@@ -12,6 +12,16 @@ nav {
     border-color: rgb(218, 166, 0);
 }
 
+#calendar {
+    background-color: white;
+    height:10%;
+    width:80%;
+    float: none;
+    margin: auto;
+    margin-top:1%;
+    margin-bottom:1%;
+}
+
 .carousel {
     background-color: rgb(255,204,39);
 }
@@ -23,6 +33,22 @@ nav {
 .carousel-caption {
     background-color:rgb(33, 32, 21, 50%);
 }
+
+.fc-scroller {
+    overflow-y: auto;
+ }
+
+.fc-title, .fc-time {
+    text-align: center;
+}
+
+.fc-view {
+    margin-top:1%;
+    position: absolute;
+    bottom:0;
+    overflow-y: auto;
+    overflow-y: hidden;
+    }
 
 footer {
     background-color:#222222;
