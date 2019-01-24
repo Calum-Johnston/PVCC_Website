@@ -1,0 +1,51 @@
+nav {
+    border-top: 4px solid rgb(255,204,39);
+}
+
+.btn-primary{
+    background-color: rgb(255,204,39);
+    border-color: rgb(255,204,39);
+}
+
+.btn-primary:hover{
+    background-color: rgb(218, 166, 0);
+    border-color: rgb(218, 166, 0);
+}
+
+.carousel {
+    background-color: rgb(255,204,39);
+}
+
+.carousel img {
+    filter: opacity(70%);
+}
+
+.carousel-caption {
+    background-color:rgb(33, 32, 21, 50%);
+}
+
+footer {
+    background-color:#222222;
+    color:#dddddd;
+}
+
+.footer-copyright {
+    background-color:#333333;
+    border-top: 4px solid rgb(255,204,39);
+}
+
+.footer-item{
+    float:left;
+}
+
+
+
+.card:hover {  
+    -webkit-transform: scale(1.02);  /* Chrome, Opera 15+, Safari 3.1+ */
+    -ms-transform: scale(1.02);  /* IE 9 */
+    transform: scale(1.02);  /* Firefox 16+, IE 10+, Opera */
+    
+    -webkit-transition: -webkit-transform 0.4s; /* Safari */
+    transition: transform 0.4s;
+
+}
