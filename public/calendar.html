@@ -13,10 +13,57 @@
 		<title>PVCC</title>
 	</head>
 	<body>
+        <div class="row">
+            <nav id="calendar-navbar" class="navbar navbar-expand-lg navbar-light bg-light">
+                    <a id="calendar-header" class="navbar-brand">Facilities</a>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav mr-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Sports
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" id="astro-turf">Astro Turf</a>
+                            <a class="dropdown-item" id="football-pitch">Football Pitch</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Arts
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" id="performing-arts">Performing Arts</a>
+                                <a class="dropdown-item" id=theatre>Theatre</a>
+                            </div>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Technology
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" id="it-suite">IT Suite</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Miscellaneous
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" id="class-room">Class Room</a>
+                            <a class="dropdown-item" id="dining-hall">Dining Hall</a>
+                            </div>
+                        </li>
+                        </ul>
+                    </div>
+                    </nav>
+        </div>
 		<div class="container-fluid">
             <div id='calendar'></div>
+            <div><button id="book-btn" class="btn btn-primary">New Booking</button></div>
         </div>
 
-		<script src="js/scripts.js"></script>    		
+        <script src="js/scripts.js"></script>    
+        <script src="js/calendarScripts.js"></script>    		
 	</body>
 </html>
