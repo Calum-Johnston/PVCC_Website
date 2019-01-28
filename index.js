@@ -6,7 +6,8 @@ app.use(express.static('public'));
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }))
 
-var astroturfEvents = [{
+var astroturfEvents = [
+    {
     title: 'Event 1',
     start: '2019-01-27T13:13:55.008',
     end: '2019-01-27T14:14:55.008'
@@ -31,10 +32,10 @@ var footballpitchEvents = [{
 ];
 
 var performingartsEvents = [{}];
-var theatreEvents = [{}];
-var itsuiteEvents = [{}];
-var classroomEvents = [{}];
-var dininghallEvents = [{}];
+var theatreEvents = [];
+var itsuiteEvents = [];
+var classroomEvents = [];
+var dininghallEvents = [];
 
 
 var events = {"astroturf" : astroturfEvents, "footballpitch" : footballpitchEvents, "performingarts" : performingartsEvents, "theatre" : theatreEvents, "itsuite" : itsuiteEvents, "classroom" : classroomEvents, "dininghall" : dininghallEvents}
