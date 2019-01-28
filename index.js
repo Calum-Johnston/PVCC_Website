@@ -46,4 +46,5 @@ app.get('/events/:room', function(req, resp){
 }) 
 
 
-app.listen(1010);
+const port=process.env.PORT || 3000
+module.exports = app.listen(port);
