@@ -1,26 +1,36 @@
 "use strict";
 var express = require('express');
 var app = express();
+
+var mysql = require("mysql");
+
 app.use(express.static('public'));
-
-
-
-var pgp = require('pg-promise')(/*options*/)
-var db = pgp('postgres://rvlfvkiyapwqjn:94a8a38395f889bd74f8f0122380259c34861321bd50ab750ffc5e33126e40b0@ec2-54-217-208-105.eu-west-1.compute.amazonaws.com:5432/d5uo2kinlb47c5')
-
-db.one('SELECT $1 AS value', 123)
-  .then(function (data) {
-    console.log('DATA:', data.value)
-  })
-  .catch(function (error) {
-    console.log('ERROR:', error)
-  })
-
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }))
 
 
+app.post("/db", function(req, resp){
+    var con = mysql.createConnection({
+      host: "localhost",
+      user: "web-admin",
+      password: "password",
+        database: "pvcc"
+    });
 
-const port=process.env.PORT || 3000
+    con.connect(function(err) {
+      if (err) throw err;
+       con.query("SELECT * FROM rooms", function (err, result, fields) {
+        if (err) throw err;
+        resp.send(result);
+      });
+    });
+    
+})
+
+ 
+
+
+const port=1010
 module.exports = app.listen(port);
+
