@@ -49,3 +49,17 @@ footer {
     transition: transform 0.4s;
 
 }
+
+.card-img-overlay {
+    background-color:rgb(33, 32, 21, 50%);
+    opacity:0;
+    -webkit-transition: opacity 0.4s;
+    transition: opacity 0.4s;
+}
+
+.card-img-overlay:hover {
+    background-color:rgb(33, 32, 21, 50%);
+    opacity:1;
+    -webkit-transition: opacity 0.4s;
+    transition: opacity 0.4s;
+}
