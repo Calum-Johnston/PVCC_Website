@@ -9,51 +9,43 @@ app.use(express.static('public'));
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }))
 
-//connect to the database
-function dbconnect(){
-    var con = mysql.createConnection({
+const con = mysql.createConnection({
       host: "localhost",
       user: "web-admin",
       password: "password",
-        database: "pvcc"
+      database: "pvcc"
     });
-    
-    return con
-}
+
+con.connect(function(error){
+    if (error) {
+        throw error;
+    }
+    console.log("Connected to dataase");
+})
+global.con = con;
 
 //load a list of all the facilities.
 app.get("/facilities", function(req, resp){
-    var con = dbconnect()
 
-    //var facility = req.query.facilityId)
-    
-    con.connect(function(err) {
-      if (err) throw err;
        con.query("SELECT * FROM rooms", function (err, result, fields) {
         if (err) throw err;
         resp.send(result);
       });
-    });
+
     
 })
 
 //return infomration about a given facility
 app.get("/facilities/:id", function(req, resp){
-    var con = dbconnect()
-
     var roomId = req.params.id
-    console.log(roomId)
-
     
-    if (roomId != "undefined"){
-        con.connect(function(err) {
-          if (err) throw err;            
+    if (roomId != "undefined"){        
             con.query("SELECT * FROM rooms WHERE roomId="+roomId, function (err, result, fields) {
               if (err) throw err;
               resp.send(result);
           });
             
-        });       
+    
     }
      
 })
