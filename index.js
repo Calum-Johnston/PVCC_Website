@@ -46,7 +46,7 @@ app.get("/facilities/:id", function(req, resp){
 
 //load a list of all activities
 app.get("/activities", function(req, resp){
-       con.query("SELECT * FROM activites", function (err, result, fields) {
+       con.query("SELECT * FROM activities", function (err, result, fields) {
         if (err) throw err;
         resp.send(result);
       }); 
@@ -56,7 +56,7 @@ app.get("/activities", function(req, resp){
 app.get("/activities/:id", function(req, resp){
     var activityId = req.params.id
     if (activityId != "undefined"){        
-            con.query("SELECT * FROM activites WHERE activityId="+activityId, function (err, result, fields) {
+            con.query("SELECT * FROM activities WHERE activityId="+activityId, function (err, result, fields) {
               if (err) throw err;
               resp.send(result);
           });
