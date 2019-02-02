@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Feb 01, 2019 at 01:25 PM
+-- Generation Time: Feb 02, 2019 at 12:08 PM
 -- Server version: 5.7.23
 -- PHP Version: 7.2.10
 
@@ -21,6 +21,30 @@ SET time_zone = "+00:00";
 --
 -- Database: `pvcc`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `activities`
+--
+
+DROP TABLE IF EXISTS `activities`;
+CREATE TABLE IF NOT EXISTS `activities` (
+  `activityId` int(11) NOT NULL AUTO_INCREMENT,
+  `activityName` varchar(40) NOT NULL,
+  `activityDescription` varchar(2000) NOT NULL,
+  `activityImage` varchar(2000) NOT NULL,
+  PRIMARY KEY (`activityId`)
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `activities`
+--
+
+INSERT INTO `activities` (`activityId`, `activityName`, `activityDescription`, `activityImage`) VALUES
+(1, 'Fast Feet Football Academy', 'Fast Feet Football Academy formed in January 2013 with the aim of helping children maximise their potential and become as comfortable and competent with the football as possible. Our methods are suitable for all ages and abilities but specifically players aged 3 to 16.\r\n\r\nOur emphasis is based on each child’s long term individual development, focusing on individual skill development and small group play, improving every player regardless of age or ability.  Players are encouraged to express themselves, be creative and most importantly, to be instinctive and spontaneous in their play.\r\n\r\nTo book 3 taster sessions for the price of 2, please contact us on 0191 4813469.', 'fastfeet.jpg'),
+(2, 'Children’s Gymnastics Coaching', 'Our Gymnastics coaching is an ideal way of introducing your child to the activity, involving them physically and for them to meet new friends.\r\n\r\nHead Coach Lyn Armstrong has been coaching young people for over 25 years and has a wealth of experience and many of her previous young pupils have gone on to take both their coaching badges and to help organise the sessions. Those young people who attend the classes are given the opportunity to gain various B.A.G.A. awards and badges.\r\n\r\nIn addition to the courses we operate there are regular special coaching classes (Taster Sessions) organised for the School holiday periods and details will be shown on this website.\r\n\r\nNext set of classes commence in January 2016, why not check out availability on current courses.\r\n', 'gymnastics.jpg'),
+(3, 'Dance Moves', 'Description Coming Soon', 'dancemoves.jpg');
 
 -- --------------------------------------------------------
 
