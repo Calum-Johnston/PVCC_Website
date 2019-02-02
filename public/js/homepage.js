@@ -25,7 +25,7 @@ $(function(){
             roomDescription = roomDescription.substring(0,roomDescription.lastIndexOf(" ",120)) + "..."
             
             
-            $("#facilities .request-result").append('<div class="col-12 col-md-6 col-lg-4 mb-4"><div class="card text-white"><img class="card-img-top" src="img/'+imagePath+'" alt="Card image cap"><div class="card-img-overlay"><h5 class="card-title">'+roomName+'</h5><p class="card-text">'+roomDescription+'</p><a href="#" class="btn btn-primary">Read More</a></div></div></div>')
+            $("#facilities .request-result").append('<div class="col-12 col-md-6 col-lg-4 mb-4"><div class="card text-white"><img class="card-img-top" src="img/'+imagePath+'" alt="Card image cap"><div class="card-img-overlay"><h5 class="card-title">'+roomName+'</h5><p class="card-text">'+roomDescription+'</p><a href="/facilities.html?id=' + roomId +'" class="btn btn-primary">Read More</a></div></div></div>')
         
         }
         
