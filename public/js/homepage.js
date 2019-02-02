@@ -64,5 +64,22 @@ $(function(){
 
 
     });
+    
+    $("#twitter-page").hide();
+    $("#btn-facebook").addClass("active");
+});
+
+$("#btn-facebook").click(function(){
+    $("#twitter-page").hide();
+    $("#fb-page").fadeIn();
+    $("#btn-facebook").addClass("active");
+    $("#btn-twitter").removeClass("active");
+});
+
+$("#btn-twitter").click(function(){
+    $("#fb-page").hide();
+    $("#twitter-page").fadeIn();
+    $("#btn-facebook").removeClass("active");
+    $("#btn-twitter").addClass("active");
 });
 
