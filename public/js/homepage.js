@@ -58,7 +58,7 @@ $(function(){
             activityDescription = activityDescription.substring(0,activityDescription.lastIndexOf(" ",120)) + "..."
 
 
-            $("#activities .request-result").append('<div class="col-12 col-md-6 col-lg-4 mb-4"><div class="card text-white"><img class="card-img-top" src="'+imagePath+'" alt="Card image cap"><div class="card-img-overlay"><h5 class="card-title">'+activityName+'</h5><p class="card-text">'+activityDescription+'</p><a href="#" class="btn btn-primary">Go somewhere</a></div></div></div>')
+            $("#activities .request-result").append('<div class="col-12 col-md-6 col-lg-4 mb-4"><div class="card text-white"><img class="card-img-top" src="'+imagePath+'" alt="Card image cap"><div class="card-img-overlay"><h5 class="card-title">'+activityName+'</h5><p class="card-text">'+activityDescription+'</p><a href="/activities.html?id=' + activityId +'" class="btn btn-primary text-white">Read More</a></div></div></div>')
 
         }
 
