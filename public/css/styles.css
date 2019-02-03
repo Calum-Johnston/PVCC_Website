@@ -16,6 +16,10 @@ nav {
     background-color: rgb(255,204,39);
 }
 
+.carousel-caption {
+    border-left: solid rgb(255,204,39) 4px;
+}
+
 .carousel img {
     filter: opacity(70%);
 }
@@ -38,7 +42,14 @@ footer {
     float:left;
 }
 
+.bg-yellow {
+    background-color: rgb(255,204,39);
+    color:white;
+}
 
+.socialFeeds {
+    height:300px;
+}
 
 .card:hover {  
     -webkit-transform: scale(1.02);  /* Chrome, Opera 15+, Safari 3.1+ */
@@ -48,4 +59,18 @@ footer {
     -webkit-transition: -webkit-transform 0.4s; /* Safari */
     transition: transform 0.4s;
 
+}
+
+.card-img-overlay {
+    background-color:rgb(33, 32, 21, 50%);
+    opacity:0;
+    -webkit-transition: opacity 0.4s;
+    transition: opacity 0.4s;
+}
+
+.card-img-overlay:hover {
+    background-color:rgb(33, 32, 21, 50%);
+    opacity:1;
+    -webkit-transition: opacity 0.4s;
+    transition: opacity 0.4s;
 }
