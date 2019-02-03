@@ -1,17 +1,18 @@
 {
-  "name": "group-4",
+  "name": "booking-form",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "formScript.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "mysql": "^2.16.0",
-    "pg": "^7.8.0"
+    "googleapis": "^27.0.0",
+    "mysql": "^2.16.0"
   }
 }
