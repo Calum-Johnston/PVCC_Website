@@ -14,7 +14,7 @@ $( document ).ready(function() {
             right: 'prev,next today '
         },
 
-        titleFormat: '[Astro Turf]',
+        titleFormat: '[]',
         allDaySlot: false,
         businessHours:
             {
@@ -31,13 +31,15 @@ $( document ).ready(function() {
     })
     var bookBtn = $('#book-btn')
     $('.fc-right').append(bookBtn);
+    var calendarTitle = $('#calendar-title')
+    $('.fc-left').append(calendarTitle);
 })
 
 
 
 function changeRooms(room) {
-    var prevRoom = $('.fc-left h2').text();
-    $(".fc-left h2").html(room);
+    var prevRoom = $('.fc-left h3').text();
+    $(".fc-left h3").html(room);
     prevRoom = prevRoom.toLowerCase();
     prevRoom = prevRoom.replace(/\s/g, '');
     room = room.toLowerCase();
@@ -46,6 +48,7 @@ function changeRooms(room) {
     var newSource = 'http://127.0.0.1:1010/events/' + room;
     $('#calendar').fullCalendar( 'removeEventSource', removeSource )
     $("#calendar").fullCalendar('addEventSource', newSource);
+    $('#calendar').fullCalendar( 'refetchEvents' );
 }
 
 var nameDict = {"astro-turf" : "Astro Turf", "football-pitch" : "Football Pitch", "performing-arts" : "Performing Arts", "theatre" : "Theatre", "it-suite" : "IT Suite", "class-room" : "Class Room", "dining-hall" : "Dining Hall" }

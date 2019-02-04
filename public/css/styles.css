@@ -93,7 +93,12 @@ footer {
 			#calendar-navbar {
 			    width: 100%;
 			    padding-left:12%;
-			}
+      }
+      
+      #calendar-title {
+        font-size: 200%;
+        margin:0%;
+    }
 
 /*Calendar CSS fine-tuning, created by Tom, added by Peter 31/01/19*/
 			
@@ -125,11 +130,11 @@ footer {
 			  padding-bottom: 10px;
 }
 
-.error{
+/*.error{
  background-color:rgb(33, 32, 21, 50%);			display: none;
 	    opacity:1;	103		margin-left: 10px;
 	    -webkit-transition: opacity 0.4s;	104	  color: red;
-	    transition: opacity 0.4s;	105	}
+	    transition: opacity 0.4s;	105	}*/
 
 /* CSS RELATING TO TOP OF PAGE */
 
