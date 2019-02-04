@@ -1,4 +1,15 @@
-		<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+<!--facebook sdk for social media plugins-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.2';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<!--navigation bar-->
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
 			<div class="container">
 				<a class="navbar-brand" href="#">
 				<img style="display:inline" src="img/PVCC_Logo-Horizontal.png" height="75px" />

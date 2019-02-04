@@ -219,7 +219,7 @@ app.get("/facilities/:id", function(req, resp){
               if (err) throw err;
               resp.send(result);
           });
-    }   
+    }
 })
 
 //activities page
