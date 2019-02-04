@@ -27,9 +27,10 @@ function loadActivity(activityId){
         $("#activities .request-result").html(" ");
         $("<img class='col-6' src=" + imagePath + " />").hide().appendTo("#activities .request-result").fadeIn()
         $("<div class='col-6'><h2>" + activityName + "</h2><p>" + activityDescription + "</p></div>").hide().appendTo("#activities .request-result").fadeIn()
-    
         
-        $('<button type="button" class="btn btn-primary" id="goBack">See All Activities</button>').hide().appendTo("#activities .request-result div").fadeIn()
+        
+        $('<div class="fb-share-button" data-href="http://127.0.0.1:1010/activities.html?id=2" data-layout="button" data-size="large" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F127.0.0.1%3A1010%2Factivities.html%3Fid%3D' + activityId + '&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>').hide().appendTo("#activities .request-result").fadeIn()
+
 
     });
     
