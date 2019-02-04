@@ -26,10 +26,12 @@ function loadActivity(activityId){
         
         $("#activities .request-result").html(" ");
         $("<img class='col-6' src=" + imagePath + " />").hide().appendTo("#activities .request-result").fadeIn()
-        $("<div class='col-6'><h2>" + activityName + "</h2><p>" + activityDescription + "</p></div>").hide().appendTo("#activities .request-result").fadeIn()
-    
+        $("<div class='col-6 activityDescription'><h2>" + activityName + "</h2><p>" + activityDescription + "</p></div>").hide().appendTo("#activities .request-result").fadeIn()
         
-        $('<button type="button" class="btn btn-primary" id="goBack">See All Activities</button>').hide().appendTo("#activities .request-result div").fadeIn()
+        $('<div class="fb-share-button" data-href="http://127.0.0.1:1010/activities.html?id=2" data-layout="button" data-size="large" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F127.0.0.1%3A1010%2Factivities.html%3Fid%3D' + activityId + '&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>').hide().appendTo("#activities .request-result .activityDescription").fadeIn()
+        
+        $('<button type="button" class="btn btn-primary my-3 d-block" id="goBack">See All Activities</button>').hide().appendTo("#activities .request-result .activityDescription").fadeIn()
+
 
     });
     
@@ -61,7 +63,9 @@ function loadActivities(){
             //convert room description into a preview of the description text of 120 characters to the nearest word.
             activityDescription = activityDescription.substring(0,activityDescription.lastIndexOf(" ",120)) + "..."
             
-            $('<div class="col-12 col-md-6 col-lg-4 mb-4"><div class="card"><img class="card-img-top" src="'+imagePath+'" alt="Card image cap"><div class="card-body"><h5 class="card-title">'+activityName+'</h5><p class="card-text">'+activityDescription+'</p><a id="'+activityId+'" class="btn btn-primary activityLink text-white">See Full Description</a></div></div></div>').hide().appendTo("#activities .request-result").fadeIn()
+            /*$('<div class="col-12 col-md-6 col-lg-4 mb-4"><div class="card"><img class="card-img-top" src="'+imagePath+'" alt="Card image cap"><div class="card-body"><h5 class="card-title">'+activityName+'</h5><p class="card-text">'+activityDescription+'</p><a id="'+activityId+'" class="btn btn-primary activityLink text-white">See Full Description</a></div></div></div>').hide().appendTo("#activities .request-result").fadeIn()*/
+            
+            $('<div class="col-12 col-md-6 col-lg-4 mb-4"><div class="card"><img class="card-img-top" src="'+imagePath+'" alt="Card image cap"><div class="card-body"><h5 class="card-title">'+activityName+'</h5><p class="card-text">'+activityDescription+'</p><a href="/activities.html?id='+activityId+'" class="btn btn-primary activityLink text-white">See Full Description</a></div></div></div>').hide().appendTo("#activities .request-result").fadeIn()
         
         }
         
@@ -70,11 +74,11 @@ function loadActivities(){
     
 }
 
-//load individual activity onto the screenn for the user.
+/*//load individual activity onto the screenn for the user.
 $("#activities .request-result").on("click", ".activityLink", function(){
     var activityId = $(this).attr("id")
     loadActivity(activityId)
-});
+});*/
 
 $("#activities .request-result").on("click", "#goBack", function(){
     loadActivities()
