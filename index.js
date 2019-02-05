@@ -18,8 +18,8 @@ const mysql = require("mysql");
 var astroturfEvents = [
     {
     title: 'Event 1',
-    start: '2019-01-27T13:13:55.008',
-    end: '2019-01-27T14:14:55.008'
+    start: '2019-02-05T13:13:55.008',
+    end: '2019-02-05T14:14:55.008'
     },
     {
     title: 'Event 2',
