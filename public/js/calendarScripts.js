@@ -13,6 +13,9 @@ $( document ).ready(function() {
             left: 'title',
             right: 'prev,next today '
         },
+        eventClick: function(calEvent, jsEvent, view) {
+            location.replace("/activities.html");
+        },
 
         titleFormat: '[]',
         allDaySlot: false,
@@ -35,8 +38,6 @@ $( document ).ready(function() {
     $('.fc-left').append(calendarTitle);
 })
 
-
-
 function changeRooms(room) {
     var prevRoom = $('.fc-left h3').text();
     $(".fc-left h3").html(room);
@@ -52,7 +53,6 @@ function changeRooms(room) {
 }
 
 var nameDict = {"astro-turf" : "Astro Turf", "football-pitch" : "Football Pitch", "performing-arts" : "Performing Arts", "theatre" : "Theatre", "it-suite" : "IT Suite", "class-room" : "Class Room", "dining-hall" : "Dining Hall" }
-
 
 $(document).on('click', '.dropdown-item', function() {
     changeRooms(nameDict[$(this).attr('id')]);
