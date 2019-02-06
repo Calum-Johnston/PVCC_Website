@@ -208,13 +208,13 @@ app.get("/facilities", function(req, resp){
        con.query("SELECT * FROM rooms", function (err, result, fields) {
         if (err) throw err;
         resp.send(result);
-      }); 
+      });
 })
 
 //return information about a given facility
 app.get("/facilities/:id", function(req, resp){
     var roomId = req.params.id
-    if (roomId != "undefined"){        
+    if (roomId != "undefined"){
             con.query("SELECT * FROM rooms WHERE roomId="+roomId, function (err, result, fields) {
               if (err) throw err;
               resp.send(result);
@@ -228,18 +228,18 @@ app.get("/activities", function(req, resp){
        con.query("SELECT * FROM activities", function (err, result, fields) {
         if (err) throw err;
         resp.send(result);
-      }); 
+      });
 })
 
 //return information about a given activity by ID
 app.get("/activities/:id", function(req, resp){
     var activityId = req.params.id
-    if (activityId != "undefined"){        
+    if (activityId != "undefined"){
             con.query("SELECT * FROM activities WHERE activityId="+activityId, function (err, result, fields) {
               if (err) throw err;
               resp.send(result);
           });
-    }   
+    }
 })
 
 
@@ -316,7 +316,6 @@ function populateEvents(){
 
         //push event onto arrays corresponding to rooms booked
         for(j = 0; j < rooms.length; j++){
-
           eventsDict[rooms[j]].push(eventCalendarObj);
         }
 
