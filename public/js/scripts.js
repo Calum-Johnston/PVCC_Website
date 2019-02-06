@@ -19,8 +19,8 @@ $.urlParam = function(name){
 $(function(){
     $("body").prepend("<div id='header'></div>");
     $("body").append("<div id='footer'></div>");
-    $("#header").load("includes/header.html"); 
-    $("#footer").load("includes/footer.html"); 
+    $("#header").load("includes/header.html");
+    $("#footer").load("includes/footer.html");
 });
 
 //carousel controls
@@ -39,7 +39,7 @@ $(document).ready(function(){
   $(".event-button").addClass('disabled'); // disable rooms by default
   $("#room-selection").attr("disabled", "disabled"); // disable text box by default
   $("#end-time").attr("disabled", 'disabled');
-
+  $(".error").hide();
   $("#start-time").on('click', function(){
     $("#time-error").hide(500);
     $("#submitButton").removeClass('disabled');
