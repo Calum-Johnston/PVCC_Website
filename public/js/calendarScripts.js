@@ -9,6 +9,7 @@ $( document ).ready(function() {
         defaultView: 'agendaWeek',
         height: 440,
         contentHeight:420,
+        scrollTime: '09:00:00',
         header: {
             left: 'title',
             right: 'prev,next today '
