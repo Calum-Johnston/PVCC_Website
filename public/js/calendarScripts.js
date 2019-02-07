@@ -7,8 +7,9 @@ $( document ).ready(function() {
     $('#calendar').fullCalendar({
         columnFormat: 'ddd D/M',
         defaultView: 'agendaWeek',
-        height: 440,
-        contentHeight:420,
+        height: 600,
+        contentHeight:600,
+        scrollTime: '10:00:00',
         header: {
             left: 'title',
             right: 'prev,next today '
@@ -21,8 +22,8 @@ $( document ).ready(function() {
         allDaySlot: false,
         businessHours:
             {
-                    start: '08:00',
-                    end:   '22:30',
+                    start: '10:00',
+                    end:   '22:00',
                     dow: [ 0, 1, 2, 3, 4, 5, 6]
             },
         events: {
