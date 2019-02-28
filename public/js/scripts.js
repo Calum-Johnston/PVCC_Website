@@ -1,4 +1,10 @@
 "use strict";
+/* jshint -W097 */
+/* jshint esversion: 6 */
+/* jshint node: true */
+/* jshint browser: true */
+/* jshint jquery: true */
+/* jshint devel: true */
 //sam stuff
 
 //from sitepoint || src: https://www.sitepoint.com/url-parameters-jquery/
@@ -10,7 +16,7 @@ $.urlParam = function(name){
     else{
        return results[1] || 0;
     }
-}
+};
 //end
 
 //carousel controls
@@ -36,7 +42,7 @@ $(".carousel-control-prev").on("click", function(){
 ############################*/
 
 $(document).ready(function(){
-  $(".event-button").addClass('disabled'); // disable rooms by default
+  $(".event-button").hide(); // hide rooms by default
   $("#room-selection").attr("disabled", "disabled"); // disable text box by default
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
@@ -127,31 +133,31 @@ $(document).ready(function(){
       const value = $(this).text();
       $('#room-selection').val("");
       if (value == "Birthday Party"){
-        $("#classroom").addClass('active');
-        $("#dining").addClass('active');
+        $("#classroom").show();
+        $("#dining").show();
         $('#room-selection').val($('#room-selection').val() + $("#classroom").data('name'));
         $('#room-selection').val($('#room-selection').val() + ", " + $("#dining").data('name'));
       }
       else if (value == "Computer Class"){
-        $("#it-suite").addClass('active');
-        $("#classroom").addClass('active');
+        $("#it-suite").show();
+        $("#classroom").show();
         $('#room-selection').val($('#room-selection').val() + $("#it-suite").data('name'));
         $('#room-selection').val($('#room-selection').val() + ", " + $("#classroom").data('name'));
       }
       else if (value == "Football Match"){
-        $("#astro").addClass('active');
-        $("#football").addClass('active');
+        $("#astro").show();
+        $("#football").show();
         $('#room-selection').val($('#room-selection').val() + $("#astro").data('name'));
         $('#room-selection').val($('#room-selection').val() + ", " + $("#football").data('name'));
       }
       else if (value == "Pantomime"){
-        $("#p-arts").addClass('active');
-        $("#theatre").addClass('active');
+        $("#p-arts").shpw();
+        $("#theatre").show();
         $('#room-selection').val($('#room-selection').val() + $("#p-arts").data('name'));
         $('#room-selection').val($('#room-selection').val() + ", " + $("#theatre").data('name'));
       }
       else if (value == "Custom"){
-        $(".event-button").removeClass('disabled');
+        $(".event-button").show();
         customSelected = true;
       }
       $(".active").addClass('disabled');
@@ -247,18 +253,18 @@ function postEvent(){
     type:"POST",
     url: "http://127.0.0.1:1010/events",
     data: JSON.stringify({
-      "name":$('#name').val(),
-      "email":$('#emailaddress').val(),
-      "telephone":$('#phone').val(),
-      "date":$('#date').val(),
-      "timeFrom":$('#start-time').val(),
-      "timeUntil":$('#end-time').val(),
-      "rooms":$('#room-selection').val()
+      "name": $('#name').val(),
+      "email": $('#emailaddress').val(),
+      "telephone": $('#phone').val(),
+      "date": $('#date').val(),
+      "timeFrom": $('#start-time').val(),
+      "timeUntil": $('#end-time').val(),
+      "rooms": $('#room-selection').val()
     }),
     contentType:"application/json; charset=utf-8",
     dataType:"json",
     success: function(data){
-      if(data["response"] === true){
+      if(data.response === true){
         alert("Booking created!");
       }else{
         alert("Clash detected, booking not made.");

@@ -139,10 +139,10 @@ error{
 /* CSS RELATING TO TOP OF PAGE */
 
 hr{
-  width: 80%;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
-  background-color:#666;
+  background-color: rgb(255,204,39);
 }
 
 label{
@@ -150,13 +150,8 @@ label{
   width: 90px;
 }
 
-#dropdownMenuButton{
-  position: relative;
-  display: inline-block;
-}
-
 .dropdown-menu{
-  background-color: #d9534f;
+  background-color: rgb(255,204,39);
 }
 
 
