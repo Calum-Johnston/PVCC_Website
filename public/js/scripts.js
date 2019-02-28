@@ -151,7 +151,7 @@ $(document).ready(function(){
         $('#room-selection').val($('#room-selection').val() + ", " + $("#football").data('name'));
       }
       else if (value == "Pantomime"){
-        $("#p-arts").shpw();
+        $("#p-arts").show();
         $("#theatre").show();
         $('#room-selection').val($('#room-selection').val() + $("#p-arts").data('name'));
         $('#room-selection').val($('#room-selection').val() + ", " + $("#theatre").data('name'));

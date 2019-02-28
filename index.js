@@ -165,12 +165,12 @@ app.post('/events', function(req,resp){
 
   //event object, stores all data sent in request
   var eventInfo = {
-    "name":req.body["name"],
-    "email":req.body["email"],
-    "telephone":req.body["telephone"],
-    "dateTimeStart": (new Date(req.body["date"] + " " + req.body["timeFrom"])).toISOString(),
-    "dateTimeEnd": (new Date(req.body["date"] + " " + req.body["timeUntil"])).toISOString(),
-    "rooms":req.body["rooms"]
+    "name":req.body.name,
+    "email":req.body.email,
+    "telephone":req.body.telephone,
+    "dateTimeStart": (new Date(req.body.date + " " + req.body.timeFrom)).toISOString(),
+    "dateTimeEnd": (new Date(req.body.date + " " + req.body.timeUntil)).toISOString(),
+    "rooms":req.body.rooms
   };
 
   //call function to check if the event is valid, i.e. not overlapping other events
@@ -193,13 +193,13 @@ app.post('events/delete/:id', function(req,resp){
       return;
     }
     console.log('Event: ' + id + " deleted!");
-  })
+  });
 });
 
 //handles full calendar events,
 app.get('/events/:room', function(req, resp){
     resp.send(eventsDict[locationsDict[req.params.room]]);
-})
+});
 
 
 //facilities page ***
@@ -213,14 +213,14 @@ app.get("/facilities", function(req, resp){
 
 //return information about a given facility
 app.get("/facilities/:id", function(req, resp){
-    var roomId = req.params.id
+    var roomId = req.params.id;
     if (roomId != "undefined"){
             con.query("SELECT * FROM rooms WHERE roomId="+roomId, function (err, result, fields) {
               if (err) throw err;
               resp.send(result);
           });
     }
-})
+});
 
 //activities page
 //load a list of all activities
@@ -229,18 +229,18 @@ app.get("/activities", function(req, resp){
         if (err) throw err;
         resp.send(result);
       });
-})
+});
 
 //return information about a given activity by ID
 app.get("/activities/:id", function(req, resp){
-    var activityId = req.params.id
+    var activityId = req.params.id;
     if (activityId != "undefined"){
             con.query("SELECT * FROM activities WHERE activityId="+activityId, function (err, result, fields) {
               if (err) throw err;
               resp.send(result);
           });
     }
-})
+});
 
 
 
@@ -258,7 +258,7 @@ app.get("/activities/:id", function(req, resp){
 //called once the authorisation has taken place, server won't start otherwise
 function startServer(auth){
   calendar = google.calendar({version: 'v3', auth});
-  authObj = auth
+  authObj = auth;
 
   populateEvents();
 
@@ -301,42 +301,42 @@ function populateEvents(){
 
       //loop through all events
       events.map((event, i) => {
-        var rooms = event["location"].split(', ');
+        var rooms = event.location.split(', ');
         //remove blank room
-        rooms.pop()
+        rooms.pop();
 
         var j;
 
         //create object to be pushed onto correct room arrays
         var eventCalendarObj = {
-          title: event["summary"],
-          start: event["start"]["dateTime"],
-          end: event["end"]["dateTime"]
-        }
+          title: event.summary,
+          start: event.start.dateTime,
+          end: event.end.dateTime
+        };
 
         //push event onto arrays corresponding to rooms booked
         for(j = 0; j < rooms.length; j++){
           eventsDict[rooms[j]].push(eventCalendarObj);
         }
 
-      })
+      });
     }
   });
-};
+}
 
 //takes a JSON object with the event information, creates an event if the authentication is valid
 function createEvent(eventInfo){
 
   var eventObj = {
     'summary': 'Example event',
-    'location': eventInfo["rooms"],
+    'location': eventInfo.rooms,
     'description': 'Test event',
     'start': {
-      'dateTime': eventInfo["dateTimeStart"],
+      'dateTime': eventInfo.dateTimeStart,
       'timeZone': 'Europe/London',
     },
     'end': {
-      'dateTime': eventInfo["dateTimeEnd"],
+      'dateTime': eventInfo.dateTimeEnd,
       'timeZone': 'Europe/London',
     },
 
@@ -357,19 +357,19 @@ function createEvent(eventInfo){
   }else{
 
 
-    console.log(event["data"]["id"]);
+    console.log(event.data.id);
     //If successful, add to Tom's array here!
 
-    var rooms = eventInfo["rooms"].split(', ');
+    var rooms = eventInfo.rooms.split(', ');
     var i;
 
 
     //JSON object that stores data in format suitable for Full calendar plugin
     var eventCalendarObj = {
-      title: eventObj["summary"],
-      start: eventInfo["dateTimeStart"],
-      end: eventInfo["dateTimeEnd"]
-    }
+      title: eventObj.summary,
+      start: eventInfo.dateTimeStart,
+      end: eventInfo.dateTimeEnd
+    };
 
     for(i = 0; i < rooms.length; i ++){
       eventsDict[rooms[i]].push(eventCalendarObj);
@@ -378,7 +378,7 @@ function createEvent(eventInfo){
   }
   console.log('Event created!');
   });
-};
+}
 
 /*function that checks if an event is able to be put on the calendar,
 ensures that it is within the opening times and doesn't overlap with
@@ -390,8 +390,8 @@ function validateEvent(newEventInfo, resp){
   calendar.events.list({
 
     calendarId: 'primary',
-    timeMin: newEventInfo["dateTimeStart"],
-    timeMax: newEventInfo["dateTimeEnd"],
+    timeMin: newEventInfo.dateTimeStart,
+    timeMax: newEventInfo.dateTimeEnd,
     maxResults: 100,
     singleEvents: true,
     orderBy: 'startTime',
@@ -420,7 +420,7 @@ function validateEvent(newEventInfo, resp){
           console.log("Booking clash detected.");
           clashDiscovered = true;
           resp.send({"response": false});
-        };
+        }
       });
 
       if (!clashDiscovered){
@@ -439,13 +439,13 @@ function validateEvent(newEventInfo, resp){
 
   });
 
-};
+}
 
 //function from https://stackoverflow.com/questions/16227197/compute-intersection-of-two-arrays-in-javascript/16227294
 function intersectArrays(a, b) {
     var t;
-    if (b.length > a.length) t = b, b = a, a = t; // indexOf to loop over shorter
+    if (b.length > a.length) {t = b; b = a; a = t;} // indexOf to loop over shorter
     return a.filter(function (e) {
         return b.indexOf(e) > -1;
     });
-};
+}
