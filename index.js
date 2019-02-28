@@ -209,7 +209,7 @@ app.get("/facilities", function(req, resp){
         if (err) throw err;
         resp.send(result);
       });
-})
+});
 
 //return information about a given facility
 app.get("/facilities/:id", function(req, resp){
@@ -243,6 +243,42 @@ app.get("/activities/:id", function(req, resp){
 });
 
 
+//load a list of all activities
+app.get("/eventrooms", function(req, resp){
+    con.query("SELECT rooms.roomId, rooms.roomName, commonevents.eventId, commonevents.eventName  FROM commonevents INNER JOIN eventrooms ON commonevents.eventId = eventrooms.eventId INNER JOIN rooms ON eventrooms.roomId = rooms.roomId", function (err, result, fields) {
+    if (err) throw err;
+
+    var eventrooms = {};
+    for (var i = 0; i < result.length; i ++){
+        if (result[i].eventId in eventrooms){
+            eventrooms[result[i].eventId].rooms.push({"roomName" : result[i].roomName, "roomId" : result[i].roomId});
+        }
+        else {
+            eventrooms[result[i].eventId] = {"eventName" : result[i].eventName, "rooms" : [{"roomName" : result[i].roomName, "roomId" : result[i].roomId}]};
+        }
+    }
+    resp.send(eventrooms);
+});
+/*
+      let eventDetails = {
+        "footballParty": {
+          "eventName": "Football Party",
+          "rooms": [
+            {
+              "roomName": "Astroturf",
+              "roomId" : "astroturf"
+            },
+            {
+              "roomName": "Classroom",
+              "roomId" : "classroom"
+            }
+          ]
+        }
+      };
+*/
+
+    //"footballParty":{"eventName": "Football Party", "rooms" : [{roomName : "Astroturf", "roomId" : astroturf}, {roomName : "Classroom", "roomId" : classroom}]}
+});
 
 
 

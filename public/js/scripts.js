@@ -46,6 +46,14 @@ $(document).ready(function(){
   $("#room-selection").attr("disabled", "disabled"); // disable text box by default
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
+
+  $.getJSON('/eventrooms', function(data){
+    console.log(data);
+    $.each(data, function(key, value){
+      // do stuff here
+    });
+  });
+
   $("#start-time").on('click', function(){
     $("#time-error").hide(500);
     $("#submitButton").removeClass('disabled');
