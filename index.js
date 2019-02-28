@@ -1,4 +1,11 @@
 "use strict";
+/* jshint -W097 */
+/* jshint esversion: 6 */
+/* jshint node: true */
+/* jshint browser: true */
+/* jshint jquery: true */
+/* jshint devel: true */
+
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
@@ -142,7 +149,7 @@ con.connect(function(error){
         throw error;
     }
     console.log("Connected to database");
-})
+});
 global.con = con;
 
 
@@ -441,7 +448,7 @@ function validateEvent(newEventInfo, resp){
 
     if (events.length) {
       //rooms requested to be booked by the user
-      const requestedRooms = newEventInfo["rooms"].split(', ');
+      const requestedRooms = newEventInfo.rooms.split(', ');
 
       events.map((event, i) => {
         //get the list of rooms of current event being evaluated

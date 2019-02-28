@@ -75,59 +75,28 @@ footer {
     transition: opacity 0.4s;
 }
 
-
 /*#####################
 ###FOR BACK END#######
 #####################*/
 
 #calendar {
-			    background-color: white;
-			    height:10%;
-			    width:80%;
-			    float: none;
-			    margin: auto;
-			    margin-top:1%;
-			    margin-bottom:1%;
-			}
+  background-color: white;
+  height:10%;
+  width:80%;
+  float: none;
+  margin: auto;
+  margin-top:1%;
+  margin-bottom:1%;
+}
 
-			#calendar-navbar {
-			    width: 100%;
-			    padding-left:12%;
-      }
+#calendar-navbar {
+  width: 100%;
+  padding-left:12%;
+}
 
-      #calendar-title {
-        font-size: 200%;
-        margin:0%;
-    }
-
-/*Calendar CSS fine-tuning, created by Tom, added by Peter 31/01/19*/
-
-			.dropdown-item:active{
-			    background-color: rgb(255,204,39);
-			}
-
-			.fc-scroller {
-			    overflow-y: auto;
-			 }
-
-			.fc-title, .fc-time {
-			    text-align: center;
-		}
-
-			.fc-view {
-			    margin-top:1%;
-			    position: absolute;
-			    bottom:0;
-			    overflow-y: auto;
-			    overflow-y: hidden;
-			}
-
-/* booking form made by faiz*/
-#submitButton{
-			  padding-left: 20px;
-			  padding-right: 20px;
-			  padding-top: 10px;
-			  padding-bottom: 10px;
+#calendar-title {
+  font-size: 200%;
+  margin:0%;
 }
 
 error{
@@ -135,34 +104,3 @@ error{
 	    opacity:1;	103		margin-left: 10px;
 	    -webkit-transition: opacity 0.4s;	104	  color: red;
 	    transition: opacity 0.4s;	105	}
-
-/* CSS RELATING TO TOP OF PAGE */
-
-hr{
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: rgb(255,204,39);
-}
-
-label{
-  display: inline-block;
-  width: 90px;
-}
-
-.dropdown-menu{
-  background-color: rgb(255,204,39);
-}
-
-
-li.event a{
-  color: white;
-  padding-left: 10px;
-}
-
-@media only screen and (min-width: 768px) {
-  .card-img-top{
-      height:225px;
-      object-fit:cover;
-    }
-}
