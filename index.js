@@ -210,7 +210,7 @@ app.post('/events', function(req, resp){
 app.post('events/delete/:id', function(req,resp){
   var params = {
     calendarId: 'primary',
-    eventId: id,
+    eventId: req.params.id, // changed this from id
   };
 
   calendar.events.delete(params, function(err) {
@@ -218,7 +218,7 @@ app.post('events/delete/:id', function(req,resp){
       console.log('Deleting resulted in an error');
       return;
     }
-    console.log('Event: ' + id + " deleted!");
+    console.log('Event: ' + req.params.id + " deleted!");
   });
 });
 
