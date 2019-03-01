@@ -168,18 +168,37 @@ app.use((req, res, next) => {
 app.use(express.static('public'));
 
 //handles the post request for creating events
-app.post('/events', function(req,resp){
+app.post('/events', function(req, resp){
 
   //event object, stores all data sent in request
   var eventInfo = {
-    "name":req.body.name,
-    "email":req.body.email,
-    "telephone":req.body.telephone,
+    "name": req.body.name,
+    "email": req.body.email,
+    "telephone": req.body.telephone,
     "dateTimeStart": (new Date(req.body.date + " " + req.body.timeFrom)).toISOString(),
     "dateTimeEnd": (new Date(req.body.date + " " + req.body.timeUntil)).toISOString(),
-    "rooms":req.body.rooms
+    "rooms": req.body.rooms
   };
 
+  /*
+  if(req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
+    return resp.json({"responseCode" : 1,"responseDesc" : "Please select captcha"});
+  }
+
+  // Put your secret key here.
+  var secretKey = "6LeakZMUAAAAAJ3ppyXG4OjcAACeLdMv4yd9NcRI";
+  // req.connection.remoteAddress will provide IP address of connected user.
+  var verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
+  // Hitting GET request to the URL, Google will respond with success or error scenario.
+  req(verificationUrl ,function(error, response, body) {
+    body = JSON.parse(body);
+    // Success will be true or false depending upon captcha validation.
+    if(body.success !== undefined && !body.success) {
+      return resp.json({"responseCode" : 1,"responseDesc" : "Failed captcha verification"});
+    }
+    resp.json({"responseCode" : 0,"responseDesc" : "Sucess"});
+  });
+  */
   //call function to check if the event is valid, i.e. not overlapping other events
   //send resp to validateEvent due to calendar API taking too long to respond, resp
   //ends up getting processed first otherwise.
@@ -283,8 +302,6 @@ app.get("/eventrooms", function(req, resp){
         }
       };
 */
-
-    //"footballParty":{"eventName": "Football Party", "rooms" : [{roomName : "Astroturf", "roomId" : astroturf}, {roomName : "Classroom", "roomId" : classroom}]}
 });
 
 
