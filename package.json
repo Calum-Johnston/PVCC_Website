@@ -13,6 +13,8 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "googleapis": "^27.0.0",
-    "mysql": "^2.16.0"
+    "inline-css": "^2.4.1",
+    "mysql": "^2.16.0",
+    "nodemailer": "^5.1.1"
   }
 }
