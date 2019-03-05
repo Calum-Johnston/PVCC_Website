@@ -368,28 +368,16 @@ app.get("/eventrooms", function(req, resp){
 
 
 /*#########################
-#########FUNCTIONS#########
+         FUNCTIONS
 #########################*/
 
-// Function called to start the server after authorisation has occured **REQUIRED**
-function startServer(auth){
-  calendar = google.calendar({version: 'v3', auth});
-  authObj = auth;
-
-  populateEvents();
-
-  app.listen(1010, () => console.log("Booking system listening on port 1010!"));
-}
-
-
-
-//function that retrieves all events from google calendar on startup -> populates website calendar
+// Function that retrieves all events from google calendar on startup -> populates website calendar
 function populateEvents(){
 
   var minDate = new Date(Date.now());
   var maxDate = new Date(Date.now());
 
-  //gets all events within the past and future year
+  // Gets all events within the past and future year
   minDate.setMonth(minDate.getMonth() -12);
   maxDate.setMonth(maxDate.getMonth() + 12);
 
@@ -495,6 +483,7 @@ function createEvent(eventInfo){
     }
 
   }
+
   console.log('Event created!');
   });
 }
@@ -567,4 +556,82 @@ function intersectArrays(a, b) {
     return a.filter(function (e) {
         return b.indexOf(e) > -1;
     });
+}
+
+
+
+
+
+
+
+/*#########################
+      EMAIL FUNCTIONS
+#########################*/
+
+// Functions sends a confirmation email when a successful booking occurs
+function sendConfirmation(email_Recipient){
+
+  // Gets the email data to be sent 
+  var email_Data = getEmailData();  
+
+  // Establoshes connection with gmail service
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      type: 'OAuth2',
+      user: 'pvcc.test.email@gmail.com',
+      clientId: '9199051241-vsse329fgo2n7jg07mhnni9gcgj4sbrr.apps.googleusercontent.com',
+      clientSecret: 'xdXOGNakrG-RxnHmM9gbWYPa',
+      refreshToken: '1/7GX2cKvcfC0JpTQ5kEIT8pe9T_eH2RCeJFOdhMlRcgg',
+      accessToken: 'ya29.Glu_BprH1s_GYP39mUPJaOuxvN8O9XnN00-wALUxUWKYm7A7c3D9cJ9dzth1Y8rWD1PN4GqB0aWI70G8FCmmUZX8Q8En12vh8TQSWuJFucz7s0J3IxJR3lDtJt42'
+    }
+  });
+
+  // Defines email recipient and content
+  var mailOptions = {
+    from: 'pvcc.test.email@gmail.com',
+    to: email_Recipient,
+    subject: 'Booking Request',
+    text: email_Data
+  }
+
+  // Sends the email
+  transporter.sendMail(mailOptions, function(err, res){
+    if(err){
+      console.log("Error in sending email");
+      Console.log(err);
+    }else{
+      Console.log("Booking successful");
+    }
+  })
+}
+
+// Function returns email data with inline css
+function getEmailData(){
+  fs.readFile('/public/email/email-template.html', (err, content) => {
+  inlineCss(content, {url: ' '})
+    .then(function(content){
+      console.log(content);
+      return content;
+    });
+}
+
+
+
+
+/*#########################
+      CORE FUNCTIONS
+#########################*/
+
+// Function called to start the server after authorisation has occured **REQUIRED**
+function startServer(auth){
+  calendar = google.calendar({version: 'v3', auth});
+  authObj = auth;
+
+  populateEvents();
+
+  app.listen(1010, () => console.log("Booking system listening on port 1010!"));
 }
