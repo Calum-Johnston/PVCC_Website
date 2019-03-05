@@ -6,21 +6,38 @@
 /* jshint jquery: true */
 /* jshint devel: true */
 
-const fs = require('fs');
-const readline = require('readline');
-const {google} = require('googleapis');
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-
-
-const mysql = require("mysql");
-
 /*#########################
-#########VARIABLES#########
+         Packages
 #########################*/
 
-//Arrays that hold lists of events to be placed on Full Calendar calendarId
+// DEFAULT PACKAGES
+const fs = require('fs');
+const express = require('express');
+const readline = require('readline');
+const bodyParser = require('body-parser');
+const app = express();
+
+// Packges(s) required to connect to google calendar
+const {google} = require('googleapis');
+
+// Package(s) required for sending emails
+const nodemailer = require('nodemailer');  // Enables emails to be sent
+const inlineCss = require('inline-css');  // Writes CSS directly into HTML
+
+// Package(s) required for database connection
+const mysql = require("mysql");
+
+
+
+
+
+
+
+/*#########################
+         VARIABLES
+#########################*/
+
+// Arrays that hold lists of events to be placed on Full Calendar calendarId
 
 var astroturfEvents = [
     {
@@ -47,34 +64,44 @@ var footballpitchEvents = [{
     }
 ];
 
+// Variables hold event information
 var performingartsEvents = [];
 var theatreEvents = [];
 var itsuiteEvents = [];
 var classroomEvents = [];
 var dininghallEvents = [];
 
-//dictionary stores relationship between room name and array of events
+// Dictionary that stores the relationship between room name and array of events
 var eventsDict = {"Astro Turf" : astroturfEvents,  "Class Room" : classroomEvents, "Dining Hall" : dininghallEvents, "Football Pitch" : footballpitchEvents, "IT Suite" : itsuiteEvents, "Performing Arts" : performingartsEvents, "Theatre" : theatreEvents };
 
-//dictionary stores relationship between html names (sent via post request) to actual location names
+// Dictionary that stores the relationship between HTML names (sent via post requests) to actual location names
 var locationsDict = {"astroturf": "Astro Turf", "classroom":"Class Room", "dininghall":"Dining Hall", "footballpitch":"Football Pitch", "itsuite":"IT Suite", "performingarts":"Performing Arts", "theatre":"Theatre"};
 
+// Other variables
 var calendar;
 var authObj;
+var email;
+
+
+
+
 
 
 /*#################################
-###GOOGLE CALENDAR FUNCTIONALITY###
+   GOOGLE CALENDAR FUNCTIONALITY
 #################################*/
 
 // Sets permission for editing calendar
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-//name of token file
+
+// Name of the token file
 const TOKEN_PATH = 'token.json';
+
 // Authorise server to interact with calendar
 fs.readFile('credentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err);
-  // If successful, server is starter
+
+  // If successful the server is started
   authorize(JSON.parse(content), startServer);
 });
 
@@ -84,10 +111,10 @@ fs.readFile('credentials.json', (err, content) => {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
+
 function authorize(credentials, callback) {
   const {client_secret, client_id, redirect_uris} = credentials.installed;
-  const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uris[0]);
+  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
@@ -134,27 +161,43 @@ function getAccessToken(oAuth2Client, callback) {
  */
 
 
+
+
+
+
+
 /*###########################
-##MYSQL DATABASE CONNECTION##
+  MYSQL DATABASE CONNECTION
 ###########################*/
+
+// Defines the database credentials
 const con = mysql.createConnection({
-      host: "localhost",
-      user: "web-admin",
-      password: "password",
-      database: "pvcc"
-    });
-//establish connecction
-con.connect(function(error){
-    if (error) {
-        throw error;
-    }
-    console.log("Connected to database");
+  host: "localhost",
+  user: "web-admin",
+  password: "password",
+  database: "pvcc"
 });
+
+// Establishes connecction with the database
+con.connect(function(error){
+  if (error) {
+    Console.log('FAILED to connect to the database');
+    throw error;
+  }
+  console.log("Connected to database");
+});
+
+// Sets the database for the current server
 global.con = con;
 
 
+
+
+
+
+
  /*#######################################
- ###EXPRESS FUNCTIONS, REQUEST HANDLING###
+    EXPRESS FUNCTIONS, REQUEST HANDLING
  #######################################*/
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -167,10 +210,11 @@ app.use((req, res, next) => {
 });
 app.use(express.static('public'));
 
-//handles the post request for creating events
+// === CREATE EVENT ===
+// Handles the post request for creating events
 app.post('/events', function(req, resp){
 
-  //event object, stores all data sent in request
+  // Creates an event object which stores all data sent in request
   var eventInfo = {
     "name": req.body.name,
     "email": req.body.email,
@@ -180,6 +224,7 @@ app.post('/events', function(req, resp){
     "rooms": req.body.rooms
   };
 
+  // Validates the captcha (** NOT WORKING **)
   /*
   if(req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
     return resp.json({"responseCode" : 1,"responseDesc" : "Please select captcha"});
@@ -202,17 +247,23 @@ app.post('/events', function(req, resp){
   //call function to check if the event is valid, i.e. not overlapping other events
   //send resp to validateEvent due to calendar API taking too long to respond, resp
   //ends up getting processed first otherwise.
+
+  // Validates the event
   validateEvent(eventInfo, resp);
 
 });
 
-//handles request to delete a given event by ID
+// === DELETE EVENT ===
+// Handles request to delete a given event by ID
 app.post('events/delete/:id', function(req,resp){
+
+  // Gets the ID of the event to be deleted
   var params = {
     calendarId: 'primary',
-    eventId: req.params.id, // changed this from id
+    eventId: req.params.id, // Gets the ID (needs testing)
   };
 
+  // Deletes the event from the calendar
   calendar.events.delete(params, function(err) {
     if (err) {
       console.log('Deleting resulted in an error');
@@ -222,22 +273,24 @@ app.post('events/delete/:id', function(req,resp){
   });
 });
 
-//handles full calendar events,
+// === DISPLAY CALENDAR ===
+// Handles full calendar events,
 app.get('/events/:room', function(req, resp){
-    resp.send(eventsDict[locationsDict[req.params.room]]);
+  resp.send(eventsDict[locationsDict[req.params.room]]);
 });
 
 
-//facilities page ***
-//load a list of all the facilities.
+// === LOAD FACILITIES ===
+// Load information abut all facilities 
 app.get("/facilities", function(req, resp){
-       con.query("SELECT * FROM rooms", function (err, result, fields) {
-        if (err) throw err;
-        resp.send(result);
-      });
+  con.query("SELECT * FROM rooms", function (err, result, fields) {
+    if (err) throw err;
+      resp.send(result);
+    });
 });
 
-//return information about a given facility
+// === LOAD INDIVIDUAL FACILITY ===
+// Loads information about a given facility
 app.get("/facilities/:id", function(req, resp){
     var roomId = req.params.id;
     if (roomId != "undefined"){
@@ -248,7 +301,7 @@ app.get("/facilities/:id", function(req, resp){
     }
 });
 
-//activities page
+// === LOAD ACTIVITIES
 //load a list of all activities
 app.get("/activities", function(req, resp){
        con.query("SELECT * FROM activities", function (err, result, fields) {
@@ -257,7 +310,8 @@ app.get("/activities", function(req, resp){
       });
 });
 
-//return information about a given activity by ID
+// === INDIVIDUAL ACTIVITIES ===
+// Returns information about a given activity by ID
 app.get("/activities/:id", function(req, resp){
     var activityId = req.params.id;
     if (activityId != "undefined"){
@@ -269,9 +323,12 @@ app.get("/activities/:id", function(req, resp){
 });
 
 
-//load a list of all activities
+// === GETS ROOM & EVENT DATA ===
+// Load a list of event rooms
 app.get("/eventrooms", function(req, resp){
-    con.query("SELECT rooms.roomId, rooms.roomName, commonevents.eventId, commonevents.eventName  FROM commonevents INNER JOIN eventrooms ON commonevents.eventId = eventrooms.eventId INNER JOIN rooms ON eventrooms.roomId = rooms.roomId", function (err, result, fields) {
+
+  // Queries the database for rooms and events
+  con.query("SELECT rooms.roomId, rooms.roomName, commonevents.eventId, commonevents.eventName  FROM commonevents INNER JOIN eventrooms ON commonevents.eventId = eventrooms.eventId INNER JOIN rooms ON eventrooms.roomId = rooms.roomId", function (err, result, fields) {
     if (err) throw err;
 
     var eventrooms = {};
@@ -314,8 +371,7 @@ app.get("/eventrooms", function(req, resp){
 #########FUNCTIONS#########
 #########################*/
 
-
-//called once the authorisation has taken place, server won't start otherwise
+// Function called to start the server after authorisation has occured **REQUIRED**
 function startServer(auth){
   calendar = google.calendar({version: 'v3', auth});
   authObj = auth;
@@ -327,7 +383,7 @@ function startServer(auth){
 
 
 
-//function that retrieves all events from google calendar on startup, populates website calendar
+//function that retrieves all events from google calendar on startup -> populates website calendar
 function populateEvents(){
 
   var minDate = new Date(Date.now());
@@ -352,29 +408,32 @@ function populateEvents(){
   }, (err, res) => {
 
     if (err) return console.log('The API returned an error: ' + err);
-    //events object
+    
+    // Creates an events object
     var clashDiscovered = false;
     const events = res.data.items;
 
-    //check events have actually been returned
+    // Checks that events have actually been returned
     if (events.length){
 
-      //loop through all events
+      // Loop through all events
       events.map((event, i) => {
+
+        // Gets a list of rooms from the event
         var rooms = event.location.split(', ');
-        //remove blank room
+        // Remove any none room types
         rooms.pop();
 
         var j;
 
-        //create object to be pushed onto correct room arrays
+        // Creates an object to be pushed onto correct room arrays
         var eventCalendarObj = {
           title: event.summary,
           start: event.start.dateTime,
           end: event.end.dateTime
         };
 
-        //push event onto arrays corresponding to rooms booked
+        // Push event onto arrays corresponding to rooms booked
         for(j = 0; j < rooms.length; j++){
           eventsDict[rooms[j]].push(eventCalendarObj);
         }
@@ -384,9 +443,10 @@ function populateEvents(){
   });
 }
 
-//takes a JSON object with the event information, creates an event if the authentication is valid
+// Takes a JSON object with the event information and creates an event if the authentication is valid
 function createEvent(eventInfo){
 
+  // Creates the event object
   var eventObj = {
     'summary': 'Example event',
     'location': eventInfo.rooms,
@@ -403,7 +463,7 @@ function createEvent(eventInfo){
   };
 
 
-  //google calendar API command to create new event
+  // Google calendar API command to create new event in the google calendar
   var event = calendar.events.insert({
   auth: authObj,
   calendarId: 'primary',
@@ -415,7 +475,6 @@ function createEvent(eventInfo){
     console.log('There was an error contacting the Calendar service: ' + err);
     return;
   }else{
-
 
     console.log(event.data.id);
     //If successful, add to Tom's array here!
@@ -501,7 +560,7 @@ function validateEvent(newEventInfo, resp){
 
 }
 
-//function from https://stackoverflow.com/questions/16227197/compute-intersection-of-two-arrays-in-javascript/16227294
+// Function from https://stackoverflow.com/questions/16227197/compute-intersection-of-two-arrays-in-javascript/16227294
 function intersectArrays(a, b) {
     var t;
     if (b.length > a.length) {t = b; b = a; a = t;} // indexOf to loop over shorter
