@@ -42,7 +42,6 @@ $(".carousel-control-prev").on("click", function(){
 ############################*/
 
 $(document).ready(function(){
-  //$(".event-button").hide(); // hide rooms by default
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
 
@@ -96,46 +95,6 @@ $(document).ready(function(){
     return endTime;
   }
 
-  function outputRooms(eventType){
-
-    $(".event-button").remove();
-    // outputting the rooms according to event type
-    $.getJSON('/eventrooms', function(data){
-      console.log(eventType);
-      $.each(data, function(key, value){
-        if (eventType == value.eventName){
-          // found match - now output rooms
-          console.log(value.rooms);
-          $.each(value.rooms, function(key2, value2){
-            console.log(value2.roomName);
-            $("<button type='button' class='btn btn-warning event-button'>" + value2.roomName + "</button>").appendTo("#roomList");
-            //$("<button type='button' class='btn btn-warning event-button' id='" + value2.roomId + "'" + "data-name='" + value2.roomName + "'"> + value2.roomName + "</button>").appendTo("#roomList");
-          });
-        }
-      });
-    });
-  }
-
-  // highlighting buttons when clicked in custom option
-  $(".event-button").on('click', function(){
-    let textData = $('#room-selection').val();
-    if (customSelected){
-      if ($(this).hasClass('active')){
-        $(this).removeClass('active');
-        $('#room-selection').val(textData.replace(($(this).text() + ","), ""));
-      }
-      else{
-        $(this).addClass('active');
-        if (textData){
-          $('#room-selection').val(textData + $(this).text() + ", ");
-        }
-        else{
-          $('#room-selection').val($(this).text() + ", ");
-        }
-      }
-    }
-  });
-
   let customSelected = false;
   $("#dropdownMenuButton").on('click', function(){
     // error checking
@@ -159,38 +118,50 @@ $(document).ready(function(){
       // Matching events to rooms
       const value = $(this).text();
       outputRooms(value);
-
-      /*$('#room-selection').val("");
-      if (value == "Birthday Party"){
-        $("#classroom").show();
-        $("#dining").show();
-        $('#room-selection').val($('#room-selection').val() + $("#classroom").data('name'));
-        $('#room-selection').val($('#room-selection').val() + ", " + $("#dining").data('name'));
-      }
-      else if (value == "Computer Class"){
-        $("#it-suite").show();
-        $("#classroom").show();
-        $('#room-selection').val($('#room-selection').val() + $("#it-suite").data('name'));
-        $('#room-selection').val($('#room-selection').val() + ", " + $("#classroom").data('name'));
-      }
-      else if (value == "Football Match"){
-        $("#astro").show();
-        $("#football").show();
-        $('#room-selection').val($('#room-selection').val() + $("#astro").data('name'));
-        $('#room-selection').val($('#room-selection').val() + ", " + $("#football").data('name'));
-      }
-      else if (value == "Pantomime"){
-        $("#p-arts").show();
-        $("#theatre").show();
-        $('#room-selection').val($('#room-selection').val() + $("#p-arts").data('name'));
-        $('#room-selection').val($('#room-selection').val() + ", " + $("#theatre").data('name'));
-      }
-      else if (value == "Custom"){
-        $(".event-button").show();
-        customSelected = true;
-      }*/
-      $(".active").addClass('disabled');
+      $(".event-button").addClass('active');
     });
+  });
+
+  function outputRooms(eventType){
+    var count = 0;
+    $(".event-button").remove();
+    // outputting the rooms according to event type
+    $.getJSON('/eventrooms', function(data){
+      console.log(eventType);
+      $.each(data, function(key, value){
+        if (eventType == value.eventName){
+          // found match - now output rooms
+          $.each(value.rooms, function(key2, value2){
+            console.log(value2.roomName);
+            $("<button type='button' class='btn btn-warning event-button'>" + value2.roomName + "</button>").appendTo("#roomList");
+          });
+          return false;
+        }
+      });
+    });
+    console.log(count);
+    count = count + 1;
+  }
+
+  // highlighting buttons when clicked in custom option
+  $(".event-button").on('click', function(){
+    console.log("event button clicked");
+    let textData = $('#room-selection').val();
+    if (customSelected){
+      if ($(this).hasClass('active')){
+        $(this).removeClass('active');
+        $('#room-selection').val(textData.replace(($(this).text() + ","), ""));
+      }
+      else{
+        $(this).addClass('active');
+        if (textData){
+          $('#room-selection').val(textData + $(this).text() + ", ");
+        }
+        else{
+          $('#room-selection').val($(this).text() + ", ");
+        }
+      }
+    }
   });
 
   // validating the form inputs
