@@ -552,13 +552,16 @@ function intersectArrays(a, b) {
       EMAIL FUNCTIONS
 #########################*/
 
+// Gets the temp email to send when server loads
+var email;
+getEmailData();
+
 // Functions sends a confirmation email when a successful booking occurs
 function sendConfirmation(confirmedEventInfo){
 
   console.log(confirmedEventInfo);
 
-  // Gets the email data to be sent
-  var email_Data = getEmailData();
+  console.log("ARGGHGHGHGHGHGH" + email);
 
   // Establoshes connection with gmail service
   var transporter = nodemailer.createTransport({
@@ -571,17 +574,19 @@ function sendConfirmation(confirmedEventInfo){
       user: 'pvcc.test.email@gmail.com',
       clientId: '9199051241-vsse329fgo2n7jg07mhnni9gcgj4sbrr.apps.googleusercontent.com',
       clientSecret: 'xdXOGNakrG-RxnHmM9gbWYPa',
-      refreshToken: '1/7GX2cKvcfC0JpTQ5kEIT8pe9T_eH2RCeJFOdhMlRcgg',
-      accessToken: 'ya29.Glu_BprH1s_GYP39mUPJaOuxvN8O9XnN00-wALUxUWKYm7A7c3D9cJ9dzth1Y8rWD1PN4GqB0aWI70G8FCmmUZX8Q8En12vh8TQSWuJFucz7s0J3IxJR3lDtJt42'
+      refreshToken: '1/GuHiUqBGEtBi5lJqQ4wuP3ECVQJXzXKqiFu1-KpKgeI',
+      accessToken: 'ya29.GlvHBjW5ZOEKhTXzQM0JyDQF43X6leB8rT7s6O8ia2X2cJ1aF1m5t8SOeQevMB8amX_ULHVbXnUAv7hbhVY9uOhP_e4Y_4BGZH2VK-_DDM7ZIazKQ_TIBBOKJjsd'
     }
   });
+
+  console.log("FAIZ");
 
   // Defines email recipient and content
   var mailOptions = {
     from: 'pvcc.test.email@gmail.com',
     to: confirmedEventInfo.email,
     subject: 'Booking Request',
-    text: email_Data
+    text: email
   };
 
   // Sends the email
@@ -591,7 +596,7 @@ function sendConfirmation(confirmedEventInfo){
       console.log(err);
     }
     else{
-      console.log("Booking successful");
+      console.log("Booking email sent");
     }
   });
 }
@@ -601,7 +606,9 @@ function getEmailData(){
   fs.readFile('public/email/email-template.html', (err, content) => {
     inlineCss(content, {url: ' '})
     .then(function(content){
-      return content;
+      console.log(content);
+      email = content;
+      console.log(email);
     });
   });
 }
