@@ -469,6 +469,8 @@ function createEvent(eventInfo){
 
   console.log('Event created!');
   });
+
+  return event.data.id;
 }
 
 /*function that checks if an event is able to be put on the calendar,
@@ -518,14 +520,19 @@ function validateEvent(newEventInfo, resp){
         //if time clash but no room clash
         console.log("No room clashes, creating event...");
         createEvent(newEventInfo);
+        sendConfirmation(newEventInfo);
         resp.send({"response": true});
       }
 
     } else {
       //if there no time clashes
       console.log("No events in that time range, no possibility for clashing booking, creating event...");
+     
+
       createEvent(newEventInfo);
       sendConfirmation(newEventInfo);
+      
+      // Sends the response to the website
       resp.send({"response": true});
     }
 
@@ -558,6 +565,8 @@ getEmailData();
 
 // Functions sends a confirmation email when a successful booking occurs
 function sendConfirmation(confirmedEventInfo){
+
+  console.log("Hi");
 
   // Establoshes connection with gmail service
   var transporter = nodemailer.createTransport({
