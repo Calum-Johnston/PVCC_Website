@@ -80,7 +80,10 @@ CREATE TABLE IF NOT EXISTS `commonevents` (
 
 INSERT INTO `commonevents` (`eventId`, `eventName`, `eventDescription`) VALUES
 (1, 'Birthday Party', 'Perfect for if you want to celebrate your birhtday with catering.'),
-(2, 'Football Party', 'Good event for outdoors fun and a place to eat.');
+(2, 'Computer Class', 'Learn how to program and have fun!'),
+(3, 'Football Match', 'Good event for outdoors fun and a place to eat.'),
+(4, 'Pantomime', 'Come and watch this hilarious play!'),
+(5, 'Custom', 'Anything you want!');
 
 -- --------------------------------------------------------
 
@@ -101,8 +104,8 @@ CREATE TABLE IF NOT EXISTS `eventrooms` (
 --
 
 INSERT INTO `eventrooms` (`eventId`, `roomId`) VALUES
-(1, 'astroTurf'),
-(1, 'classroom'),
+(1, '2'),
+(1, '3'),
 (2, 'astroTurf'),
 (2, 'classroom'),
 (2, 'theatre');
@@ -128,13 +131,14 @@ CREATE TABLE IF NOT EXISTS `rooms` (
 --
 
 INSERT INTO `rooms` (`roomId`, `roomName`, `roomDescription`, `roomImage`, `roomType`) VALUES
-('astroTurf', 'Astro Turf', 'The multi-use games area has been newly refurbished and is a high class, floodlit facility available until 9pm each night.  It can be hired as a full or half pitch, depending upon the age group of user or the activity required. Because it is composed of synthetic carpet, it can be used for a host of sports, including football, netball and tennis.\r\n\r\nFree parking is available on site.', 'astroturf.jpg', 'sports'),
-('classroom', 'Classroom', 'The award winning Community Centre holds classrooms of differing sizes and thus can play host to a wide range of activities, including ICT and computing lessons. Because there are no fixed fittings, each room has the capability to act as a venue for meetings or interviews as well as adult education, with the largest being ideal for a birthday party.', 'classroom.jpg', 'misc'),
-('sportsField', 'Sports Field', 'With a long-jump pit and two football pitches of varying size, this is an ideal venue to book for any outdoor event or field sports. It is spacious, well looked after and sheltered, as well as enjoying easy access to community facilities.', 'sportsfield.jpg', 'sports'),
-('sportsHall', 'Sports Hall', 'The size of the Sports Hall makes it incredibly flexible and thus user-friendly. At its largest, it is ideal for sports like indoor football (5 a side and its variants) and hockey but can also be portioned to make basketball, dodgeball and racket sports available. It is currently marked to facilitate all of these. The area is clean, dry and has its own heating, the cushioned flooring making it safe for all. Because of its size, it is also suitable for aerobic, circuit and individual fitness sessions.It would be an excellent facility to hire for activities within a children’s party, giving the guests a vast amount of space to burn some energy off.\r\n\r\nFree parking is available on site.', 'sportshall.jpg', 'sports'),
-('itSuite', 'IT Suite', 'The IT Suite is equipped with 21 desk top computers.\r\nThis multipurpose room can be used as a general class room as monitors can be lowered into the purpose built desks. The room is spacious with additional round tables to allow for group working.\r\n', 'itsuite.jpg', 'technology'),
-('theatre', 'Theatre', 'The recently re-decorated, 250 seated theatre has a traditional proscenium arch and stage and thus is a professional setting for performances or presentations of any type. Because the seating folds back, the space is sufficiently flexible to accommodate theatre in the round, more intimate musical events or fitness-related and dance activities. It is heated and well lit, with disabled access catered for – a beautiful setting for any event.\r\n<br />\r\n<a href=\"https://www.4dtours.co.uk/4d/the-pictures/fullscreen/\">Take a tour of our theatre!</a>', 'theatre.jpg', 'arts'),
-('theGymnasium', 'The Gymnasium', 'The heated gymnasium is ideal for either gymnastics, small group games, like dodgeball,trampolining, martial arts and a whole lot more. It would be an excellent facility to hire for activities within a children’s party, giving the guests a space to burn some energy off in. Because of its size, it is also suitable for aerobic, circuit and individual fitness sessions.\r\n', 'gym.jpg', 'sports');
+('1', 'Astro Turf', 'The multi-use games area has been newly refurbished and is a high class, floodlit facility available until 9pm each night.  It can be hired as a full or half pitch, depending upon the age group of user or the activity required. Because it is composed of synthetic carpet, it can be used for a host of sports, including football, netball and tennis.\r\n\r\nFree parking is available on site.', 'astroturf.jpg', 'sports'),
+('2', 'Classroom', 'The award winning Community Centre holds classrooms of differing sizes and thus can play host to a wide range of activities, including ICT and computing lessons. Because there are no fixed fittings, each room has the capability to act as a venue for meetings or interviews as well as adult education, with the largest being ideal for a birthday party.', 'classroom.jpg', 'misc'),
+('3', 'Dining Hall', 'The Dining Hall is a bright, heated large area which could be used for a whole host of activities, ranging from formal dining to dance and fitness related sessions. Catering, both formal and informal, can be provided in this area and licenced events could be held.')
+('4', 'Sports Field', 'With a long-jump pit and two football pitches of varying size, this is an ideal venue to book for any outdoor event or field sports. It is spacious, well looked after and sheltered, as well as enjoying easy access to community facilities.', 'sportsfield.jpg', 'sports'),
+('5', 'Sports Hall', 'The size of the Sports Hall makes it incredibly flexible and thus user-friendly. At its largest, it is ideal for sports like indoor football (5 a side and its variants) and hockey but can also be portioned to make basketball, dodgeball and racket sports available. It is currently marked to facilitate all of these. The area is clean, dry and has its own heating, the cushioned flooring making it safe for all. Because of its size, it is also suitable for aerobic, circuit and individual fitness sessions.It would be an excellent facility to hire for activities within a children’s party, giving the guests a vast amount of space to burn some energy off.\r\n\r\nFree parking is available on site.', 'sportshall.jpg', 'sports'),
+('6', 'IT Suite', 'The IT Suite is equipped with 21 desk top computers.\r\nThis multipurpose room can be used as a general class room as monitors can be lowered into the purpose built desks. The room is spacious with additional round tables to allow for group working.\r\n', 'itsuite.jpg', 'technology'),
+('7', 'Theatre', 'The recently re-decorated, 250 seated theatre has a traditional proscenium arch and stage and thus is a professional setting for performances or presentations of any type. Because the seating folds back, the space is sufficiently flexible to accommodate theatre in the round, more intimate musical events or fitness-related and dance activities. It is heated and well lit, with disabled access catered for – a beautiful setting for any event.\r\n<br />\r\n<a href=\"https://www.4dtours.co.uk/4d/the-pictures/fullscreen/\">Take a tour of our theatre!</a>', 'theatre.jpg', 'arts'),
+('8', 'The Gymnasium', 'The heated gymnasium is ideal for either gymnastics, small group games, like dodgeball,trampolining, martial arts and a whole lot more. It would be an excellent facility to hire for activities within a children’s party, giving the guests a space to burn some energy off in. Because of its size, it is also suitable for aerobic, circuit and individual fitness sessions.\r\n', 'gym.jpg', 'sports');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
