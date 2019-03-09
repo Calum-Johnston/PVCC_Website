@@ -579,7 +579,7 @@ function sendConfirmation(confirmedEventInfo){
   // Defines email recipient and content
   var mailOptions = {
     from: 'pvcc.test.email@gmail.com',
-    to: email_Recipient,
+    to: confirmedEventInfo.email,
     subject: 'Booking Request',
     text: email_Data
   };
@@ -598,10 +598,9 @@ function sendConfirmation(confirmedEventInfo){
 
 // Function returns email data with inline css
 function getEmailData(){
-  fs.readFile('/public/email/email-template.html', (err, content) => {
-  inlineCss(content, {url: ' '})
+  fs.readFile('public/email/email-template.html', (err, content) => {
+    inlineCss(content, {url: ' '})
     .then(function(content){
-      console.log(content);
       return content;
     });
   });
