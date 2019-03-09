@@ -255,15 +255,13 @@ app.post('/events', function(req, resp){
 
 // === DELETE EVENT ===
 // Handles request to delete a given event by ID
-app.post('events/delete/:id', function(req,resp){
+app.get('/delete-event/:id', function(req, resp){
 
   // Gets the ID of the event to be deleted
   var params = {
     calendarId: 'primary',
-    eventId: req.params.id, // Gets the ID (needs testing)
+    eventId: req.params.id
   };
-
-  alert(req.params.id);
 
   // Deletes the event from the calendar
   calendar.events.delete(params, function(err) {
@@ -273,6 +271,9 @@ app.post('events/delete/:id', function(req,resp){
     }
     console.log('Event: ' + req.params.id + " deleted!");
   });
+
+  // Redirect user elsewhere
+
 });
 
 
@@ -292,6 +293,7 @@ app.get("/facilities", function(req, resp){
     });
 });
 
+
 // === LOAD INDIVIDUAL FACILITY ===
 // Loads information about a given facility
 app.get("/facilities/:id", function(req, resp){
@@ -304,6 +306,7 @@ app.get("/facilities/:id", function(req, resp){
     }
 });
 
+
 // === LOAD ACTIVITIES
 //load a list of all activities
 app.get("/activities", function(req, resp){
@@ -312,6 +315,7 @@ app.get("/activities", function(req, resp){
         resp.send(result);
       });
 });
+
 
 // === INDIVIDUAL ACTIVITIES ===
 // Returns information about a given activity by ID
