@@ -559,10 +559,6 @@ getEmailData();
 // Functions sends a confirmation email when a successful booking occurs
 function sendConfirmation(confirmedEventInfo){
 
-  console.log(confirmedEventInfo);
-
-  console.log("ARGGHGHGHGHGHGH" + email);
-
   // Establoshes connection with gmail service
   var transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -579,7 +575,11 @@ function sendConfirmation(confirmedEventInfo){
     }
   });
 
-  console.log("FAIZ");
+  // Edits the data for the email
+  email = email.replace("BOOKING-NAME", confirmedEventInfo.name);
+  email = email.replace("BOOKING-ROOMS", confirmedEventInfo.rooms);
+  email = email.replace("BOOKING-DATE", confirmedEventInfo.dateTimeStart.split("T")[0]);
+  email = email.replace("BOOKING-TIME", confirmedEventInfo.dateTimeStart.split("T")[1].substring(0, 5) + " - " + confirmedEventInfo.dateTimeEnd.split("T")[1].substring(0, 5));
 
   // Defines email recipient and content
   var mailOptions = {
@@ -599,6 +599,13 @@ function sendConfirmation(confirmedEventInfo){
       console.log("Booking email sent");
     }
   });
+
+  // Resets the data for the email
+  email = email.replace(confirmedEventInfo.name, "BOOKING-NAME");
+  email = email.replace(confirmedEventInfo.rooms, "BOOKING-ROOMS");
+  email = email.replace(confirmedEventInfo.dateTimeStart.split("T")[0], "BOOKING-DATE");
+  email = email.replace(confirmedEventInfo.dateTimeStart.split("T")[1].substring(0, 5) + " - " + confirmedEventInfo.dateTimeEnd.split("T")[1].substring(0, 5), "BOOKING-TIME");
+
 }
 
 // Function returns email data with inline css
@@ -606,9 +613,7 @@ function getEmailData(){
   fs.readFile('public/email/email-template.html', (err, content) => {
     inlineCss(content, {url: ' '})
     .then(function(content){
-      console.log(content);
       email = content;
-      console.log(email);
     });
   });
 }
