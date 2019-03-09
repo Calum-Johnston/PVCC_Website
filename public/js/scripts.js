@@ -43,7 +43,6 @@ $(".carousel-control-prev").on("click", function(){
 
 $(document).ready(function(){
   $(".event-button").hide(); // hide rooms by default
-  $("#room-selection").attr("disabled", "disabled"); // disable text box by default
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
 
