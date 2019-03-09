@@ -332,33 +332,16 @@ app.get("/eventrooms", function(req, resp){
     if (err) throw err;
 
     var eventrooms = {};
-    for (var i = 0; i < result.length; i ++){
-        if (result[i].eventId in eventrooms){
-            eventrooms[result[i].eventId].rooms.push({"roomName" : result[i].roomName, "roomId" : result[i].roomId});
-        }
-        else {
-            eventrooms[result[i].eventId] = {"eventName" : result[i].eventName, "rooms" : [{"roomName" : result[i].roomName, "roomId" : result[i].roomId}]};
-        }
+    for (var i = 0; i < result.length; i++){
+      if (result[i].eventId in eventrooms){
+          eventrooms[result[i].eventId].rooms.push({"roomName" : result[i].roomName, "roomId" : result[i].roomId});
+      }
+      else {
+          eventrooms[result[i].eventId] = {"eventName" : result[i].eventName, "rooms" : [{"roomName" : result[i].roomName, "roomId" : result[i].roomId}]};
+      }
     }
     resp.send(eventrooms);
-});
-/*
-      let eventDetails = {
-        "footballParty": {
-          "eventName": "Football Party",
-          "rooms": [
-            {
-              "roomName": "Astroturf",
-              "roomId" : "astroturf"
-            },
-            {
-              "roomName": "Classroom",
-              "roomId" : "classroom"
-            }
-          ]
-        }
-      };
-*/
+  });
 });
 
 
