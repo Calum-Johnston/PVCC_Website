@@ -46,10 +46,10 @@ $(document).ready(function(){
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
 
+  // loading the event types into dropdown box
   $.getJSON('/eventrooms', function(data){
-    console.log(data);
     $.each(data, function(key, value){
-      // do stuff here
+      $("#dropdownList").append('<li class="event"><a href="#">' + value.eventName + '</a></li>');
     });
   });
 
