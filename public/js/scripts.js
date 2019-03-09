@@ -96,6 +96,23 @@ $(document).ready(function(){
     return endTime;
   }
 
+  function outputRooms(eventType){
+
+    // outputting the rooms according to event type
+    $.getJSON('/eventrooms', function(data){
+      console.log(eventType);
+      $.each(data, function(key, value){
+        if (eventType == value.eventName){
+          // found match - now output rooms
+          console.log(value.rooms);
+          $.each(value.rooms, function(key2, value2){
+            console.log(value2.roomName);
+          });
+        }
+      });
+    });
+  }
+
   // highlighting buttons when clicked in custom option
   $(".event-button").on('click', function(){
     let textData = $('#room-selection').val();
@@ -138,7 +155,9 @@ $(document).ready(function(){
 
       // Matching events to rooms
       const value = $(this).text();
-      $('#room-selection').val("");
+      outputRooms(value);
+
+      /*$('#room-selection').val("");
       if (value == "Birthday Party"){
         $("#classroom").show();
         $("#dining").show();
@@ -166,7 +185,7 @@ $(document).ready(function(){
       else if (value == "Custom"){
         $(".event-button").show();
         customSelected = true;
-      }
+      }*/
       $(".active").addClass('disabled');
     });
   });
