@@ -542,6 +542,7 @@ function validateEvent(newEventInfo, resp){
       //if there no time clashes
       console.log("No events in that time range, no possibility for clashing booking, creating event...");
       createEvent(newEventInfo);
+      sendConfirmation(newEventInfo);
       resp.send({"response": true});
     }
 
@@ -569,7 +570,9 @@ function intersectArrays(a, b) {
 #########################*/
 
 // Functions sends a confirmation email when a successful booking occurs
-function sendConfirmation(email_Recipient){
+function sendConfirmation(confirmedEventInfo){
+
+  console.log(confirmedEventInfo);
 
   // Gets the email data to be sent
   var email_Data = getEmailData();
