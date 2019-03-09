@@ -37,34 +37,9 @@ const mysql = require("mysql");
          VARIABLES
 #########################*/
 
-// Arrays that hold lists of events to be placed on Full Calendar calendarId
-
-var astroturfEvents = [
-    {
-    title: 'Event 1',
-    start: '2019-02-05T13:13:55.008',
-    end: '2019-02-05T14:14:55.008'
-    },
-    {
-    title: 'Event 2',
-    start: '2019-01-27T15:13:55',
-    end: '2019-01-27T16:13:55'
-    }
-];
-
-var footballpitchEvents = [{
-    title: 'Football Pitch event 1',
-    start: '2019-01-28T13:11:55.008',
-    end: '2019-01-28T14:14:55.008'
-    },
-    {
-    title: 'Football Pitch event 2',
-    start: '2019-01-29T15:13:55',
-    end: '2019-01-29T18:13:55'
-    }
-];
-
 // Variables hold event information
+var astroturfEvents = [];
+var footballpitchEvents = [];
 var performingartsEvents = [];
 var theatreEvents = [];
 var itsuiteEvents = [];
@@ -263,7 +238,7 @@ app.get('/delete-event/:id', function(req, resp){
     eventId: req.params.id
   };
 
-  // Deletes the event from the calendar
+  // Deletes the event from the Google Calendar
   calendar.events.delete(params, function(err) {
     if (err) {
       console.log('Deleting resulted in an error');
@@ -272,8 +247,11 @@ app.get('/delete-event/:id', function(req, resp){
     console.log('Event: ' + req.params.id + " deleted!");
   });
 
-  // Redirect user elsewhere
+  // Update website calendar to follow google calendar
+  
 
+  // Redirect user elsewhere
+  return resp.redirect('/');
 });
 
 
@@ -414,6 +392,7 @@ function populateEvents(){
         // Push event onto arrays corresponding to rooms booked
         for(j = 0; j < rooms.length - 1; j++){
           eventsDict[rooms[j]].push(eventCalendarObj);
+          console.log(eventCalendarObj);
         }
 
       });
