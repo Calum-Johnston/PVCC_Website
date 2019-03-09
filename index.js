@@ -263,6 +263,8 @@ app.post('events/delete/:id', function(req,resp){
     eventId: req.params.id, // Gets the ID (needs testing)
   };
 
+  alert(req.params.id);
+
   // Deletes the event from the calendar
   calendar.events.delete(params, function(err) {
     if (err) {
@@ -272,6 +274,7 @@ app.post('events/delete/:id', function(req,resp){
     console.log('Event: ' + req.params.id + " deleted!");
   });
 });
+
 
 // === DISPLAY CALENDAR ===
 // Handles full calendar events,
@@ -448,6 +451,7 @@ function createEvent(eventInfo){
   }else{
 
     console.log(event.data.id);
+    id = event.data.id;
     //If successful, add to Tom's array here!
 
     var rooms = eventInfo.rooms.split(', ');
@@ -466,11 +470,9 @@ function createEvent(eventInfo){
     }
 
   }
-
   console.log('Event created!');
+  sendConfirmation(eventInfo, event.data.id);
   });
-
-  return event.data.id;
 }
 
 /*function that checks if an event is able to be put on the calendar,
@@ -519,8 +521,10 @@ function validateEvent(newEventInfo, resp){
       if (!clashDiscovered){
         //if time clash but no room clash
         console.log("No room clashes, creating event...");
+        // Passes createEvent() as a callback for sendConfirmation()
         createEvent(newEventInfo);
-        sendConfirmation(newEventInfo);
+
+        // Sends teh response to the website
         resp.send({"response": true});
       }
 
@@ -528,9 +532,8 @@ function validateEvent(newEventInfo, resp){
       //if there no time clashes
       console.log("No events in that time range, no possibility for clashing booking, creating event...");
      
-
+      // Passes createEvent() as a callback for sendConfirmation()
       createEvent(newEventInfo);
-      sendConfirmation(newEventInfo);
       
       // Sends the response to the website
       resp.send({"response": true});
@@ -563,10 +566,11 @@ function intersectArrays(a, b) {
 var email;
 getEmailData();
 
-// Functions sends a confirmation email when a successful booking occurs
-function sendConfirmation(confirmedEventInfo){
+// Defines a global variable to store the id
+var id;
 
-  console.log("Hi");
+// Functions sends a confirmation email when a successful booking occurs
+function sendConfirmation(confirmedEventInfo, id){
 
   // Establoshes connection with gmail service
   var transporter = nodemailer.createTransport({
@@ -589,6 +593,7 @@ function sendConfirmation(confirmedEventInfo){
   email = email.replace("BOOKING-ROOMS", confirmedEventInfo.rooms);
   email = email.replace("BOOKING-DATE", confirmedEventInfo.dateTimeStart.split("T")[0]);
   email = email.replace("BOOKING-TIME", confirmedEventInfo.dateTimeStart.split("T")[1].substring(0, 5) + " - " + confirmedEventInfo.dateTimeEnd.split("T")[1].substring(0, 5));
+  email = email.replace('BOOKING-ID', id);
 
   // Defines email recipient and content
   var mailOptions = {
@@ -609,11 +614,14 @@ function sendConfirmation(confirmedEventInfo){
     }
   });
 
+  console.log(email);
+
   // Resets the data for the email
   email = email.replace(confirmedEventInfo.name, "BOOKING-NAME");
   email = email.replace(confirmedEventInfo.rooms, "BOOKING-ROOMS");
   email = email.replace(confirmedEventInfo.dateTimeStart.split("T")[0], "BOOKING-DATE");
   email = email.replace(confirmedEventInfo.dateTimeStart.split("T")[1].substring(0, 5) + " - " + confirmedEventInfo.dateTimeEnd.split("T")[1].substring(0, 5), "BOOKING-TIME");
+  email = email.replace(id, "BOOKING-ID");
 
 }
 
