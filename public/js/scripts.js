@@ -42,7 +42,7 @@ $(".carousel-control-prev").on("click", function(){
 ############################*/
 
 $(document).ready(function(){
-  $(".event-button").hide(); // hide rooms by default
+  //$(".event-button").hide(); // hide rooms by default
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
 
@@ -98,6 +98,7 @@ $(document).ready(function(){
 
   function outputRooms(eventType){
 
+    $(".event-button").remove();
     // outputting the rooms according to event type
     $.getJSON('/eventrooms', function(data){
       console.log(eventType);
@@ -107,6 +108,8 @@ $(document).ready(function(){
           console.log(value.rooms);
           $.each(value.rooms, function(key2, value2){
             console.log(value2.roomName);
+            $("<button type='button' class='btn btn-warning event-button'>" + value2.roomName + "</button>").appendTo("#roomList");
+            //$("<button type='button' class='btn btn-warning event-button' id='" + value2.roomId + "'" + "data-name='" + value2.roomName + "'"> + value2.roomName + "</button>").appendTo("#roomList");
           });
         }
       });
