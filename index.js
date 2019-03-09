@@ -408,7 +408,7 @@ function populateEvents(){
         };
 
         // Push event onto arrays corresponding to rooms booked
-        for(j = 0; j < rooms.length; j++){
+        for(j = 0; j < rooms.length - 1; j++){
           eventsDict[rooms[j]].push(eventCalendarObj);
         }
 
