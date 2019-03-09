@@ -604,7 +604,7 @@ function sendConfirmation(confirmedEventInfo, id){
     from: 'pvcc.test.email@gmail.com',
     to: confirmedEventInfo.email,
     subject: 'Booking Request',
-    text: email
+    html: email
   };
 
   // Sends the email
@@ -617,8 +617,6 @@ function sendConfirmation(confirmedEventInfo, id){
       console.log("Booking email sent");
     }
   });
-
-  console.log(email);
 
   // Resets the data for the email
   email = email.replace(confirmedEventInfo.name, "BOOKING-NAME");
