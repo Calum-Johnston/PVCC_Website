@@ -248,7 +248,7 @@ app.get('/delete-event/:id', function(req, resp){
   });
 
   // Update website calendar to follow google calendar
-  
+
 
   // Redirect user elsewhere
   return resp.redirect('/');
@@ -514,10 +514,10 @@ function validateEvent(newEventInfo, resp){
     } else {
       //if there no time clashes
       console.log("No events in that time range, no possibility for clashing booking, creating event...");
-     
+
       // Passes createEvent() as a callback for sendConfirmation()
       createEvent(newEventInfo);
-      
+
       // Sends the response to the website
       resp.send({"response": true});
     }
@@ -560,7 +560,7 @@ function sendConfirmation(confirmedEventInfo, id){
     service: 'gmail',
     host: 'smtp.gmail.com',
     port: 465,
-    secure: true,
+    secure: false,
     auth: {
       type: 'OAuth2',
       user: 'pvcc.test.email@gmail.com',
@@ -568,6 +568,9 @@ function sendConfirmation(confirmedEventInfo, id){
       clientSecret: 'xdXOGNakrG-RxnHmM9gbWYPa',
       refreshToken: '1/GuHiUqBGEtBi5lJqQ4wuP3ECVQJXzXKqiFu1-KpKgeI',
       accessToken: 'ya29.GlvHBjW5ZOEKhTXzQM0JyDQF43X6leB8rT7s6O8ia2X2cJ1aF1m5t8SOeQevMB8amX_ULHVbXnUAv7hbhVY9uOhP_e4Y_4BGZH2VK-_DDM7ZIazKQ_TIBBOKJjsd'
+    },
+    tls: {
+      rejectUnauthorized: false
     }
   });
 
