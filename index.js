@@ -617,6 +617,7 @@ function getEmailData(){
       console.log(content);
       return content;
     });
+  });
 }
 
 
