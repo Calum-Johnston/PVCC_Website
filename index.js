@@ -181,7 +181,7 @@ const con = mysql.createConnection({
 // Establishes connecction with the database
 con.connect(function(error){
   if (error) {
-    Console.log('FAILED to connect to the database');
+    console.log('FAILED to connect to the database');
     throw error;
   }
   console.log("Connected to database");
@@ -281,7 +281,7 @@ app.get('/events/:room', function(req, resp){
 
 
 // === LOAD FACILITIES ===
-// Load information abut all facilities 
+// Load information abut all facilities
 app.get("/facilities", function(req, resp){
   con.query("SELECT * FROM rooms", function (err, result, fields) {
     if (err) throw err;
@@ -396,7 +396,7 @@ function populateEvents(){
   }, (err, res) => {
 
     if (err) return console.log('The API returned an error: ' + err);
-    
+
     // Creates an events object
     var clashDiscovered = false;
     const events = res.data.items;
@@ -571,8 +571,8 @@ function intersectArrays(a, b) {
 // Functions sends a confirmation email when a successful booking occurs
 function sendConfirmation(email_Recipient){
 
-  // Gets the email data to be sent 
-  var email_Data = getEmailData();  
+  // Gets the email data to be sent
+  var email_Data = getEmailData();
 
   // Establoshes connection with gmail service
   var transporter = nodemailer.createTransport({
@@ -596,17 +596,18 @@ function sendConfirmation(email_Recipient){
     to: email_Recipient,
     subject: 'Booking Request',
     text: email_Data
-  }
+  };
 
   // Sends the email
   transporter.sendMail(mailOptions, function(err, res){
     if(err){
       console.log("Error in sending email");
-      Console.log(err);
-    }else{
-      Console.log("Booking successful");
+      console.log(err);
     }
-  })
+    else{
+      console.log("Booking successful");
+    }
+  });
 }
 
 // Function returns email data with inline css
