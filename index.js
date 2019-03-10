@@ -313,16 +313,16 @@ app.get("/activities/:id", function(req, resp){
 app.get("/eventrooms", function(req, resp){
 
   // Queries the database for rooms and events
-  con.query("SELECT rooms.roomId, rooms.roomName, commonevents.eventId, commonevents.eventName  FROM commonevents INNER JOIN eventrooms ON commonevents.eventId = eventrooms.eventId INNER JOIN rooms ON eventrooms.roomId = rooms.roomId", function (err, result, fields) {
+  con.query("SELECT rooms.roomId, rooms.roomName, rooms.price, commonevents.eventId, commonevents.eventName  FROM commonevents INNER JOIN eventrooms ON commonevents.eventId = eventrooms.eventId INNER JOIN rooms ON eventrooms.roomId = rooms.roomId", function (err, result, fields) {
     if (err) throw err;
 
     var eventrooms = {};
     for (var i = 0; i < result.length; i++){
       if (result[i].eventId in eventrooms){
-          eventrooms[result[i].eventId].rooms.push({"roomName" : result[i].roomName, "roomId" : result[i].roomId});
+          eventrooms[result[i].eventId].rooms.push({"roomName" : result[i].roomName, "roomId" : result[i].roomId, "price": result[i].price});
       }
       else {
-          eventrooms[result[i].eventId] = {"eventName" : result[i].eventName, "rooms" : [{"roomName" : result[i].roomName, "roomId" : result[i].roomId}]};
+          eventrooms[result[i].eventId] = {"eventName" : result[i].eventName, "rooms" : [{"roomName" : result[i].roomName, "roomId" : result[i].roomId, "price": result[i].price}]};
       }
     }
     resp.send(eventrooms);
