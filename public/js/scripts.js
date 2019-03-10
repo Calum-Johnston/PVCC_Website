@@ -46,20 +46,11 @@ $(document).ready(function(){
   // disable end-time and hide errors and price by default
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
-  $("#div-price").hide();
-
-  $.getJSON('/roomprices', function(data){
-
-    $.each(data, function(key, value){
-      console.log(key, value.price);
-    });
-
-  });
+  //$("#div-price").hide();
 
   // loading the event types into dropdown box and dynamically selecting rooms when an event is selected
   $.getJSON('/eventrooms', function(data){
 
-    console.log(data);
     $.each(data, function(key, value){
       $("#dropdownList").append('<li class="event"><a href="#">' + value.eventName + '</a></li>');
     });
@@ -143,29 +134,40 @@ $(document).ready(function(){
 
       $(".event-button").on('click', function(){
 
+        // getting the price of the room
         let textData = $('#room-selection').val();
+        const roomName = $(this).text();
 
-        // if clicked, make active and vice versa
-        // add rooms to room selection box too
-        if ($(this).hasClass('active')){
-          $(this).removeClass('active');
-          $('#room-selection').val(textData.replace(($(this).text() + ","), ""));
+        $.getJSON('/roomprices', function(data){
+          $.each(data, function(key, value){
+            if (roomName == key){
+              const price = value.price;
+              console.log(price);
 
-          // getting the price of the room
-          $.getJSON()
-          $("#div-price").show(500);
+              let originalPrice = ("#show-price").text(); // price before newly clicked room added
 
+              // if clicked, make active and vice versa; add rooms to selection box
+              if ($(this).hasClass('active')){
+                // unselected
+                $(this).removeClass('active');
+                $('#room-selection').val(textData.replace(($(this).text() + ","), ""));
+              }
+              else {
+                // selected
+                $(this).addClass('active');
 
-        }
-        else {
-          $(this).addClass('active');
-          if (textData){
-            $('#room-selection').val(textData + $(this).text() + ", ");
-          }
-          else{
-            $('#room-selection').val($(this).text() + ", ");
-          }
-        }
+                $("#div-price").show(500);
+
+                if (textData){
+                  $('#room-selection').val(textData + $(this).text() + ", ");
+                }
+                else{
+                  $('#room-selection').val($(this).text() + ", ");
+                }
+              }
+            }
+          });
+        });
       });
     });
   }
