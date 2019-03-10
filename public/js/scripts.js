@@ -126,7 +126,7 @@ $(document).ready(function(){
         if (eventType == value.eventName){
           // found match - now output rooms
           $.each(value.rooms, function(key2, value2){
-            $("<button type='button' class='btn btn-warning event-button'>" + value2.roomName + "</button>").appendTo("#roomList");
+            $("<button type='button' class='btn btn-warning event-button' id='" + value2.roomId + "'>" + value2.roomName + "</button>").appendTo("#roomList");
           });
           return false;
         }
@@ -134,6 +134,7 @@ $(document).ready(function(){
 
       $(".event-button").on('click', function(){
 
+        const id = $(this).attr('id');
         // getting the price of the room
         let textData = $('#room-selection').val();
         const roomName = $(this).text();
@@ -142,27 +143,30 @@ $(document).ready(function(){
           $.each(data, function(key, value){
             if (roomName == key){
               const price = value.price;
-              console.log(price);
 
-              let originalPrice = ("#show-price").text(); // price before newly clicked room added
+              let originalPrice = $("#show-price").text(); // price before newly clicked room added
+
+              // remove pound sign and convert to int
+              originalPrice = originalPrice.substring(1, originalPrice.length);
+              originalPrice = parseInt(originalPrice, 10);
 
               // if clicked, make active and vice versa; add rooms to selection box
-              if ($(this).hasClass('active')){
+              if ($("#" + id).hasClass('active')){
                 // unselected
-                $(this).removeClass('active');
-                $('#room-selection').val(textData.replace(($(this).text() + ","), ""));
+                $("#" + id).removeClass('active');
+                $('#room-selection').val(textData.replace(($("#" + id).text() + ","), ""));
               }
               else {
                 // selected
-                $(this).addClass('active');
+                $("#" + id).addClass('active');
 
                 $("#div-price").show(500);
 
                 if (textData){
-                  $('#room-selection').val(textData + $(this).text() + ", ");
+                  $('#room-selection').val(textData + $("#" + id).text() + ", ");
                 }
                 else{
-                  $('#room-selection').val($(this).text() + ", ");
+                  $('#room-selection').val($("#" + id).text() + ", ");
                 }
               }
             }
