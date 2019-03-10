@@ -75,6 +75,7 @@ $(document).ready(function(){
   });
 
   $("#start-time").on('click', function(){
+    console.log($("#show-price").text());
     $("#time-error").hide(500);
     $("#submitButton").removeClass('disabled');
 
@@ -202,8 +203,6 @@ $(document).ready(function(){
               else {
                 // selected
                 $("#" + id).addClass('active');
-                console.log(price);
-                console.log(originalPrice);
                 // add price to original price
                 if (originalPrice < 1){
                   $("#show-price").append(price);
@@ -326,8 +325,9 @@ function postEvent(){
       "date": $('#date').val(),
       "timeFrom": $('#start-time').val(),
       "timeUntil": $('#end-time').val(),
-      "private": $("#private").prop("checked"),
-      "rooms": $('#room-selection').val()
+      "private": $("#private").prop("checked"), // not sure about this
+      "rooms": $('#room-selection').val(),
+      "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) // not sure if this works
     }),
     contentType:"application/json; charset=utf-8",
     dataType:"json",
