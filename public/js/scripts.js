@@ -117,6 +117,24 @@ $(document).ready(function(){
     return endTime;
   }
 
+  // disabling and enabling checkboxes
+  $("#public").on('click', function(){
+    if ($(this).prop("checked")){
+      $("#private").attr("disabled", true);
+    }
+    else {
+      $("#private").removeAttr("disabled");
+    }
+  });
+  $("#private").on('click', function(){
+    if ($(this).prop("checked")){
+      $("#public").attr("disabled", true);
+    }
+    else {
+      $("#public").removeAttr("disabled");
+    }
+  });
+
   function outputRooms(eventType){
 
     // removing everything from previous options
@@ -303,9 +321,12 @@ function postEvent(){
       "name": $('#name').val(),
       "email": $('#emailaddress').val(),
       "telephone": $('#phone').val(),
+      "title": $('#title').val(),
+      "description": $("#description").val(),
       "date": $('#date').val(),
       "timeFrom": $('#start-time').val(),
       "timeUntil": $('#end-time').val(),
+      "private": $("#private").prop("checked"),
       "rooms": $('#room-selection').val()
     }),
     contentType:"application/json; charset=utf-8",
