@@ -1,8 +1,8 @@
 //load facilities
 $(function(){  
-    //load what's on  
+
+    //load drop down of options
     $.get("/activities", function(data){
-        $("#activities .request-result").html(" ");
         //alert(data);
         for (i = 0; i < data.length; i++){
             if (data[i] == undefined){
@@ -28,53 +28,115 @@ $(function(){
 
     });
     
+    
+    $('#activitiesForm').on('click', '.dropdown-item', function() {
+        if($(this).attr("data-name") != 0){
+
+            $.get('/activities/'+$(this).attr("data-name"), function(data){
+
+                var activityId = data[0].activityId
+                var imagePath = data[0].activityImage
+                var activityName = data[0].activityName
+                var activityDescription = data[0].activityDescription
+
+
+                //alert(data)
+                $('#id').val(activityId)
+                $('#name').val(activityName)
+                $('#description').val(activityDescription)
+                $('#imagePath').val(imagePath)
+
+
+            })
+        } else {
+            $('#id').val("0")
+            $('#name').val("New Event")
+            $('#imagePath').val("")
+            $('#description').val("Activity Description")
+        }
+
+        $('#activityDetails').removeClass('d-none')
+    });
+    
+    
+    $('.form').on('submit', function(){
+        return confirm("Are you sure you want to make this submission? The information you have entered will be displayed on the website.")
+    })
+
+    
+    
+    
+        
+     //load drop down of options
     $.get("/facilities", function(data){
-        $("#facilities .request-result").html(" ");
         //alert(data);
-        for (i = 0; i < 3; i++){
+        for (i = 0; i < data.length; i++){
             if (data[i] == undefined){
                 break
             }
-            
+
             var roomId = data[i].roomId
             var imagePath = data[i].roomImage
             var roomName = data[i].roomName
             var roomDescription = data[i].roomDescription
             var roomId = data[i].roomId
-            
+
             //Change path to filler image if none is assigned and provide full path if it is
             if (imagePath == ""){
-                imagePath = "facilities/room.jpg"
+                imagePath = "img/facilities/activity.jpg"
             } else {
-                imagePath = "facilities/" + imagePath
+                imagePath = "img/facilities/" + imagePath
             }
-            
-            //convert room description into a preview of the description text of 120 characters to the nearest word.
-            roomDescription = roomDescription.substring(0,roomDescription.lastIndexOf(" ",120)) + "..."
-            
-            
-            $("#facilities .request-result").append('<div class="col-12 col-md-6 col-lg-4 mb-4"><div class="card text-white"><img class="card-img-top" src="img/'+imagePath+'" alt="Card image cap"><div class="card-img-overlay"><h5 class="card-title">'+roomName+'</h5><p class="card-text">'+roomDescription+'</p><a href="/facilities.html?id=' + roomId +'" class="btn btn-primary">Read More</a></div></div></div>')
-        
+
+            $("#facilitiesDropdown").append('<a class="dropdown-item" data-name="' + roomId + '" href="#">' + roomName + '</a>')
+
         }
-        
+
 
     });
     
-    $("#twitter-page").hide();
-    $("#btn-facebook").addClass("active");
+    
+        $('#facilitiesForm').on('click', '.dropdown-item', function() {
+        if($(this).attr("data-name") != 0){
+
+            $.get('/facilities/'+$(this).attr("data-name"), function(data){
+                
+               var roomId = data[0].roomId
+                var imagePath = data[0].roomImage
+                var roomName = data[0].roomName
+                var roomDescription = data[0].roomDescription
+                var roomId = data[0].roomId
+
+                console.log(roomName)
+                
+                //alert(data)
+                $('#id').val(roomId)
+                $('#name').val(roomName)
+                $('#description').val(roomDescription)
+
+
+            })
+        } else {
+            $('#id').val("0")
+            $('#name').val("New Event")
+            $('#imagePath').val("")
+            $('#description').val("Activity Description")
+        }
+
+        $('#facilityDetails').removeClass('d-none')
+    });
+    
+    
+    $('.form').on('submit', function(){
+        return confirm("Are you sure you want to make this submission? The information you have entered will be displayed on the website.")
+    })
+    
+    
+    
+
+
 });
 
-$("#btn-facebook").click(function(){
-    $("#twitter-page").hide();
-    $("#fb-page").fadeIn();
-    $("#btn-facebook").addClass("active");
-    $("#btn-twitter").removeClass("active");
-});
 
-$("#btn-twitter").click(function(){
-    $("#fb-page").hide();
-    $("#twitter-page").fadeIn();
-    $("#btn-facebook").removeClass("active");
-    $("#btn-twitter").addClass("active");
-});
+
 

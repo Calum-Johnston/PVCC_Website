@@ -21,7 +21,7 @@ function loadActivity(activityId){
         if (imagePath == "" || imagePath == undefined){
             imagePath = "img/activities/room.jpg"
         } else {
-            imagePath = "img/activities/" + imagePath
+            imagePath = "img" + imagePath
         }
         
         $("#activities .request-result").html(" ");
@@ -57,7 +57,7 @@ function loadActivities(){
             if (imagePath == ""){
                 imagePath = "img/activities/room.jpg"
             } else {
-                imagePath = "img/activities/" + imagePath
+                imagePath = "img/" + imagePath
             }
             
             //convert room description into a preview of the description text of 120 characters to the nearest word.
