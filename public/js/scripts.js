@@ -42,8 +42,19 @@ $(".carousel-control-prev").on("click", function(){
 ############################*/
 
 $(document).ready(function(){
+
+  // disable end-time and hide errors and price by default
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
+  $("#div-price").hide();
+
+  $.getJSON('/roomprices', function(data){
+
+    $.each(data, function(key, value){
+      console.log(key, value.price);
+    });
+
+  });
 
   // loading the event types into dropdown box and dynamically selecting rooms when an event is selected
   $.getJSON('/eventrooms', function(data){
@@ -55,6 +66,7 @@ $(document).ready(function(){
 
     $(".event").on('click', function(e){
       e.preventDefault();
+      $("#div-price").hide();
 
       $("#room-empty").hide(500);
       $("#submitButton").removeClass('disabled');
@@ -138,6 +150,12 @@ $(document).ready(function(){
         if ($(this).hasClass('active')){
           $(this).removeClass('active');
           $('#room-selection').val(textData.replace(($(this).text() + ","), ""));
+
+          // getting the price of the room
+          $.getJSON()
+          $("#div-price").show(500);
+
+
         }
         else {
           $(this).addClass('active');

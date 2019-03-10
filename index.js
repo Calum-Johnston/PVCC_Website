@@ -329,6 +329,25 @@ app.get("/eventrooms", function(req, resp){
   });
 });
 
+app.get("/roomprices", function(req, resp){
+
+  // query that returns dictionary of rooms and prices
+  con.query("SELECT rooms.roomName, rooms.price FROM rooms", function(err, result, fields){
+    if (err) throw err;
+
+    var roomPrices = {};
+    for (var i = 0; i < result.length; i++){
+      if (result[i].roomName in roomPrices){
+        roomPrices[result[i].roomName].push({"price" : result[i].price});
+      }
+      else{
+        roomPrices[result[i].roomName] = {"price" : result[i].price};
+      }
+    }
+    resp.send(roomPrices);
+  });
+});
+
 
 
 
