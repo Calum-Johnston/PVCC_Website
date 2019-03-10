@@ -15,6 +15,7 @@ function loadActivity(activityId){
         var imagePath = data[0].activityImage
         var activityName = data[0].activityName
         var activityDescription = data[0].activityDescription
+    
         
         //Change path to filler image if none is assigned and provide full path if it is
         //***apply undefined condition to other parts of site
