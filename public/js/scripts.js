@@ -46,7 +46,7 @@ $(document).ready(function(){
   // disable end-time and hide errors and price by default
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
-  //$("#div-price").hide();
+  $("#div-price").hide();
 
   // loading the event types into dropdown box and dynamically selecting rooms when an event is selected
   $.getJSON('/eventrooms', function(data){
@@ -57,7 +57,10 @@ $(document).ready(function(){
 
     $(".event").on('click', function(e){
       e.preventDefault();
+
+      // hide and reset price when selecting new event
       $("#div-price").hide();
+      $("#show-price").text("£");
 
       $("#room-empty").hide(500);
       $("#submitButton").removeClass('disabled');
@@ -142,24 +145,56 @@ $(document).ready(function(){
         $.getJSON('/roomprices', function(data){
           $.each(data, function(key, value){
             if (roomName == key){
-              const price = value.price;
-
+              let price = value.price;
               let originalPrice = $("#show-price").text(); // price before newly clicked room added
 
-              // remove pound sign and convert to int
-              originalPrice = originalPrice.substring(1, originalPrice.length);
-              originalPrice = parseInt(originalPrice, 10);
+              if (originalPrice == "£"){
+                originalPrice = 0;
+              }
+              else {
+                // remove pound sign and convert to int
+                originalPrice = originalPrice.substring(1, originalPrice.length);
+                originalPrice = parseFloat(originalPrice);
+              }
 
               // if clicked, make active and vice versa; add rooms to selection box
               if ($("#" + id).hasClass('active')){
                 // unselected
                 $("#" + id).removeClass('active');
                 $('#room-selection').val(textData.replace(($("#" + id).text() + ","), ""));
+
+                // now subtract current from original
+                price = originalPrice - price;
+                if (price < 1){
+                  $("#div-price").hide(500);
+                  price = 0;
+                  originalPrice = 0;
+                  $("#show-price").text("£");
+                }
+                else {
+                  if (price.toString().length > 2){
+                    price = Math.round(price) - 0.01;
+                  }
+                  else {
+                    price = price - 0.01;
+                  }
+                  $("#show-price").text("£" + price);
+                }
               }
               else {
                 // selected
                 $("#" + id).addClass('active');
-
+                console.log(price);
+                console.log(originalPrice);
+                // add price to original price
+                if (originalPrice < 1){
+                  $("#show-price").append(price);
+                }
+                else {
+                  price = originalPrice + price;
+                  price = Math.round(price) - 0.01;
+                  $("#show-price").text("£" + price);
+                }
                 $("#div-price").show(500);
 
                 if (textData){
