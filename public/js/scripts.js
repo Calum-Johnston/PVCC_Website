@@ -50,6 +50,21 @@ $(document).ready(function(){
     $.each(data, function(key, value){
       $("#dropdownList").append('<li class="event"><a href="#">' + value.eventName + '</a></li>');
     });
+
+    $(".event").on('click', function(e){
+      e.preventDefault();
+
+      $("#room-empty").hide(500);
+      $("#submitButton").removeClass('disabled');
+
+      // showing value of chosen event on dropdown button
+      $("#dropdownMenuButton").html($(this).text() + "&nbsp;" + "<span class='caret'></span>");
+
+      // Matching events to rooms
+      const value = $(this).text();
+      outputRooms(value);
+      $(".event-button").addClass('active');
+    });
   });
 
   $("#start-time").on('click', function(){
@@ -94,72 +109,37 @@ $(document).ready(function(){
     endTime = endHour + (endMinute/60);
     return endTime;
   }
-
-  let customSelected = false;
-  $("#dropdownMenuButton").on('click', function(){
-    // error checking
-    $(".event").on('click', function(e){
-      e.preventDefault();
-
-      $("#room-empty").hide(500);
-      $("#submitButton").removeClass('disabled');
-
-      if (customSelected){
-        $(".event-button").addClass('disabled');
-        customSelected = false;
-      }
-      else{
-        $(".active").addClass('disabled');
-        $(".active").removeClass('active');
-      }
-      // showing value of chosen event on dropdown button
-      $("#dropdownMenuButton").html($(this).text() + "&nbsp;" + "<span class='caret'></span>");
-
-      // Matching events to rooms
-      const value = $(this).text();
-      outputRooms(value);
-      $(".event-button").addClass('active');
-    });
-  });
-
+  
   function outputRooms(eventType){
-    var count = 0;
     $(".event-button").remove();
     // outputting the rooms according to event type
     $.getJSON('/eventrooms', function(data){
-      console.log(eventType);
       $.each(data, function(key, value){
         if (eventType == value.eventName){
           // found match - now output rooms
           $.each(value.rooms, function(key2, value2){
-            console.log(value2.roomName);
             $("<button type='button' class='btn btn-warning event-button'>" + value2.roomName + "</button>").appendTo("#roomList");
           });
           return false;
         }
       });
     });
-    console.log(count);
-    count = count + 1;
   }
 
   // highlighting buttons when clicked in custom option
   $(".event-button").on('click', function(){
-    console.log("event button clicked");
     let textData = $('#room-selection').val();
-    if (customSelected){
-      if ($(this).hasClass('active')){
-        $(this).removeClass('active');
-        $('#room-selection').val(textData.replace(($(this).text() + ","), ""));
+    if ($(this).hasClass('active')){
+      $(this).removeClass('active');
+      $('#room-selection').val(textData.replace(($(this).text() + ","), ""));
+    }
+    else{
+      $(this).addClass('active');
+      if (textData){
+        $('#room-selection').val(textData + $(this).text() + ", ");
       }
       else{
-        $(this).addClass('active');
-        if (textData){
-          $('#room-selection').val(textData + $(this).text() + ", ");
-        }
-        else{
-          $('#room-selection').val($(this).text() + ", ");
-        }
+        $('#room-selection').val($(this).text() + ", ");
       }
     }
   });
