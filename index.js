@@ -404,8 +404,6 @@ app.post('/activities', upload.single('image'), (req, resp) => {
 
     con.query(sql, function (err, result, fields) {
       if (err) throw err;
-        console.log(result)
-        console.log(sql)
         
         resp.redirect("/activities.html")
         
