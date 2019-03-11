@@ -192,7 +192,36 @@ global.con = con;
 
 
 
+ /*#######################################
+ ROUTING FOR SECURE SECTION OF ADMIN SITE
+ #######################################*/
+//secure admin section
+function userIsAllowed(callback) {
+  // this function would contain your logic, presumably asynchronous,
+  // about whether or not the user is allowed to see files in the
+  // protected directory; here, we'll use a default value of "false"
+  callback(true);
+};
 
+// This function returns a middleware function
+var protectPath = function(regex) {
+  return function(req, res, next) {
+      //console.log(req.url)
+      //console.log(regex.test(req.url))
+    if (!regex.test(req.url)) { return next(); }
+
+    userIsAllowed(function(allowed) {
+      if (allowed) {
+        next(); // send the request to the next handler, which is express.static
+      } else {
+        res.end('You are not allowed!');
+      }
+    });
+  };
+};
+//end of secure
+
+app.use(protectPath(/^.*\/secure\/.*$/)); //secure directory
 
 
 
@@ -324,8 +353,9 @@ app.get("/activities", function(req, resp){
 app.get("/activities/:id", function(req, resp){
     var activityId = req.params.id;
     if (activityId != "undefined"){
-            con.query("SELECT * FROM activities WHERE activityId="+activityId, function (err, result, fields) {
-              if (err) throw err;                
+            var sql = "SELECT * FROM activities WHERE activityId="+activityId
+            con.query(sql, function (err, result, fields) {
+              if (err) throw err; 
               resp.send(result);
           });
     }
@@ -346,6 +376,7 @@ var storage = multer.diskStorage({
 })
 
 var upload = multer({ storage: storage })
+
 
 
 //insert an activity 
@@ -371,12 +402,50 @@ app.post('/activities', upload.single('image'), (req, resp) => {
         sql = "DELETE FROM activities WHERE activityId = " + activityId
     }
 
-    console.log(sql)
     con.query(sql, function (err, result, fields) {
       if (err) throw err;
         console.log(result)
+        console.log(sql)
         
         resp.redirect("/activities.html")
+        
+    });
+    
+});
+
+
+
+//insert a facilitiy
+app.post('/facilities', upload.single('image'), (req, resp) => {   
+    var facilityId = req.body.facilityId;
+    var facilityName = req.body.facilityName;
+    var facilityDescription = req.body.facilityDescription;
+    var image = req.file;
+    var facilityType = req.body.facilityType;
+    var facilityPrice = req.body.facilityPrice;
+    
+    var sql = ""
+    if (req.body.submit == "Submit"){
+        //insert new activity if it does't already exist
+        if (activityId == 0 && image){
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, roomPrice) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '" +  image.filename + "', '" +  facilityType + "', '" +  facilityPrice + ")"
+        } else if (activityId == 0 && !image){
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, roomPrice) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '/facilities/default.jpg'', '" +  facilityType + "', '" +  facilityPrice + ")"
+        } else if (activityId != 0 && image){
+            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomImage = '" +  image.filename + "', roomType = '" +  facilityType + "', roomPrice = '" +  roomPrice + "'   WHERE roomId = " + activityId
+        } else if (activityId != 0 && !image){
+            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomType = '" +  facilityType + "', roomPrice = '" +  roomPrice + "'   WHERE roomId = " + activityId
+        } 
+    } else if (req.body.submit == "Delete") {
+        sql = "DELETE FROM rooms WHERE roomId = " + activityId
+    }
+
+    con.query(sql, function (err, result, fields) {
+      if (err) throw err;
+        console.log(result)
+        console.log(sql)
+        
+        resp.redirect("/facilities.html")
         
     });
     

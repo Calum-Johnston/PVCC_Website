@@ -1,7 +1,6 @@
 //load activities
 $(function(){    
     //if there is not url parameter present, load all the facilites on page load, oterwie, load the specific parameter
-    console.log($.urlParam("id"))
     if ($.urlParam("id") == null || $.urlParam("id") == 0){
         loadActivities();
     } else {
@@ -16,6 +15,7 @@ function loadActivity(activityId){
         var activityName = data[0].activityName
         var activityDescription = data[0].activityDescription
     
+        console.log(activityId)
         
         //Change path to filler image if none is assigned and provide full path if it is
         //***apply undefined condition to other parts of site
