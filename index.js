@@ -1,73 +1,82 @@
 "use strict";
-const fs = require('fs');
-const readline = require('readline');
-const {google} = require('googleapis');
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-
-
-const mysql = require("mysql");
+/* jshint -W097 */
+/* jshint esversion: 6 */
+/* jshint node: true */
+/* jshint browser: true */
+/* jshint jquery: true */
+/* jshint devel: true */
 
 /*#########################
-#########VARIABLES#########
+         Packages
 #########################*/
 
-//Arrays that hold lists of events to be placed on Full Calendar calendarId
+// DEFAULT PACKAGES
+const fs = require('fs');
+const express = require('express');
+const readline = require('readline');
+const bodyParser = require('body-parser');
+const app = express();
 
-var astroturfEvents = [
-    {
-    title: 'Event 1',
-    start: '2019-02-05T13:13:55.008',
-    end: '2019-02-05T14:14:55.008'
-    },
-    {
-    title: 'Event 2',
-    start: '2019-01-27T15:13:55',
-    end: '2019-01-27T16:13:55'
-    }
-];
+// Packges(s) required to connect to google calendar
+const {google} = require('googleapis');
 
-var footballpitchEvents = [{
-    title: 'Football Pitch event 1',
-    start: '2019-01-28T13:11:55.008',
-    end: '2019-01-28T14:14:55.008'
-    },
-    {
-    title: 'Football Pitch event 2',
-    start: '2019-01-29T15:13:55',
-    end: '2019-01-29T18:13:55'
-    }
-];
+// Package(s) required for sending emails
+const nodemailer = require('nodemailer');  // Enables emails to be sent
+const inlineCss = require('inline-css');  // Writes CSS directly into HTML
 
+// Package(s) required for database connection
+const mysql = require("mysql");
+
+
+
+
+
+
+
+/*#########################
+         VARIABLES
+#########################*/
+
+// Variables hold event information
+var astroturfEvents = [];
+var footballpitchEvents = [];
 var performingartsEvents = [];
 var theatreEvents = [];
 var itsuiteEvents = [];
 var classroomEvents = [];
 var dininghallEvents = [];
 
-//dictionary stores relationship between room name and array of events
+// Dictionary that stores the relationship between room name and array of events
 var eventsDict = {"Astro Turf" : astroturfEvents,  "Class Room" : classroomEvents, "Dining Hall" : dininghallEvents, "Football Pitch" : footballpitchEvents, "IT Suite" : itsuiteEvents, "Performing Arts" : performingartsEvents, "Theatre" : theatreEvents };
 
-//dictionary stores relationship between html names (sent via post request) to actual location names
+// Dictionary that stores the relationship between HTML names (sent via post requests) to actual location names
 var locationsDict = {"astroturf": "Astro Turf", "classroom":"Class Room", "dininghall":"Dining Hall", "footballpitch":"Football Pitch", "itsuite":"IT Suite", "performingarts":"Performing Arts", "theatre":"Theatre"};
 
+// Other variables
 var calendar;
 var authObj;
+var email;
+
+
+
+
 
 
 /*#################################
-###GOOGLE CALENDAR FUNCTIONALITY###
+   GOOGLE CALENDAR FUNCTIONALITY
 #################################*/
 
 // Sets permission for editing calendar
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-//name of token file
+
+// Name of the token file
 const TOKEN_PATH = 'token.json';
+
 // Authorise server to interact with calendar
 fs.readFile('credentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err);
-  // If successful, server is starter
+
+  // If successful the server is started
   authorize(JSON.parse(content), startServer);
 });
 
@@ -77,10 +86,10 @@ fs.readFile('credentials.json', (err, content) => {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
+
 function authorize(credentials, callback) {
   const {client_secret, client_id, redirect_uris} = credentials.installed;
-  const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uris[0]);
+  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
@@ -127,27 +136,72 @@ function getAccessToken(oAuth2Client, callback) {
  */
 
 
+
+
+
+
+
 /*###########################
-##MYSQL DATABASE CONNECTION##
+  MYSQL DATABASE CONNECTION
 ###########################*/
+
+// Defines the database credentials
 const con = mysql.createConnection({
-      host: "localhost",
-      user: "web-admin",
-      password: "password",
-      database: "pvcc"
-    });
-//establish connecction
+  host: "localhost",
+  user: "web-admin",
+  password: "password",
+  database: "pvcc"
+});
+
+// Establishes connecction with the database
 con.connect(function(error){
-    if (error) {
-        throw error;
-    }
-    console.log("Connected to database");
-})
+  if (error) {
+    console.log('FAILED to connect to the database');
+    throw error;
+  }
+  console.log("Connected to database");
+});
+
+// Sets the database for the current server
 global.con = con;
 
 
+
  /*#######################################
- ###EXPRESS FUNCTIONS, REQUEST HANDLING###
+ ROUTING FOR SECURE SECTION OF ADMIN SITE
+ #######################################*/
+//secure admin section
+function userIsAllowed(callback) {
+  // this function would contain your logic, presumably asynchronous,
+  // about whether or not the user is allowed to see files in the
+  // protected directory; here, we'll use a default value of "false"
+  callback(true);
+};
+
+// This function returns a middleware function
+var protectPath = function(regex) {
+  return function(req, res, next) {
+      //console.log(req.url)
+      //console.log(regex.test(req.url))
+    if (!regex.test(req.url)) { return next(); }
+
+    userIsAllowed(function(allowed) {
+      if (allowed) {
+        next(); // send the request to the next handler, which is express.static
+      } else {
+        res.end('You are not allowed!');
+      }
+    });
+  };
+};
+//end of secure
+
+app.use(protectPath(/^.*\/secure\/.*$/)); //secure directory
+
+
+
+ /*#######################################
+    EXPRESS FUNCTIONS, REQUEST HANDLING
  #######################################*/
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -160,89 +214,259 @@ app.use((req, res, next) => {
 });
 app.use(express.static('public'));
 
-//handles the post request for creating events
-app.post('/events', function(req,resp){
+// === CREATE EVENT ===
+// Handles the post request for creating events
+app.post('/events', function(req, resp){
 
-  //event object, stores all data sent in request
+  // Creates an event object which stores all data sent in request
   var eventInfo = {
-    "name":req.body["name"],
-    "email":req.body["email"],
-    "telephone":req.body["telephone"],
-    "dateTimeStart": (new Date(req.body["date"] + " " + req.body["timeFrom"])).toISOString(),
-    "dateTimeEnd": (new Date(req.body["date"] + " " + req.body["timeUntil"])).toISOString(),
-    "rooms":req.body["rooms"]
+    "name": req.body.name,
+    "email": req.body.email,
+    "telephone": req.body.telephone,
+    "dateTimeStart": (new Date(req.body.date + " " + req.body.timeFrom)).toISOString(),
+    "dateTimeEnd": (new Date(req.body.date + " " + req.body.timeUntil)).toISOString(),
+    "rooms": req.body.rooms
   };
 
+  // Validates the captcha (** NOT WORKING **)
+  /*
+  if(req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
+    return resp.json({"responseCode" : 1,"responseDesc" : "Please select captcha"});
+  }
+
+  // Put your secret key here.
+  var secretKey = "6LeakZMUAAAAAJ3ppyXG4OjcAACeLdMv4yd9NcRI";
+  // req.connection.remoteAddress will provide IP address of connected user.
+  var verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
+  // Hitting GET request to the URL, Google will respond with success or error scenario.
+  req(verificationUrl ,function(error, response, body) {
+    body = JSON.parse(body);
+    // Success will be true or false depending upon captcha validation.
+    if(body.success !== undefined && !body.success) {
+      return resp.json({"responseCode" : 1,"responseDesc" : "Failed captcha verification"});
+    }
+    resp.json({"responseCode" : 0,"responseDesc" : "Sucess"});
+  });
+  */
   //call function to check if the event is valid, i.e. not overlapping other events
   //send resp to validateEvent due to calendar API taking too long to respond, resp
   //ends up getting processed first otherwise.
+
+  // Validates the event
   validateEvent(eventInfo, resp);
 
 });
 
-//handles request to delete a given event by ID
-app.post('events/delete/:id', function(req,resp){
+// === DELETE EVENT ===
+// Handles request to delete a given event by ID
+app.get('/delete-event/:id', function(req, resp){
+
+  // Gets the ID of the event to be deleted
   var params = {
     calendarId: 'primary',
-    eventId: id,
+    eventId: req.params.id
   };
 
+  // Deletes the event from the Google Calendar
   calendar.events.delete(params, function(err) {
     if (err) {
       console.log('Deleting resulted in an error');
       return;
     }
-    console.log('Event: ' + id + " deleted!");
-  })
+    console.log('Event: ' + req.params.id + " deleted!");
+  });
+
+  // Update website calendar to follow google calendar
+
+
+  // Redirect user elsewhere
+  return resp.redirect('/');
 });
 
-//handles full calendar events,
+
+// === DISPLAY CALENDAR ===
+// Handles full calendar events,
 app.get('/events/:room', function(req, resp){
-    resp.send(eventsDict[locationsDict[req.params.room]]);
-})
+  resp.send(eventsDict[locationsDict[req.params.room]]);
+});
 
 
-//facilities page ***
-//load a list of all the facilities.
+
+// === LOAD FACILITIES ===
+// Load information abut all facilities
 app.get("/facilities", function(req, resp){
-       con.query("SELECT * FROM rooms", function (err, result, fields) {
-        if (err) throw err;
-        resp.send(result);
-      });
-})
+  con.query("SELECT * FROM rooms", function (err, result, fields) {
+    if (err) throw err;
+      resp.send(result);
+    });
+});
 
-//return information about a given facility
+
+// === LOAD INDIVIDUAL FACILITY ===
+// Loads information about a given facility
 app.get("/facilities/:id", function(req, resp){
-    var roomId = req.params.id
+    var roomId = req.params.id;
     if (roomId != "undefined"){
-            con.query("SELECT * FROM rooms WHERE roomId="+roomId, function (err, result, fields) {
+            con.query("SELECT * FROM rooms WHERE roomId='"+roomId+"'", function (err, result, fields) {
               if (err) throw err;
               resp.send(result);
           });
     }
-})
+});
 
-//activities page
+
+
+// === LOAD ACTIVITIES
 //load a list of all activities
 app.get("/activities", function(req, resp){
        con.query("SELECT * FROM activities", function (err, result, fields) {
         if (err) throw err;
         resp.send(result);
       });
-})
+});
 
-//return information about a given activity by ID
+
+// === INDIVIDUAL ACTIVITIES ===
+// Returns information about a given activity by ID
 app.get("/activities/:id", function(req, resp){
-    var activityId = req.params.id
+    var activityId = req.params.id;
     if (activityId != "undefined"){
-            con.query("SELECT * FROM activities WHERE activityId="+activityId, function (err, result, fields) {
-              if (err) throw err;
+            var sql = "SELECT * FROM activities WHERE activityId="+activityId
+            con.query(sql, function (err, result, fields) {
+              if (err) throw err; 
               resp.send(result);
           });
     }
+});
+
+
+const multer = require('multer');
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/img')
+  },
+  filename: function (req, file, cb) {
+    var originalname = file.originalname
+    var extension = originalname.substr(originalname.lastIndexOf("."))
+    console.log(req.url + "/" + req.body.activityId + extension)
+    cb(null, req.url + "/" + req.body.activityId + extension)
+  }
 })
 
+var upload = multer({ storage: storage })
 
+
+
+//insert an activity 
+app.post('/activities', upload.single('image'), (req, resp) => {   
+    var activityId = req.body.activityId;
+    var activityName = req.body.activityName;
+    var activityDescription = req.body.activityDescription;
+    var image = req.file;
+    
+    var sql = ""
+    if (req.body.submit == "Submit"){
+        //insert new activity if it does't already exist
+        if (activityId == 0 && image){
+            sql = "INSERT INTO activities (activityName, activityDescription, activityImage) VALUES('" +  activityName + "', '" +  activityDescription + "', '" +  image.filename
+        } else if (activityId == 0 && !image){
+            sql = "INSERT INTO activities (activityName, activityDescription, activityImage) VALUES('" +  activityName + "', '" +  activityDescription +"', '/activities/default.jpg')"
+        } else if (activityId != 0 && image){
+            sql = "UPDATE activities SET activityName = '" +  activityName + "', activityDescription = '" +  activityDescription + "', activityImage = '" +  image.filename + "'   WHERE activityId = " + activityId
+        } else if (activityId != 0 && !image){
+            sql = "UPDATE activities SET activityName = '" +  activityName + "', activityDescription = '" +  activityDescription + "' WHERE activityId = " + activityId
+        } 
+    } else if (req.body.submit == "Delete") {
+        sql = "DELETE FROM activities WHERE activityId = " + activityId
+    }
+
+    con.query(sql, function (err, result, fields) {
+      if (err) throw err;
+        
+        resp.redirect("/activities.html")
+        
+    });
+    
+});
+
+
+
+//insert a facilitiy
+app.post('/facilities', upload.single('image'), (req, resp) => {   
+    var facilityId = req.body.facilityId;
+    var facilityName = req.body.facilityName;
+    var facilityDescription = req.body.facilityDescription;
+    var image = req.file;
+    var facilityType = req.body.facilityType;
+    var facilityPrice = req.body.facilityPrice;
+    
+    var sql = ""
+    if (req.body.submit == "Submit"){
+        //insert new activity if it does't already exist
+        if (activityId == 0 && image){
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, roomPrice) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '" +  image.filename + "', '" +  facilityType + "', '" +  facilityPrice + ")"
+        } else if (activityId == 0 && !image){
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, roomPrice) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '/facilities/default.jpg'', '" +  facilityType + "', '" +  facilityPrice + ")"
+        } else if (activityId != 0 && image){
+            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomImage = '" +  image.filename + "', roomType = '" +  facilityType + "', roomPrice = '" +  roomPrice + "'   WHERE roomId = " + activityId
+        } else if (activityId != 0 && !image){
+            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomType = '" +  facilityType + "', roomPrice = '" +  roomPrice + "'   WHERE roomId = " + activityId
+        } 
+    } else if (req.body.submit == "Delete") {
+        sql = "DELETE FROM rooms WHERE roomId = " + activityId
+    }
+
+    con.query(sql, function (err, result, fields) {
+      if (err) throw err;
+        console.log(result)
+        console.log(sql)
+        
+        resp.redirect("/facilities.html")
+        
+    });
+    
+});
+
+
+// === GETS ROOM & EVENT DATA ===
+// Load a list of event rooms
+app.get("/eventrooms", function(req, resp){
+
+  // Queries the database for rooms and events
+  con.query("SELECT rooms.roomId, rooms.roomName, rooms.price, commonevents.eventId, commonevents.eventName  FROM commonevents INNER JOIN eventrooms ON commonevents.eventId = eventrooms.eventId INNER JOIN rooms ON eventrooms.roomId = rooms.roomId", function (err, result, fields) {
+    if (err) throw err;
+
+    var eventrooms = {};
+    for (var i = 0; i < result.length; i++){
+      if (result[i].eventId in eventrooms){
+          eventrooms[result[i].eventId].rooms.push({"roomName" : result[i].roomName, "roomId" : result[i].roomId, "price": result[i].price});
+      }
+      else {
+          eventrooms[result[i].eventId] = {"eventName" : result[i].eventName, "rooms" : [{"roomName" : result[i].roomName, "roomId" : result[i].roomId, "price": result[i].price}]};
+      }
+    }
+    resp.send(eventrooms);
+  });
+});
+
+app.get("/roomprices", function(req, resp){
+
+  // query that returns dictionary of rooms and prices
+  con.query("SELECT rooms.roomName, rooms.price FROM rooms", function(err, result, fields){
+    if (err) throw err;
+
+    var roomPrices = {};
+    for (var i = 0; i < result.length; i++){
+      if (result[i].roomName in roomPrices){
+        roomPrices[result[i].roomName].push({"price" : result[i].price});
+      }
+      else{
+        roomPrices[result[i].roomName] = {"price" : result[i].price};
+      }
+    }
+    resp.send(roomPrices);
+  });
+});
 
 
 
@@ -251,29 +475,16 @@ app.get("/activities/:id", function(req, resp){
 
 
 /*#########################
-#########FUNCTIONS#########
+         FUNCTIONS
 #########################*/
 
-
-//called once the authorisation has taken place, server won't start otherwise
-function startServer(auth){
-  calendar = google.calendar({version: 'v3', auth});
-  authObj = auth
-
-  populateEvents();
-
-  app.listen(1010, () => console.log("Booking system listening on port 1010!"));
-}
-
-
-
-//function that retrieves all events from google calendar on startup, populates website calendar
+// Function that retrieves all events from google calendar on startup -> populates website calendar
 function populateEvents(){
 
   var minDate = new Date(Date.now());
   var maxDate = new Date(Date.now());
 
-  //gets all events within the past and future year
+  // Gets all events within the past and future year
   minDate.setMonth(minDate.getMonth() -12);
   maxDate.setMonth(maxDate.getMonth() + 12);
 
@@ -292,58 +503,63 @@ function populateEvents(){
   }, (err, res) => {
 
     if (err) return console.log('The API returned an error: ' + err);
-    //events object
+
+    // Creates an events object
     var clashDiscovered = false;
     const events = res.data.items;
 
-    //check events have actually been returned
+    // Checks that events have actually been returned
     if (events.length){
 
-      //loop through all events
+      // Loop through all events
       events.map((event, i) => {
-        var rooms = event["location"].split(', ');
-        //remove blank room
-        rooms.pop()
+
+        // Gets a list of rooms from the event
+        var rooms = event.location.split(', ');
+        // Remove any none room types
+        rooms.pop();
 
         var j;
 
-        //create object to be pushed onto correct room arrays
+        // Creates an object to be pushed onto correct room arrays
         var eventCalendarObj = {
-          title: event["summary"],
-          start: event["start"]["dateTime"],
-          end: event["end"]["dateTime"]
-        }
+          title: event.summary,
+          start: event.start.dateTime,
+          end: event.end.dateTime
+        };
 
-        //push event onto arrays corresponding to rooms booked
-        for(j = 0; j < rooms.length; j++){
+        // Push event onto arrays corresponding to rooms booked
+        for(j = 0; j < rooms.length - 1; j++){
           eventsDict[rooms[j]].push(eventCalendarObj);
+          console.log(eventCalendarObj);
         }
 
-      })
+      });
     }
   });
-};
+}
 
-//takes a JSON object with the event information, creates an event if the authentication is valid
+// Takes a JSON object with the event information and creates an event if the authentication is valid
 function createEvent(eventInfo){
 
+  // Creates the event object
   var eventObj = {
     'summary': 'Example event',
-    'location': eventInfo["rooms"],
+    'location': eventInfo.rooms,
     'description': 'Test event',
     'start': {
-      'dateTime': eventInfo["dateTimeStart"],
+      'dateTime': eventInfo.dateTimeStart,
       'timeZone': 'Europe/London',
     },
     'end': {
-      'dateTime': eventInfo["dateTimeEnd"],
+      'dateTime': eventInfo.dateTimeEnd,
       'timeZone': 'Europe/London',
     },
 
   };
 
 
-  //google calendar API command to create new event
+  // Google calendar API command to create new event in the google calendar
   var event = calendar.events.insert({
   auth: authObj,
   calendarId: 'primary',
@@ -356,20 +572,20 @@ function createEvent(eventInfo){
     return;
   }else{
 
-
-    console.log(event["data"]["id"]);
+    console.log(event.data.id);
+    id = event.data.id;
     //If successful, add to Tom's array here!
 
-    var rooms = eventInfo["rooms"].split(', ');
+    var rooms = eventInfo.rooms.split(', ');
     var i;
 
 
     //JSON object that stores data in format suitable for Full calendar plugin
     var eventCalendarObj = {
-      title: eventObj["summary"],
-      start: eventInfo["dateTimeStart"],
-      end: eventInfo["dateTimeEnd"]
-    }
+      title: eventObj.summary,
+      start: eventInfo.dateTimeStart,
+      end: eventInfo.dateTimeEnd
+    };
 
     for(i = 0; i < rooms.length; i ++){
       eventsDict[rooms[i]].push(eventCalendarObj);
@@ -377,8 +593,9 @@ function createEvent(eventInfo){
 
   }
   console.log('Event created!');
+  sendConfirmation(eventInfo, event.data.id);
   });
-};
+}
 
 /*function that checks if an event is able to be put on the calendar,
 ensures that it is within the opening times and doesn't overlap with
@@ -390,8 +607,8 @@ function validateEvent(newEventInfo, resp){
   calendar.events.list({
 
     calendarId: 'primary',
-    timeMin: newEventInfo["dateTimeStart"],
-    timeMax: newEventInfo["dateTimeEnd"],
+    timeMin: newEventInfo.dateTimeStart,
+    timeMax: newEventInfo.dateTimeEnd,
     maxResults: 100,
     singleEvents: true,
     orderBy: 'startTime',
@@ -405,7 +622,7 @@ function validateEvent(newEventInfo, resp){
 
     if (events.length) {
       //rooms requested to be booked by the user
-      const requestedRooms = newEventInfo["rooms"].split(', ');
+      const requestedRooms = newEventInfo.rooms.split(', ');
 
       events.map((event, i) => {
         //get the list of rooms of current event being evaluated
@@ -420,32 +637,140 @@ function validateEvent(newEventInfo, resp){
           console.log("Booking clash detected.");
           clashDiscovered = true;
           resp.send({"response": false});
-        };
+        }
       });
 
       if (!clashDiscovered){
         //if time clash but no room clash
         console.log("No room clashes, creating event...");
+        // Passes createEvent() as a callback for sendConfirmation()
         createEvent(newEventInfo);
+
+        // Sends teh response to the website
         resp.send({"response": true});
       }
 
     } else {
       //if there no time clashes
       console.log("No events in that time range, no possibility for clashing booking, creating event...");
+
+      // Passes createEvent() as a callback for sendConfirmation()
       createEvent(newEventInfo);
+
+      // Sends the response to the website
       resp.send({"response": true});
     }
 
   });
 
-};
+}
 
-//function from https://stackoverflow.com/questions/16227197/compute-intersection-of-two-arrays-in-javascript/16227294
+// Function from https://stackoverflow.com/questions/16227197/compute-intersection-of-two-arrays-in-javascript/16227294
 function intersectArrays(a, b) {
     var t;
-    if (b.length > a.length) t = b, b = a, a = t; // indexOf to loop over shorter
+    if (b.length > a.length) {t = b; b = a; a = t;} // indexOf to loop over shorter
     return a.filter(function (e) {
         return b.indexOf(e) > -1;
     });
-};
+}
+
+
+
+
+
+
+
+/*#########################
+      EMAIL FUNCTIONS
+#########################*/
+
+// Gets the temp email to send when server loads
+var email;
+getEmailData();
+
+// Defines a global variable to store the id
+var id;
+
+// Functions sends a confirmation email when a successful booking occurs
+function sendConfirmation(confirmedEventInfo, id){
+
+  // Establoshes connection with gmail service
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: false,
+    auth: {
+      type: 'OAuth2',
+      user: 'pvcc.test.email@gmail.com',
+      clientId: '9199051241-vsse329fgo2n7jg07mhnni9gcgj4sbrr.apps.googleusercontent.com',
+      clientSecret: 'xdXOGNakrG-RxnHmM9gbWYPa',
+      refreshToken: '1/GuHiUqBGEtBi5lJqQ4wuP3ECVQJXzXKqiFu1-KpKgeI',
+      accessToken: 'ya29.GlvHBjW5ZOEKhTXzQM0JyDQF43X6leB8rT7s6O8ia2X2cJ1aF1m5t8SOeQevMB8amX_ULHVbXnUAv7hbhVY9uOhP_e4Y_4BGZH2VK-_DDM7ZIazKQ_TIBBOKJjsd'
+    },
+    tls: {
+      rejectUnauthorized: false
+    }
+  });
+
+  // Edits the data for the email
+  email = email.replace("BOOKING-NAME", confirmedEventInfo.name);
+  email = email.replace("BOOKING-ROOMS", confirmedEventInfo.rooms);
+  email = email.replace("BOOKING-DATE", confirmedEventInfo.dateTimeStart.split("T")[0]);
+  email = email.replace("BOOKING-TIME", confirmedEventInfo.dateTimeStart.split("T")[1].substring(0, 5) + " - " + confirmedEventInfo.dateTimeEnd.split("T")[1].substring(0, 5));
+  email = email.replace('BOOKING-ID', id);
+
+  // Defines email recipient and content
+  var mailOptions = {
+    from: 'pvcc.test.email@gmail.com',
+    to: confirmedEventInfo.email,
+    subject: 'Booking Request',
+    html: email
+  };
+
+  // Sends the email
+  transporter.sendMail(mailOptions, function(err, res){
+    if(err){
+      console.log("Error in sending email");
+      console.log(err);
+    }
+    else{
+      console.log("Booking email sent");
+    }
+  });
+
+  // Resets the data for the email
+  email = email.replace(confirmedEventInfo.name, "BOOKING-NAME");
+  email = email.replace(confirmedEventInfo.rooms, "BOOKING-ROOMS");
+  email = email.replace(confirmedEventInfo.dateTimeStart.split("T")[0], "BOOKING-DATE");
+  email = email.replace(confirmedEventInfo.dateTimeStart.split("T")[1].substring(0, 5) + " - " + confirmedEventInfo.dateTimeEnd.split("T")[1].substring(0, 5), "BOOKING-TIME");
+  email = email.replace(id, "BOOKING-ID");
+
+}
+
+// Function returns email data with inline css
+function getEmailData(){
+  fs.readFile('public/email/email-template.html', (err, content) => {
+    inlineCss(content, {url: ' '})
+    .then(function(content){
+      email = content;
+    });
+  });
+}
+
+
+
+
+/*#########################
+      CORE FUNCTIONS
+#########################*/
+
+// Function called to start the server after authorisation has occured **REQUIRED**
+function startServer(auth){
+  calendar = google.calendar({version: 'v3', auth});
+  authObj = auth;
+
+  populateEvents();
+
+  app.listen(1010, () => console.log("Booking system listening on port 1010!"));
+}

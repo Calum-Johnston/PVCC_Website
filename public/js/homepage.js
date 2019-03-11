@@ -51,7 +51,7 @@ $(function(){
             if (imagePath == ""){
                 imagePath = "img/activities/activity.jpg"
             } else {
-                imagePath = "img/activities/" + imagePath
+                imagePath = "img" + imagePath
             }
 
             //convert room description into a preview of the description text of 120 characters to the nearest word.

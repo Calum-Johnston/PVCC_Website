@@ -19,6 +19,28 @@ body .fc {
   /* extra precedence to overcome jqui */
   font-size: 1em; }
 
+/*Calendar CSS fine-tuning, created by Tom, added by Peter 31/01/19*/
+
+.dropdown-item:active{
+    background-color: rgb(255,204,39);
+}
+
+.fc-scroller {
+    overflow-y: auto;
+ }
+
+.fc-title, .fc-time {
+    text-align: center;
+}
+
+.fc-view {
+    margin-top:1%;
+    position: absolute;
+    bottom:0;
+    overflow-y: auto;
+    overflow-y: hidden;
+}
+
 /* Colors
 --------------------------------------------------------------------------------------------------*/
 .fc-highlight {

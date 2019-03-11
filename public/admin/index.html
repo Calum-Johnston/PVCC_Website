@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link rel="stylesheet" type="text/css" href="../css/bootstrap.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="../js/bootstrap/bootstrap.bundle.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" />
+        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+		<title>PVCC</title>
+	</head>
+	<body>      
+        
+    <div class="container my-5">        
+        <div class="row">
+            <h2 class="col-12">Admin Login</h2>
+        </div>
+        
+         <form class="form" target="_blank" class="form-horizontal" id="activitiesForm" action="/activities" enctype="multipart/form-data" method="POST" >
+             
+             <div class="row form-group">
+                 <div class="dropdown show col-12">
+                  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Activities
+                  </a>
+
+                  <div class="dropdown-menu" id="activitiesDropdown" aria-labelledby="dropdownMenuLink">
+                      <a class="dropdown-item" data-name="0">Add new</a>
+                  </div>
+                </div>
+             </div>
+
+        </form>
+        
+        <!--
+        <div class="row">
+            <h2 class="col-12">Facilities</h2>
+        </div>
+        
+        <form target="_blank" class="form-horizontal" id="facilitiesForm" action="/facilities" enctype="multipart/form-data" method="POST" >
+             
+             <div class="row form-group">
+                 <div class="dropdown show col-12">
+                  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    facilities
+                  </a>
+
+                  <div class="dropdown-menu" id="facilitiesDropdown" aria-labelledby="dropdownMenuLink">
+                      <a class="dropdown-item" data-name="0">Add new</a>
+                  </div>
+                </div>
+             </div>
+
+
+            <div class="d-none" id="facilityDetails">
+                
+                <input id="id" type='text' name="facilityId" class="form-control">
+             
+                <div class="row form-group">
+                    <label for="name" class="control-label col-12">facility Name:</label>
+                    <div class="col-sm-12">
+                      <input id="name" type="text" name="facilityName" class="form-control" required>
+                    </div>
+                  </div>
+
+                  <div class="row form-group" id="quillFormGroup">
+                    <label for="description" class="control-label col-12">facility Description</label>
+                    <div class="col-sm-12">
+                        <input id="description" type="text" name="facilityDescription" class="form-control" required>
+                    </div>
+                  </div>
+
+                
+                <div class="row form-group">
+                    <label for="imagePath" class="control-label col-12">New image (optional):</label>
+                    <div class="col-sm-12">
+                      <input id="image" type="file" accept="image/*" name="image" >
+                    </div>
+                  </div>
+                
+                    <div class="row form-group">
+                    <div class="col-12">
+                      <input type="submit" value="Submit" class="btn" id="submitButton">
+                    </div>
+                  </div>
+                
+            </div>
+
+        </form> -->
+        
+    </div>
+        
+        
+		<script src="../js/scripts.js"></script>
+        <script src="js/admin.js"></script>
+
+	</body>
+</html>

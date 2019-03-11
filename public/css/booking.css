@@ -1,0 +1,46 @@
+/* CSS RELATING TO TOP OF PAGE
+  booking form made by faiz*/
+
+hr{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(255,204,39);
+}
+
+label{
+  display: inline-block;
+  width: 90px;
+}
+
+.error{
+  color: red;
+}
+
+.dropdown-menu{
+  background-color: rgb(255,204,39);
+}
+
+li.event a{
+  color: white;
+  padding-left: 10px;
+}
+
+@media only screen and (min-width: 768px) {
+  .card-img-top{
+      height:225px;
+      object-fit:cover;
+    }
+}
+
+#submitButton{
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.event-button{
+  margin-right: 10px;
+  margin-bottom: 10px;
+}

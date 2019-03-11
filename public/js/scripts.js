@@ -1,16 +1,22 @@
 "use strict";
+/* jshint -W097 */
+/* jshint esversion: 6 */
+/* jshint node: true */
+/* jshint browser: true */
+/* jshint jquery: true */
+/* jshint devel: true */
 //sam stuff
 
 //from sitepoint || src: https://www.sitepoint.com/url-parameters-jquery/
 $.urlParam = function(name){
-    var results = new RegExp('[\?&]' + name + '=([^[?|?]]*)').exec(window.location.href);
+    var results = new RegExp('[\?&]' + name + '=([^[?|?]*]*)').exec(window.location.href);
     if (results==null){
        return null;
     }
     else{
        return results[1] || 0;
     }
-}
+};
 //end
 
 //carousel controls
@@ -36,10 +42,38 @@ $(".carousel-control-prev").on("click", function(){
 ############################*/
 
 $(document).ready(function(){
-  $(".event-button").addClass('disabled'); // disable rooms by default
-  $("#room-selection").attr("disabled", "disabled"); // disable text box by default
+
+  // disable end-time and hide errors and price by default
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
+  $("#div-price").hide();
+
+  // loading the event types into dropdown box and dynamically selecting rooms when an event is selected
+  $.getJSON('/eventrooms', function(data){
+
+    $.each(data, function(key, value){
+      $("#dropdownList").append('<li class="event"><a href="#">' + value.eventName + '</a></li>');
+    });
+
+    $(".event").on('click', function(e){
+      e.preventDefault();
+
+      // hide and reset price when selecting new event
+      $("#div-price").hide();
+      $("#show-price").text("£");
+
+      $("#room-empty").hide(500);
+      $("#submitButton").removeClass('disabled');
+
+      // showing value of chosen event on dropdown button
+      $("#dropdownMenuButton").html($(this).text() + "&nbsp;" + "<span class='caret'></span>");
+
+      // Matching events to rooms
+      const value = $(this).text();
+      outputRooms(value);
+    });
+  });
+
   $("#start-time").on('click', function(){
     $("#time-error").hide(500);
     $("#submitButton").removeClass('disabled');
@@ -62,9 +96,11 @@ $(document).ready(function(){
     $("#end-time").removeAttr("disabled");
   });
 
+
   $("#end-time").on('click', function(){
     $("#time-error").hide(500);
     $("#submitButton").removeClass('disabled');
+    });
   });
 
   function getStartTime(){
@@ -83,80 +119,121 @@ $(document).ready(function(){
     return endTime;
   }
 
-  // highlighting buttons when clicked in custom option
-  $(".event-button").on('click', function(){
-    let textData = $('#room-selection').val();
-    if (customSelected){
-      if ($(this).hasClass('active')){
-        $(this).removeClass('active');
-        $('#room-selection').val(textData.replace(($(this).text() + ","), ""));
-      }
-      else{
-        $(this).addClass('active');
-        if (textData){
-          $('#room-selection').val(textData + $(this).text() + ", ");
-        }
-        else{
-          $('#room-selection').val($(this).text() + ", ");
-        }
-      }
+
+  // disabling and enabling checkboxes
+  $("#public").on('click', function(){
+    if ($(this).prop("checked")){
+      $("#private").attr("disabled", true);
+    }
+    else {
+      $("#private").removeAttr("disabled");
+    }
+  });
+  $("#private").on('click', function(){
+    if ($(this).prop("checked")){
+      $("#public").attr("disabled", true);
+    }
+    else {
+      $("#public").removeAttr("disabled");
     }
   });
 
-  let customSelected = false;
-  $("#dropdownMenuButton").on('click', function(){
-    // error checking
-    $(".event").on('click', function(e){
-      e.preventDefault();
+  function outputRooms(eventType){
 
-      $("#room-empty").hide(500);
-      $("#submitButton").removeClass('disabled');
+    // removing everything from previous options
+    $(".event-button").remove();
+    $('#room-selection').val("");
 
-      if (customSelected){
-        $(".event-button").addClass('disabled');
-        customSelected = false;
-      }
-      else{
-        $(".active").addClass('disabled');
-        $(".active").removeClass('active');
-      }
-      // showing value of chosen event on dropdown button
-      $("#dropdownMenuButton").html($(this).text() + "&nbsp;" + "<span class='caret'></span>");
+    // outputting the rooms according to event type
+    $.getJSON('/eventrooms', function(data){
+      $.each(data, function(key, value){
+        if (eventType == value.eventName){
+          // found match - now output rooms
+          $.each(value.rooms, function(key2, value2){
+            $("<button type='button' class='btn btn-warning event-button' id='" + value2.roomId + "'>" + value2.roomName + "</button>").appendTo("#roomList");
+          });
+          return false;
+        }
+      });
 
-      // Matching events to rooms
-      const value = $(this).text();
-      $('#room-selection').val("");
-      if (value == "Birthday Party"){
-        $("#classroom").addClass('active');
-        $("#dining").addClass('active');
-        $('#room-selection').val($('#room-selection').val() + $("#classroom").data('name'));
-        $('#room-selection').val($('#room-selection').val() + ", " + $("#dining").data('name'));
-      }
-      else if (value == "Computer Class"){
-        $("#it-suite").addClass('active');
-        $("#classroom").addClass('active');
-        $('#room-selection').val($('#room-selection').val() + $("#it-suite").data('name'));
-        $('#room-selection').val($('#room-selection').val() + ", " + $("#classroom").data('name'));
-      }
-      else if (value == "Football Match"){
-        $("#astro").addClass('active');
-        $("#football").addClass('active');
-        $('#room-selection').val($('#room-selection').val() + $("#astro").data('name'));
-        $('#room-selection').val($('#room-selection').val() + ", " + $("#football").data('name'));
-      }
-      else if (value == "Pantomime"){
-        $("#p-arts").addClass('active');
-        $("#theatre").addClass('active');
-        $('#room-selection').val($('#room-selection').val() + $("#p-arts").data('name'));
-        $('#room-selection').val($('#room-selection').val() + ", " + $("#theatre").data('name'));
-      }
-      else if (value == "Custom"){
-        $(".event-button").removeClass('disabled');
-        customSelected = true;
-      }
-      $(".active").addClass('disabled');
+      $(".event-button").on('click', function(){
+
+        const id = $(this).attr('id');
+        // getting the price of the room
+        let textData = $('#room-selection').val();
+        const roomName = $(this).text();
+
+        $.getJSON('/roomprices', function(data){
+          $.each(data, function(key, value){
+            if (roomName == key){
+              let price = value.price;
+              let originalPrice = $("#show-price").text(); // price before newly clicked room added
+
+              if (originalPrice == "£"){
+                originalPrice = 0;
+              }
+              else {
+                // remove pound sign and convert to int
+                originalPrice = originalPrice.substring(1, originalPrice.length);
+                originalPrice = parseFloat(originalPrice);
+              }
+
+              // if clicked, make active and vice versa; add rooms to selection box
+              if ($("#" + id).hasClass('active')){
+                // unselected
+                $("#" + id).removeClass('active');
+                $('#room-selection').val(textData.replace(($("#" + id).text() + ","), ""));
+
+                // now subtract current from original
+                price = originalPrice - price;
+                if (price < 1){
+                  $("#div-price").hide(500);
+                  price = 0;
+                  originalPrice = 0;
+                  $("#show-price").text("£");
+                }
+                else {
+                  if (price.toString().length > 2){
+                    price = Math.round(price) - 0.01;
+                  }
+                  else {
+                    price = price - 0.01;
+                  }
+                  $("#show-price").text("£" + price);
+                }
+              }
+              else {
+                // selected
+                $("#" + id).addClass('active');
+
+                const time = getEndTime() - getStartTime();
+
+                // add price to original price
+                if (originalPrice < 1){
+                  $("#show-price").append(Math.round(price * time) - 0.01);
+                }
+                else {
+                  price = price * time;
+                  price = originalPrice + price;
+                  price = Math.round(price) - 0.01;
+                  $("#show-price").text("£" + price);
+                }
+                $("#div-price").show(500);
+
+                if (textData){
+                  $('#room-selection').val(textData + $("#" + id).text() + ", ");
+                }
+                else{
+                  $('#room-selection').val($("#" + id).text() + ", ");
+                }
+              }
+              return false;
+            }
+          });
+        });
+      });
     });
-  });
+  }
 
   // validating the form inputs
   $("#name").on('input', function(){
@@ -233,7 +310,6 @@ $(document).ready(function(){
 
     return false;
 
-  });
 });
 
 
@@ -247,28 +323,32 @@ function postEvent(){
     type:"POST",
     url: "http://127.0.0.1:1010/events",
     data: JSON.stringify({
-      "name":$('#name').val(),
-      "email":$('#emailaddress').val(),
-      "telephone":$('#phone').val(),
-      "date":$('#date').val(),
-      "timeFrom":$('#start-time').val(),
-      "timeUntil":$('#end-time').val(),
-      "rooms":$('#room-selection').val()
+      "name": $('#name').val(),
+      "email": $('#emailaddress').val(),
+      "telephone": $('#phone').val(),
+      "title": $('#title').val(),
+      "description": $("#description").val(),
+      "date": $('#date').val(),
+      "timeFrom": $('#start-time').val(),
+      "timeUntil": $('#end-time').val(),
+      "private": $("#private").prop("checked"), // not sure about this
+      "rooms": $('#room-selection').val(),
+      "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) // not sure if this works
     }),
     contentType:"application/json; charset=utf-8",
     dataType:"json",
     success: function(data){
-      if(data["response"] === true){
+      if(data.response === true){
         alert("Booking created!");
-      }else{
+      }
+      else{
         alert("Clash detected, booking not made.");
       }
     },
     error: function(){
       alert("Booking not made, ensure all data has been enterted correctly.");
     }
-
   });
-
   return false;
 }
+
