@@ -1,5 +1,14 @@
 //load facilities
 $(function(){  
+    
+    /*$(function(){
+        $("body").prepend("<div id='header'></div>");
+        $("body").append("<div id='footer'></div>");
+        $("#header").load("includes/header.html");
+        $("#footer").load("includes/footer.html");
+    });*/
+    
+    
 
     //load drop down of options
     $.get("/activities", function(data){

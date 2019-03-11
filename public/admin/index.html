@@ -12,7 +12,7 @@
         
     <div class="container my-5">        
         <div class="row">
-            <h2 class="col-12">Activities</h2>
+            <h2 class="col-12">Admin Login</h2>
         </div>
         
          <form class="form" target="_blank" class="form-horizontal" id="activitiesForm" action="/activities" enctype="multipart/form-data" method="POST" >
@@ -28,43 +28,6 @@
                   </div>
                 </div>
              </div>
-
-
-            <div class="d-none" id="activityDetails">
-                
-                <input id="id" type='hidden' name="activityId" class="form-control">
-             
-                <div class="row form-group">
-                    <label for="name" class="control-label col-12">Activity Name:</label>
-                    <div class="col-sm-12">
-                      <input id="name" type="text" name="activityName" class="form-control" required>
-                    </div>
-                  </div>
-
-                  <div class="row form-group" id="quillFormGroup">
-                    <label for="description" class="control-label col-12">Activity Description</label>
-                    <div class="col-sm-12">
-                        <input id="description" type="text" name="activityDescription" class="form-control" required>
-                    </div>
-                  </div>
-
-                
-                <div class="row form-group">
-                    <label for="imagePath" class="control-label col-12">New image (optional):</label>
-                    <div class="col-sm-12">
-                      <input id="image" type="file" accept="image/*" name="image" >
-                    </div>
-                  </div>
-                
-                    <div class="row form-group">
-                    <div class="col-12">
-                      <input name="submit" type="submit" value="Submit" class="btn btn-dark" id="submitButton">
-                        
-                        <input name="submit" type="submit" value="Delete" class="btn btn-danger" id="submitButton">
-                    </div>
-                  </div>
-                
-            </div>
 
         </form>
         
@@ -129,7 +92,6 @@
         
 		<script src="../js/scripts.js"></script>
         <script src="js/admin.js"></script>
-        <!-- Include the Quill library -->
 
 	</body>
 </html>
