@@ -227,6 +227,7 @@ $(document).ready(function(){
                   $('#room-selection').val($("#" + id).text() + ", ");
                 }
               }
+              return false;
             }
           });
         });
