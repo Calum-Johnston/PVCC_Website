@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Mar 10, 2019 at 05:36 PM
+-- Generation Time: Mar 11, 2019 at 03:40 PM
 -- Server version: 5.7.24
 -- PHP Version: 7.2.14
 
@@ -42,9 +42,9 @@ CREATE TABLE IF NOT EXISTS `activities` (
 --
 
 INSERT INTO `activities` (`activityId`, `activityName`, `activityDescription`, `activityImage`) VALUES
-(1, 'Fast Feet Football Academy', 'Fast Feet Football Academy formed in January 2013 with the aim of helping children maximise their potential and become as comfortable and competent with the football as possible. Our methods are suitable for all ages and abilities but specifically players aged 3 to 16.\r\n\r\nOur emphasis is based on each child’s long term individual development, focusing on individual skill development and small group play, improving every player regardless of age or ability.  Players are encouraged to express themselves, be creative and most importantly, to be instinctive and spontaneous in their play.\r\n\r\nTo book 3 taster sessions for the price of 2, please contact us on 0191 4813469.', 'fastfeet.jpg'),
-(2, 'Children’s Gymnastics Coaching', 'Our Gymnastics coaching is an ideal way of introducing your child to the activity, involving them physically and for them to meet new friends.\r\n\r\nHead Coach Lyn Armstrong has been coaching young people for over 25 years and has a wealth of experience and many of her previous young pupils have gone on to take both their coaching badges and to help organise the sessions. Those young people who attend the classes are given the opportunity to gain various B.A.G.A. awards and badges.\r\n\r\nIn addition to the courses we operate there are regular special coaching classes (Taster Sessions) organised for the School holiday periods and details will be shown on this website.\r\n\r\nNext set of classes commence in January 2016, why not check out availability on current courses.\r\n', 'gymnastics.jpg'),
-(3, 'Dance Moves', 'A great class.', 'dancemoves.jpg');
+(1, 'Fast Feet Football Academy', 'Fast Feet Football Academy formed in January 2013 with the aim of helping children maximise their potential and become as comfortable and competent with the football as possible. Our methods are suitable for all ages and abilities but specifically players aged 3 to 16.\r\n\r\nOur emphasis is based on each child’s long term individual development, focusing on individual skill development and small group play, improving every player regardless of age or ability.  Players are encouraged to express themselves, be creative and most importantly, to be instinctive and spontaneous in their play.\r\n\r\nTo book 3 taster sessions for the price of 2, please contact us on 0191 4813469.', '/activities/1.jpg'),
+(2, 'Children’s Gymnastics Coaching', 'Our Gymnastics coaching is an ideal way of introducing your child to the activity, involving them physically and for them to meet new friends.Head Coach Lyn Armstrong has been coaching young people for over 25 years and has a wealth of experience and many of her previous young pupils have gone on to take both their coaching badges and to help organise the sessions. Those young people who attend the classes are given the opportunity to gain various B.A.G.A. awards and badges.In addition to the courses we operate there are regular special coaching classes (Taster Sessions) organised for the School holiday periods and details will be shown on this website.Next set of classes commence in January 2016, why not check out availability on current courses.', '/activities/2.jpg'),
+(3, 'Dance Moves', 'A great class.', '/activities/3.jpg');
 
 -- --------------------------------------------------------
 
