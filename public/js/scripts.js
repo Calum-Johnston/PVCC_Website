@@ -75,7 +75,6 @@ $(document).ready(function(){
   });
 
   $("#start-time").on('click', function(){
-    console.log($("#show-price").text());
     $("#time-error").hide(500);
     $("#submitButton").removeClass('disabled');
 
@@ -97,9 +96,24 @@ $(document).ready(function(){
     $("#end-time").removeAttr("disabled");
   });
 
+  $("#start-time").on('input', function(){
+    recalculatePrice();
+  });
+
   $("#end-time").on('click', function(){
     $("#time-error").hide(500);
     $("#submitButton").removeClass('disabled');
+
+    const originalTime = getEndTime();
+    $("#end-time").on('input', function(){
+      const newTime = getEndTime();
+      if (newTime - originalTime > 0){
+        recalculatePrice("higher");
+      }
+      else{
+        recalculatePrice("lower");
+      }
+    });
   });
 
   function getStartTime(){
@@ -116,6 +130,30 @@ $(document).ready(function(){
     let endMinute = parseInt(endTime.substring(3, 5));
     endTime = endHour + (endMinute/60);
     return endTime;
+  }
+
+  function recalculatePrice(difference){
+
+    let time = getEndTime() - getStartTime();
+    if (time > 0){
+      if ($("#div-price").is(":visible")){
+        $("#show-price").show(500);
+        let price = $("#show-price").text();
+        price = price.substring(1, price.length);
+        price = parseFloat(price);
+        if (difference == "higher"){
+          price = price * time;
+          price = Math.round(price) - 0.01;
+        }
+        else {
+          console.log("what now?");
+        }
+        $("#show-price").text("£" + price);
+      }
+    }
+    else{
+      $("#show-price").hide(500);
+    }
   }
 
   // disabling and enabling checkboxes
@@ -203,11 +241,15 @@ $(document).ready(function(){
               else {
                 // selected
                 $("#" + id).addClass('active');
+
+                const time = getEndTime() - getStartTime();
+
                 // add price to original price
                 if (originalPrice < 1){
-                  $("#show-price").append(price);
+                  $("#show-price").append(Math.round(price * time) - 0.01);
                 }
                 else {
+                  price = price * time;
                   price = originalPrice + price;
                   price = Math.round(price) - 0.01;
                   $("#show-price").text("£" + price);
