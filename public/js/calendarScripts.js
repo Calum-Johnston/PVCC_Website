@@ -2,8 +2,52 @@
 ##########Full calendar javascript##########
 ###Made by Tom, added by Peter 31/01/2019###
 ###########################################*/
+var nameDict = {}
 
 $( document ).ready(function() {
+
+    $.get("/facilities", function(data){
+
+      $('#dropdown-menu').html(" ");
+
+      for (i = 0; i < data.length; i++){
+        if (data[i] == "undefined"){
+          alert("Data incorrectly loaded");
+          break;
+        }else{
+
+          var roomID = data[i].roomId.toString();
+          var roomName = data[i].roomName;
+          var roomType = data[i].roomType;
+
+          nameDict[roomID] = roomName;
+
+
+          //select based on room type in row
+          switch(roomType){
+            case "sports":
+              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#dropdown-menu .sportsDropDown");
+              break;
+            case "technology":
+              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#dropdown-menu .techDropDown");
+              break;
+            case "arts":
+              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#dropdown-menu .artsDropDown");
+              break;
+            case "misc":
+              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#dropdown-menu .miscDropDown");
+              break;
+            default:
+              alert("No valid room type found");
+          }
+        }
+      }
+      console.log(nameDict);
+
+
+    })
+
+
     $('#calendar').fullCalendar({
         columnFormat: 'ddd D/M',
         defaultView: 'agendaWeek',
@@ -27,7 +71,7 @@ $( document ).ready(function() {
                     dow: [ 0, 1, 2, 3, 4, 5, 6]
             },
         events: {
-            url: "http://127.0.0.1:1010/events/astroturf",
+            url: "http://127.0.0.1:1010/events/1",
         },
         eventBackgroundColor: "rgb(255, 201, 45)",
         eventTextColor: "black",
@@ -52,8 +96,6 @@ function changeRooms(room) {
     $("#calendar").fullCalendar('addEventSource', newSource);
     $('#calendar').fullCalendar( 'refetchEvents' );
 }
-
-var nameDict = {"astro-turf" : "Astro Turf", "football-pitch" : "Football Pitch", "performing-arts" : "Performing Arts", "theatre" : "Theatre", "it-suite" : "IT Suite", "class-room" : "Class Room", "dining-hall" : "Dining Hall" }
 
 $(document).on('click', '.dropdown-item', function() {
     changeRooms(nameDict[$(this).attr('id')]);

@@ -297,6 +297,7 @@ app.get('/events/:room', function(req, resp){
 app.get("/facilities", function(req, resp){
   con.query("SELECT * FROM rooms", function (err, result, fields) {
     if (err) throw err;
+      console.log("Returning facilities data");
       resp.send(result);
     });
 });
@@ -333,7 +334,7 @@ app.get("/activities/:id", function(req, resp){
     if (activityId != "undefined"){
             var sql = "SELECT * FROM activities WHERE activityId="+activityId
             con.query(sql, function (err, result, fields) {
-              if (err) throw err; 
+              if (err) throw err;
               resp.send(result);
           });
     }
@@ -357,13 +358,13 @@ var upload = multer({ storage: storage })
 
 
 
-//insert an activity 
-app.post('/activities', upload.single('image'), (req, resp) => {   
+//insert an activity
+app.post('/activities', upload.single('image'), (req, resp) => {
     var activityId = req.body.activityId;
     var activityName = req.body.activityName;
     var activityDescription = req.body.activityDescription;
     var image = req.file;
-    
+
     var sql = ""
     if (req.body.submit == "Submit"){
         //insert new activity if it does't already exist
@@ -375,31 +376,31 @@ app.post('/activities', upload.single('image'), (req, resp) => {
             sql = "UPDATE activities SET activityName = '" +  activityName + "', activityDescription = '" +  activityDescription + "', activityImage = '" +  image.filename + "'   WHERE activityId = " + activityId
         } else if (activityId != 0 && !image){
             sql = "UPDATE activities SET activityName = '" +  activityName + "', activityDescription = '" +  activityDescription + "' WHERE activityId = " + activityId
-        } 
+        }
     } else if (req.body.submit == "Delete") {
         sql = "DELETE FROM activities WHERE activityId = " + activityId
     }
 
     con.query(sql, function (err, result, fields) {
       if (err) throw err;
-        
+
         resp.redirect("/activities.html")
-        
+
     });
-    
+
 });
 
 
 
 //insert a facilitiy
-app.post('/facilities', upload.single('image'), (req, resp) => {   
+app.post('/facilities', upload.single('image'), (req, resp) => {
     var facilityId = req.body.facilityId;
     var facilityName = req.body.facilityName;
     var facilityDescription = req.body.facilityDescription;
     var image = req.file;
     var facilityType = req.body.facilityType;
     var facilityPrice = req.body.facilityPrice;
-    
+
     var sql = ""
     if (req.body.submit == "Submit"){
         //insert new activity if it does't already exist
@@ -411,7 +412,7 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
             sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomImage = '" +  image.filename + "', roomType = '" +  facilityType + "', roomPrice = '" +  roomPrice + "'   WHERE roomId = " + activityId
         } else if (activityId != 0 && !image){
             sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomType = '" +  facilityType + "', roomPrice = '" +  roomPrice + "'   WHERE roomId = " + activityId
-        } 
+        }
     } else if (req.body.submit == "Delete") {
         sql = "DELETE FROM rooms WHERE roomId = " + activityId
     }
@@ -420,11 +421,11 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
       if (err) throw err;
         console.log(result)
         console.log(sql)
-        
+
         resp.redirect("/facilities.html")
-        
+
     });
-    
+
 });
 
 
@@ -588,6 +589,7 @@ function createEvent(eventInfo){
     };
 
     for(i = 0; i < rooms.length; i ++){
+      consolel.log("Trying to push to events dictionary...");
       eventsDict[rooms[i]].push(eventCalendarObj);
     }
 
