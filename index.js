@@ -223,9 +223,13 @@ app.post('/events', function(req, resp){
     "name": req.body.name,
     "email": req.body.email,
     "telephone": req.body.telephone,
+    "title": req.body.title,
+    "description": req.body.description,
     "dateTimeStart": (new Date(req.body.date + " " + req.body.timeFrom)).toISOString(),
     "dateTimeEnd": (new Date(req.body.date + " " + req.body.timeUntil)).toISOString(),
-    "rooms": req.body.rooms
+    "private": req.body.private,
+    "rooms": req.body.rooms,
+    "price": req.body.price
   };
 
   // Validates the captcha (** NOT WORKING **)
@@ -545,9 +549,9 @@ function createEvent(eventInfo){
 
   // Creates the event object
   var eventObj = {
-    'summary': 'Example event',
+    'summary': eventInfo.title,
     'location': eventInfo.rooms,
-    'description': 'Test event',
+    'description': eventInfo.description,
     'start': {
       'dateTime': eventInfo.dateTimeStart,
       'timeZone': 'Europe/London',
@@ -585,7 +589,8 @@ function createEvent(eventInfo){
     var eventCalendarObj = {
       title: eventObj.summary,
       start: eventInfo.dateTimeStart,
-      end: eventInfo.dateTimeEnd
+      end: eventInfo.dateTimeEnd,
+      private: eventInfo.private //tracks whether or not the new event is private
     };
 
     for(i = 0; i < rooms.length; i ++){
@@ -675,10 +680,6 @@ function intersectArrays(a, b) {
         return b.indexOf(e) > -1;
     });
 }
-
-
-
-
 
 
 

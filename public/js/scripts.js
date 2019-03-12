@@ -331,9 +331,9 @@ function postEvent(){
       "date": $('#date').val(),
       "timeFrom": $('#start-time').val(),
       "timeUntil": $('#end-time').val(),
-      "private": $("#private").prop("checked"), // not sure about this
+      "private": $("#private").prop("checked"), //returns if yes tickbox is ticked
       "rooms": $('#room-selection').val(),
-      "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) // not sure if this works
+      "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) //returns total price, formatted as a float
     }),
     contentType:"application/json; charset=utf-8",
     dataType:"json",
