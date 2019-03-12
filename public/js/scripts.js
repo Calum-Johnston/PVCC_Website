@@ -37,9 +37,9 @@ $(".carousel-control-prev").on("click", function(){
     $('.carousel').carousel('prev');
  });
 
-/*###########################
-######Back end STUFF#########
-############################*/
+/*###############################
+######Booking form stuff#########
+###############################*/
 
 $(document).ready(function(){
 
@@ -351,4 +351,3 @@ function postEvent(){
   });
   return false;
 }
-

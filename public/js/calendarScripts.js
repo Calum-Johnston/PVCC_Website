@@ -8,8 +8,6 @@ $( document ).ready(function() {
 
     $.get("/facilities", function(data){
 
-      $('#dropdown-menu').html(" ");
-
       for (i = 0; i < data.length; i++){
         if (data[i] == "undefined"){
           alert("Data incorrectly loaded");
@@ -26,16 +24,16 @@ $( document ).ready(function() {
           //select based on room type in row
           switch(roomType){
             case "sports":
-              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#dropdown-menu .sportsDropDown");
+              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#sportsDropDown");
               break;
             case "technology":
-              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#dropdown-menu .techDropDown");
+              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#techDropDown");
               break;
             case "arts":
-              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#dropdown-menu .artsDropDown");
+              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#artsDropDown");
               break;
             case "misc":
-              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#dropdown-menu .miscDropDown");
+              $('<a class="dropdown-item" id="' + roomID +'">' + roomName +'</a>').appendTo("#miscDropDown");
               break;
             default:
               alert("No valid room type found");
