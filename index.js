@@ -398,24 +398,25 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
     var facilityDescription = req.body.facilityDescription;
     var image = req.file;
     var facilityType = req.body.facilityType;
-    var facilityPrice = req.body.facilityPrice;
+    var facilityPrice = req.body.roomPrice;
     
     var sql = ""
     if (req.body.submit == "Submit"){
         //insert new activity if it does't already exist
-        if (activityId == 0 && image){
-            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, roomPrice) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '" +  image.filename + "', '" +  facilityType + "', '" +  facilityPrice + ")"
-        } else if (activityId == 0 && !image){
-            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, roomPrice) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '/facilities/default.jpg'', '" +  facilityType + "', '" +  facilityPrice + ")"
-        } else if (activityId != 0 && image){
-            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomImage = '" +  image.filename + "', roomType = '" +  facilityType + "', roomPrice = '" +  roomPrice + "'   WHERE roomId = " + activityId
-        } else if (activityId != 0 && !image){
-            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomType = '" +  facilityType + "', roomPrice = '" +  roomPrice + "'   WHERE roomId = " + activityId
+        if (facilityId == 0 && image){
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '" +  image.filename + "', '" +  facilityType + "', '" +  facilityPrice + ")"
+        } else if (facilityId == 0 && !image){
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '/facilities/default.jpg'', '" +  facilityType + "', '" +  facilityPrice + ")"
+        } else if (facilityId != 0 && image){
+            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomImage = '" +  image.filename + "', roomType = '" +  facilityType + "', price = '" +  facilityPrice + "'   WHERE roomId = " + facilityId
+        } else if (facilityId != 0 && !image){
+            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomType = '" +  facilityType + "', price = '" +  facilityPrice + "'   WHERE roomId = " + facilityId
         } 
     } else if (req.body.submit == "Delete") {
         sql = "DELETE FROM rooms WHERE roomId = " + activityId
     }
 
+    
     con.query(sql, function (err, result, fields) {
       if (err) throw err;
         console.log(result)

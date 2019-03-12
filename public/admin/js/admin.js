@@ -115,13 +115,16 @@ $(function(){
                 var roomName = data[0].roomName
                 var roomDescription = data[0].roomDescription
                 var roomId = data[0].roomId
+                var roomPrice = data[0].price
+                var roomType = data[0].roomType
 
-                console.log(roomName)
                 
                 //alert(data)
                 $('#id').val(roomId)
                 $('#name').val(roomName)
                 $('#description').val(roomDescription)
+                 $('#roomPrice').val(roomPrice)
+                 $('#roomType').val(roomType)
 
 
             })
