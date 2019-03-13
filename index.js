@@ -34,29 +34,14 @@ const inlineCss = require('inline-css');  // Writes CSS directly into HTML
 const mysql = require("mysql");
 
 
-
-
-
 /*#########################
          VARIABLES
 #########################*/
 
-// Variables hold event information
-var astroturfEvents = [];
-var footballpitchEvents = [];
-var performingartsEvents = [];
-var theatreEvents = [];
-var itsuiteEvents = [];
-var classroomEvents = [];
-var dininghallEvents = [];
 
-// Dictionary that stores the relationship between room name and array of events
-var eventsDict = {"Astro Turf" : astroturfEvents,  "Class Room" : classroomEvents, "Dining Hall" : dininghallEvents, "Football Pitch" : footballpitchEvents, "IT Suite" : itsuiteEvents, "Performing Arts" : performingartsEvents, "Theatre" : theatreEvents };
+//events dict stores arrays of events generated from the google calendar. Entries in the form: "roomname":[arrayOfEvents]
+var eventsDict = {}
 
-// Dictionary that stores the relationship between HTML names (sent via post requests) to actual location names
-var locationsDict = {"astroturf": "Astro Turf", "classroom":"Class Room", "dininghall":"Dining Hall", "footballpitch":"Football Pitch", "itsuite":"IT Suite", "performingarts":"Performing Arts", "theatre":"Theatre"};
-
-// Other variables
 var calendar;
 var authObj;
 var email;
@@ -275,9 +260,13 @@ app.post('/events', function(req, resp){
     "name": req.body.name,
     "email": req.body.email,
     "telephone": req.body.telephone,
+    "title": req.body.title,
+    "description": req.body.description,
     "dateTimeStart": (new Date(req.body.date + " " + req.body.timeFrom)).toISOString(),
     "dateTimeEnd": (new Date(req.body.date + " " + req.body.timeUntil)).toISOString(),
-    "rooms": req.body.rooms
+    "private": req.body.private,
+    "rooms": req.body.rooms,
+    "price": req.body.price
   };
 
   // Validates the captcha (** NOT WORKING **)
@@ -331,6 +320,12 @@ app.get('/delete-event/:id', function(req, resp){
   // Update website calendar to follow google calendar
 
 
+  for (var key in eventsDict){
+    //filters every array, removes event object if its ID = id of deleted google calendar event
+    eventsDict[key] = eventsDict[key].filter(function(value, index, arr){
+      return value["id"] != req.params.id;
+    });
+  };
   // Redirect user elsewhere
   return resp.redirect('/');
 });
@@ -339,7 +334,11 @@ app.get('/delete-event/:id', function(req, resp){
 // === DISPLAY CALENDAR ===
 // Handles full calendar events,
 app.get('/events/:room', function(req, resp){
-  resp.send(eventsDict[locationsDict[req.params.room]]);
+  console.log(req.params.room);
+  if (eventsDict[req.params.room] == undefined){
+    eventsDict[req.params.room] = [];
+  }
+  resp.send(eventsDict[req.params.room]);
 });
 
 
@@ -385,7 +384,7 @@ app.get("/activities/:id", function(req, resp){
     if (activityId != "undefined"){
             var sql = "SELECT * FROM activities WHERE activityId="+activityId
             con.query(sql, function (err, result, fields) {
-              if (err) throw err; 
+              if (err) throw err;
               resp.send(result);
           });
     }
@@ -415,13 +414,13 @@ var upload = multer({ storage: storage })
 
 
 
-//insert an activity 
-app.post('/activities', upload.single('image'), (req, resp) => {   
+//insert an activity
+app.post('/activities', upload.single('image'), (req, resp) => {
     var activityId = req.body.activityId;
     var activityName = req.body.activityName;
     var activityDescription = req.body.activityDescription.replace("\n", "<br />");
     var image = req.file;
-    
+
     var sql = ""
     if (req.body.submit == "Submit"){
         //insert new activity if it does't already exist
@@ -433,7 +432,7 @@ app.post('/activities', upload.single('image'), (req, resp) => {
             sql = "UPDATE activities SET activityName = '" +  activityName + "', activityDescription = '" +  activityDescription + "', activityImage = '" +  image.filename + "'   WHERE activityId = " + activityId
         } else if (activityId != 0 && !image){
             sql = "UPDATE activities SET activityName = '" +  activityName + "', activityDescription = '" +  activityDescription + "' WHERE activityId = " + activityId
-        } 
+        }
     } else if (req.body.submit == "Delete") {
         sql = "DELETE FROM activities WHERE activityId = " + activityId
         
@@ -450,22 +449,23 @@ app.post('/activities', upload.single('image'), (req, resp) => {
 
     con.query(sql, function (err, result, fields) {
       if (err) throw err;
-        
+
         resp.redirect("/activities.html")
-        
+
     });
 
-    
+
 });
 
 
 
 //insert a facilitiy
-app.post('/facilities', upload.single('image'), (req, resp) => {   
+app.post('/facilities', upload.single('image'), (req, resp) => {
     var facilityId = req.body.facilityId;
     var facilityName = req.body.facilityName;
     var facilityDescription = req.body.facilityDescription.replace("\n", "<br />");
     var image = req.file;
+
     var facilityType = req.body.roomType;
     var facilityPrice = req.body.roomPrice;
 
@@ -482,6 +482,7 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
         } else if (facilityId != 0 && !image){
             sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomType = '" +  facilityType + "', price = '" +  facilityPrice + "'   WHERE roomId = " + facilityId
         } 
+
     } else if (req.body.submit == "Delete") {
         sql = "DELETE FROM rooms WHERE roomId = " + facilityId
         
@@ -498,13 +499,13 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
 
     console.log(sql)
     con.query(sql, function (err, result, fields) {
-      if (err) throw err;        
-        resp.redirect("/facilities.html")
-        
-    });
-    
 
-    
+      if (err) throw err;        
+
+        resp.redirect("/facilities.html")
+
+    });
+
 });
 
 
@@ -551,9 +552,6 @@ app.get("/roomprices", function(req, resp){
 
 
 
-
-
-
 /*#########################
          FUNCTIONS
 #########################*/
@@ -596,8 +594,8 @@ function populateEvents(){
 
         // Gets a list of rooms from the event
         var rooms = event.location.split(', ');
-        // Remove any none room types
-        rooms.pop();
+        // Remove any none room types, not sure this is needed anymore
+        //  rooms.pop();
 
         var j;
 
@@ -605,18 +603,39 @@ function populateEvents(){
         var eventCalendarObj = {
           title: event.summary,
           start: event.start.dateTime,
-          end: event.end.dateTime
+          end: event.end.dateTime,
+          id: event.id
         };
+
+        //checks if the event is Private, sets title to private if it is
+        if (event.private == true){
+          eventCalendarObj["title"] = "Private Event";
+        }
 
         // Push event onto arrays corresponding to rooms booked
         for(j = 0; j < rooms.length - 1; j++){
-          eventsDict[rooms[j]].push(eventCalendarObj);
-          console.log(eventCalendarObj);
+          //set to lower case and remove whitespace
+          var room = rooms[j];
+          room = room.toLowerCase();
+          room = room.replace(/\s/g, '');
+
+          //check for empty string (end of array of google calendar)
+          if (room != null){
+
+            if (eventsDict[room] == undefined){
+              //set up dictionary entry
+              eventsDict[room] = [];
+            }
+            eventsDict[room].push(eventCalendarObj);
+
+          }
         }
+
 
       });
     }
   });
+
 }
 
 // Takes a JSON object with the event information and creates an event if the authentication is valid
@@ -624,9 +643,9 @@ function createEvent(eventInfo){
 
   // Creates the event object
   var eventObj = {
-    'summary': 'Example event',
+    'summary': eventInfo.title,
     'location': eventInfo.rooms,
-    'description': 'Test event',
+    'description': eventInfo.description,
     'start': {
       'dateTime': eventInfo.dateTimeStart,
       'timeZone': 'Europe/London',
@@ -635,6 +654,8 @@ function createEvent(eventInfo){
       'dateTime': eventInfo.dateTimeEnd,
       'timeZone': 'Europe/London',
     },
+     //use this google calendar event variable to track if event is private or not. True == Private, public otherwise
+    attendeesOmitted: eventInfo.private,
 
   };
 
@@ -652,8 +673,8 @@ function createEvent(eventInfo){
     return;
   }else{
 
-    console.log(event.data.id);
-    id = event.data.id;
+
+    var eventId = event.data.id;
     //If successful, add to Tom's array here!
 
     var rooms = eventInfo.rooms.split(', ');
@@ -664,11 +685,24 @@ function createEvent(eventInfo){
     var eventCalendarObj = {
       title: eventObj.summary,
       start: eventInfo.dateTimeStart,
-      end: eventInfo.dateTimeEnd
+      end: eventInfo.dateTimeEnd,
+      id: eventId
+
     };
 
+    if (eventInfo.private == true){
+      eventCalendarObj["title"] = "Private Event";
+    }
+
     for(i = 0; i < rooms.length; i ++){
-      eventsDict[rooms[i]].push(eventCalendarObj);
+      var room = rooms[i];
+      room = room.toLowerCase();
+      room = room.replace(/\s/g, '');
+
+      if (eventsDict[room] == undefined){
+        eventsDict[room] = [];
+      }
+      eventsDict[room].push(eventCalendarObj);
     }
 
   }
@@ -707,13 +741,22 @@ function validateEvent(newEventInfo, resp){
       events.map((event, i) => {
         //get the list of rooms of current event being evaluated
         const rooms = event.location.split(', ');
-
+        rooms.pop();
+        
+        for (var i = 0; i < rooms.length; i++){
+          console.log(rooms[i]);
+        }
         //intersect the two room arrays to see if they are booking taken rooms
-        var matchingRooms = intersectArrays(requestedRooms, rooms);
+        console.log("Requested rooms: " + requestedRooms);
+        console.log("Events rooms: " + rooms);
+        //var matchingRooms = intersectArrays(requestedRooms, rooms);
+        const matched = requestedRooms.some(r=> rooms.includes(r));
+        console.log("Matched rooms:" + matched);
 
         //if there is more than 0 matching rooms then there is a clash
-        if (matchingRooms.length > 0){
+        if (matched == true){
           //if time and room clash is found
+
           console.log("Booking clash detected.");
           clashDiscovered = true;
           resp.send({"response": false});
@@ -753,10 +796,6 @@ function intersectArrays(a, b) {
         return b.indexOf(e) > -1;
     });
 }
-
-
-
-
 
 
 
@@ -848,6 +887,7 @@ function getEmailData(){
 
 // Function called to start the server after authorisation has occured **REQUIRED**
 function startServer(auth){
+
   calendar = google.calendar({version: 'v3', auth});
   authObj = auth;
 
