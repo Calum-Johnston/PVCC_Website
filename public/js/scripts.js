@@ -48,6 +48,8 @@ $(document).ready(function(){
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
   $("#div-price").hide();
+  $('#paypal-button-container').hide();
+
 
   // loading the event types into dropdown box and dynamically selecting rooms when an event is selected
   $.getJSON('/eventrooms', function(data){
@@ -313,7 +315,8 @@ $(document).ready(function(){
     }
 
     if (bookingValid){
-      postEvent();
+      $('#submitButton').hide();
+      $('#paypal-button-container').show();
     }
     return false;
 });
@@ -356,3 +359,32 @@ function postEvent(){
   });
   return false;
 }
+
+/* ##########################
+##PAYMENT STUFF##
+###########################*/
+
+paypal.Buttons({
+  createOrder: function(data, actions){
+    // Set up the transaction
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          value: totalCost
+        }
+      }]
+    });
+  },
+  onApprove: function(data, actions){
+    // Capture the funds from the transaction
+    return actions.order.capture().then(function(details){
+      alert('Transaction completed by ' + details.payer.name.given_name);  
+      postEvent();
+    });
+  },
+  onError: function(error){
+    console.log('Invalid Payment' + error);
+    postEvent();
+  }
+}).render('#paypal-button-container');
+
