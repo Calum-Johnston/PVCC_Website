@@ -30,9 +30,6 @@ const mysql = require("mysql");
 
 
 
-
-
-
 /*#########################
          VARIABLES
 #########################*/
@@ -525,8 +522,8 @@ function populateEvents(){
         };
 
         //checks if the event is Private, sets title to private if it is
-        if (event.private){
-          eventCalendarObj[title] = "Private Event";
+        if (event.private == true){
+          eventCalendarObj["title"] = "Private Event";
         }
 
         // Push event onto arrays corresponding to rooms booked
@@ -589,7 +586,7 @@ function createEvent(eventInfo){
   }else{
 
     console.log(event.data.id);
-    id = event.data.id;
+    var id = event.data.id;
     //If successful, add to Tom's array here!
 
     var rooms = eventInfo.rooms.split(', ');
@@ -601,12 +598,22 @@ function createEvent(eventInfo){
       title: eventObj.summary,
       start: eventInfo.dateTimeStart,
       end: eventInfo.dateTimeEnd,
-      private: eventInfo.private //tracks whether or not the new event is private
+
     };
 
+    if (eventInfo.private == true){
+      eventCalendarObj["title"] = "Private Event";
+    }
+
     for(i = 0; i < rooms.length; i ++){
-      consolel.log("Trying to push to events dictionary...");
-      eventsDict[rooms[i]].push(eventCalendarObj);
+      var room = rooms[i];
+      room = room.toLowerCase();
+      room = room.replace(/\s/g, '');
+
+      if (eventsDict[room] == undefined){
+        eventsDict[room] = [];
+      }
+      eventsDict[room].push(eventCalendarObj);
     }
 
   }
