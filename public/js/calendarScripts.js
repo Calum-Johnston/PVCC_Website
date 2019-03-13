@@ -69,7 +69,7 @@ $( document ).ready(function() {
                     dow: [ 0, 1, 2, 3, 4, 5, 6]
             },
         events: {
-            url: "http://127.0.0.1:1010/events/1",
+            url: "http://127.0.0.1:1010/events/astroturf",
         },
         eventBackgroundColor: "rgb(255, 201, 45)",
         eventTextColor: "black",

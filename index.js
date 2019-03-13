@@ -37,22 +37,10 @@ const mysql = require("mysql");
          VARIABLES
 #########################*/
 
-// Variables hold event information
-var astroturfEvents = [];
-var footballpitchEvents = [];
-var performingartsEvents = [];
-var theatreEvents = [];
-var itsuiteEvents = [];
-var classroomEvents = [];
-var dininghallEvents = [];
 
-// Dictionary that stores the relationship between room name and array of events
-var eventsDict = {"Astro Turf" : astroturfEvents,  "Class Room" : classroomEvents, "Dining Hall" : dininghallEvents, "Football Pitch" : footballpitchEvents, "IT Suite" : itsuiteEvents, "Performing Arts" : performingartsEvents, "Theatre" : theatreEvents };
+//events dict stores arrays of events generated from the google calendar. Entries in the form: "roomname":[arrayOfEvents]
+var eventsDict = {}
 
-// Dictionary that stores the relationship between HTML names (sent via post requests) to actual location names
-var locationsDict = {"astroturf": "Astro Turf", "classroom":"Class Room", "dininghall":"Dining Hall", "footballpitch":"Football Pitch", "itsuite":"IT Suite", "performingarts":"Performing Arts", "theatre":"Theatre"};
-
-// Other variables
 var calendar;
 var authObj;
 var email;
@@ -291,7 +279,11 @@ app.get('/delete-event/:id', function(req, resp){
 // === DISPLAY CALENDAR ===
 // Handles full calendar events,
 app.get('/events/:room', function(req, resp){
-  resp.send(eventsDict[locationsDict[req.params.room]]);
+  console.log(req.params.room);
+  if (eventsDict[req.params.room] == undefined){
+    eventsDict[req.params.room] = [];
+  }
+  resp.send(eventsDict[req.params.room]);
 });
 
 
@@ -301,7 +293,6 @@ app.get('/events/:room', function(req, resp){
 app.get("/facilities", function(req, resp){
   con.query("SELECT * FROM rooms", function (err, result, fields) {
     if (err) throw err;
-      console.log("Returning facilities data");
       resp.send(result);
     });
 });
@@ -521,8 +512,8 @@ function populateEvents(){
 
         // Gets a list of rooms from the event
         var rooms = event.location.split(', ');
-        // Remove any none room types
-        rooms.pop();
+        // Remove any none room types, not sure this is needed anymore
+        //  rooms.pop();
 
         var j;
 
@@ -530,13 +521,31 @@ function populateEvents(){
         var eventCalendarObj = {
           title: event.summary,
           start: event.start.dateTime,
-          end: event.end.dateTime
+          end: event.end.dateTime,
         };
+
+        //checks if the event is Private, sets title to private if it is
+        if (event.private){
+          eventCalendarObj[title] = "Private Event";
+        }
 
         // Push event onto arrays corresponding to rooms booked
         for(j = 0; j < rooms.length - 1; j++){
-          eventsDict[rooms[j]].push(eventCalendarObj);
-          console.log(eventCalendarObj);
+          //set to lower case and remove whitespace
+          var room = rooms[j];
+          room = room.toLowerCase();
+          room = room.replace(/\s/g, '');
+
+          //check for empty string (end of array of google calendar)
+          if (room != null){
+
+            if (eventsDict[room] == undefined){
+              //set up dictionary entry
+              eventsDict[room] = [];
+            }
+            eventsDict[room].push(eventCalendarObj);
+
+          }
         }
 
       });
@@ -560,6 +569,8 @@ function createEvent(eventInfo){
       'dateTime': eventInfo.dateTimeEnd,
       'timeZone': 'Europe/London',
     },
+     //use this google calendar event variable to track if event is private or not. True == Private, public otherwise
+    attendeesOmitted: eventInfo.private,
 
   };
 
@@ -770,6 +781,14 @@ function getEmailData(){
 
 // Function called to start the server after authorisation has occured **REQUIRED**
 function startServer(auth){
+
+  var testDict = {1:"yes"};
+  if (testDict[2] != undefined){
+    console.log("oh yes");
+  }else{
+    console.log("Yes");
+  }
+
   calendar = google.calendar({version: 'v3', auth});
   authObj = auth;
 
