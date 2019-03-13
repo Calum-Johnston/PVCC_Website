@@ -16,8 +16,6 @@ const express = require('express');
 const readline = require('readline');
 const bodyParser = require('body-parser');
 
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
 const jwt = require('jwt-simple');
 
 const ADMIN = 'admin';
