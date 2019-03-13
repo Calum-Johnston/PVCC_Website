@@ -116,8 +116,11 @@ $(function(){
                 $('#name').val(roomName)
                 $('#description').val(roomDescription)
                  $('#roomPrice').val(roomPrice)
-                 $('#roomType').val(roomType)
-
+                 
+                 $('#roomType').children("option").each(function () {
+                    $(this).removeAttr("selected")
+                });
+                $('#roomType #'+roomType).attr("selected", "selected")
 
             })
         } else {
@@ -138,12 +141,11 @@ $(function(){
     $('#adminLoginForm').on('submit', function(){        
         $.post("/login", {password: $("#adminKey").val()}, function(data) {
               var d = new Date();
-              d.setTime(d.getTime() + 30*60*1000);
+              d.setTime(d.getTime() + 10*60*1000);
               var expires = "expires="+ d.toUTCString();
               document.cookie = "adminToken=" + data + ";" + expires + ";path=/admin";
-                alert("cookies; " + document.cookie)
+                window.location.href = "/admin";
             });
-        window.location.replace("/admin");
         return false;
     });
     
