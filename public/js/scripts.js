@@ -7,6 +7,9 @@
 /* jshint devel: true */
 //sam stuff
 
+// Variable stores price
+var totalCost = 0;
+
 //from sitepoint || src: https://www.sitepoint.com/url-parameters-jquery/
 $.urlParam = function(name){
     var results = new RegExp('[\?&]' + name + '=([^[?|?]*]*)').exec(window.location.href);
@@ -18,8 +21,6 @@ $.urlParam = function(name){
     }
 };
 //end
-
-//carousel controls
 
 //load header and footer
 $(function(){
@@ -56,11 +57,15 @@ $(document).ready(function(){
     });
 
     $(".event").on('click', function(e){
+
+      // Resets price
+      totalCost = 0;
+
       e.preventDefault();
 
       // hide and reset price when selecting new event
       $("#div-price").hide();
-      $("#show-price").text("£");
+      $("#show-price").text("");
 
       $("#submitButton").removeClass('disabled');
 
@@ -173,17 +178,7 @@ $(document).ready(function(){
         $.getJSON('/roomprices', function(data){
           $.each(data, function(key, value){
             if (roomName == key){
-              let price = value.price;
-              let originalPrice = $("#show-price").text(); // price before newly clicked room added
-
-              if (originalPrice == "£"){
-                originalPrice = 0;
-              }
-              else {
-                // remove pound sign and convert to int
-                originalPrice = originalPrice.substring(1, originalPrice.length);
-                originalPrice = parseFloat(originalPrice);
-              }
+              var price = value.price;
 
               // if clicked, make active and vice versa; add rooms to selection box
               if ($("#" + id).hasClass('active')){
@@ -192,21 +187,18 @@ $(document).ready(function(){
                 $('#room-selection').val(textData.replace(($("#" + id).text() + ","), ""));
 
                 // now subtract current from original
-                price = originalPrice - price;
-                if (price < 1){
+                totalCost -= price;
+                if (totalCost < 1){
                   $("#div-price").hide(500);
-                  price = 0;
-                  originalPrice = 0;
-                  $("#show-price").text("£");
                 }
                 else {
                   if (price.toString().length > 2){
-                    price = Math.round(price) - 0.01;
+                    totalCost = Math.round(totalCost) - 0.01;
                   }
                   else {
-                    price = price - 0.01;
+                    totalCost = totalCost - 0.01;
                   }
-                  $("#show-price").text("£" + price);
+                  $("#show-price").text("£" + totalCost);
                 }
               }
               else {
@@ -215,15 +207,16 @@ $(document).ready(function(){
 
                 const time = getEndTime() - getStartTime();
 
+                price = price * time;
+                totalCost += price;
+
                 // add price to original price
-                if (originalPrice < 1){
-                  $("#show-price").append(Math.round(price * time) - 0.01);
+                if (totalCost < 1){
+                  $("#show-price").append(Math.round(totalCost * time) - 0.01);
                 }
                 else {
-                  price = price * time;
-                  price = originalPrice + price;
-                  price = Math.round(price) - 0.01;
-                  $("#show-price").text("£" + price);
+                  totalCost = Math.round(totalCost) - 0.01;
+                  $("#show-price").text("£" + totalCost);
                 }
                 $("#div-price").show(500);
 
@@ -325,8 +318,6 @@ $(document).ready(function(){
     return false;
 });
 
-var price = parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length));
-
 /* ##########################
 ##Google Calendar API Stuff##
 ###########################*/
@@ -353,6 +344,7 @@ function postEvent(){
     success: function(data){
       if(data.response === true){
         alert("Booking created!");
+        console.log(price);
       }
       else{
         alert("Clash detected, booking not made.");
