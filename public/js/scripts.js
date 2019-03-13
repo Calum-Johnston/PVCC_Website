@@ -48,6 +48,8 @@ $(document).ready(function(){
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
   $("#div-price").hide();
+  $('#paypal-button-container').hide();
+
 
   // loading the event types into dropdown box and dynamically selecting rooms when an event is selected
   $.getJSON('/eventrooms', function(data){
@@ -101,29 +103,15 @@ $(document).ready(function(){
 
     $(this).on('input', function(){
       // reset the price
-      $("#show-price").text("");
+      $("#show-price").text("£");
       $("#div-price").hide(500);
-
-      $('.event-button').each(function(i, obj) {
-        $(this).removeClass('active');
-        totalCost = 0;
-      });
     });
   });
+
 
   $("#end-time").on('click', function(){
     $("#time-error").hide(500);
     $("#submitButton").removeClass('disabled');
-
-    $(this).on('input', function(){
-      // reset the price
-      $("#show-price").text("");
-      $("#div-price").hide(500);
-
-      $('.event-button').each(function(i, obj) {
-        $(this).removeClass('active');
-        totalCost = 0;
-      });
     });
   });
 
@@ -327,47 +315,76 @@ $(document).ready(function(){
     }
 
     if (bookingValid){
-      postEvent();
+      $('#submitButton').hide();
+      $('#paypal-button-container').show();
     }
     return false;
-  });
-
+});
 
 /* ##########################
 ##Google Calendar API Stuff##
 ###########################*/
 
-  function postEvent(){
-    $.ajax({
-      type:"POST",
-      url: "http://127.0.0.1:1010/events",
-      data: JSON.stringify({
-        "name": $('#name').val(),
-        "email": $('#emailaddress').val(),
-        "telephone": $('#phone').val(),
-        "title": $('#title').val(),
-        "description": $("#description").val(),
-        "date": $('#date').val(),
-        "timeFrom": $('#start-time').val(),
-        "timeUntil": $('#end-time').val(),
-        "private": $("#private").prop("checked"), //returns if yes tickbox is ticked
-        "rooms": $('#room-selection').val(),
-        "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) //returns total price, formatted as a float
-      }),
-      contentType:"application/json; charset=utf-8",
-      dataType:"json",
-      success: function(data){
-        if(data.response === true){
-          alert("Booking created!");
-        }
-        else{
-          alert("Clash detected, booking not made.");
-        }
-      },
-      error: function(){
-        alert("Booking not made, ensure all data has been enterted correctly.");
+function postEvent(){
+  $.ajax({
+    type:"POST",
+    url: "http://127.0.0.1:1010/events",
+    data: JSON.stringify({
+      "name": $('#name').val(),
+      "email": $('#emailaddress').val(),
+      "telephone": $('#phone').val(),
+      "title": $('#title').val(),
+      "description": $("#description").val(),
+      "date": $('#date').val(),
+      "timeFrom": $('#start-time').val(),
+      "timeUntil": $('#end-time').val(),
+      "private": $("#private").prop("checked"), //returns if yes tickbox is ticked
+      "rooms": $('#room-selection').val(),
+      "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) //returns total price, formatted as a float
+    }),
+    contentType:"application/json; charset=utf-8",
+    dataType:"json",
+    success: function(data){
+      if(data.response === true){
+        alert("Booking created!");
+        console.log(price);
       }
+      else{
+        alert("Clash detected, booking not made.");
+      }
+    },
+    error: function(){
+      alert("Booking not made, ensure all data has been enterted correctly.");
+    }
+  });
+  return false;
+}
+
+/* ##########################
+##PAYMENT STUFF##
+###########################*/
+
+paypal.Buttons({
+  createOrder: function(data, actions){
+    // Set up the transaction
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          value: totalCost
+        }
+      }]
     });
-    return false;
+  },
+  onApprove: function(data, actions){
+    // Capture the funds from the transaction
+    return actions.order.capture().then(function(details){
+      alert('Transaction completed by ' + details.payer.name.given_name);  
+      postEvent();
+    });
+  },
+  onError: function(error){
+    console.log('Invalid Payment' + error);
+    postEvent();
   }
-});
+}).render('#paypal-button-container');
+
