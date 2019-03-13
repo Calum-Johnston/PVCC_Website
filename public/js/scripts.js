@@ -113,6 +113,7 @@ $(document).ready(function(){
     });
   });
 
+
   $("#end-time").on('click', function(){
     $("#time-error").hide(500);
     $("#submitButton").removeClass('disabled');
@@ -126,6 +127,7 @@ $(document).ready(function(){
         $(this).removeClass('active');
         totalCost = 0;
       });
+    });
     });
   });
 
@@ -333,8 +335,7 @@ $(document).ready(function(){
       $('#paypal-button-container').show();
     }
     return false;
-  });
-
+});
 
 /* ##########################
 ##Google Calendar API Stuff##
