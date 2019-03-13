@@ -196,7 +196,7 @@ app.post('/login',
       }
 });
 
-//secure admin section
+
 function userIsAllowed(req, callback) {
     try {
         var decodedCookies = decodeURIComponent(req.headers.cookie).split(";");
@@ -231,11 +231,10 @@ var protectPath = function(regex) {
 
     if (!regex.test(req.url)) { return next(); }
     userIsAllowed(req, function(allowed) {
-        console.log(allowed)
       if (allowed) {
         next(); // send the request to the next handler, which is express.static
       } else {
-        res.redirect('/admin');
+        res.redirect('/admin/login.html');
         return;
       }
     });
@@ -244,6 +243,18 @@ var protectPath = function(regex) {
 //end of secure
 
 app.use(protectPath(/^.*\/secure\/.*$/)); //secure directory
+
+
+app.post("/testLogin", function(req,resp){
+    userIsAllowed(req, function(allowed) {
+        if (allowed) {
+            resp.send(true)
+        } else {
+            resp.send(false)
+            return;
+        }
+    });
+})
 
 
 // end of secure admin section
@@ -388,9 +399,15 @@ var storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     var originalname = file.originalname
-    var extension = originalname.substr(originalname.lastIndexOf("."))
-    console.log(req.url + "/" + req.body.activityId + extension)
-    cb(null, req.url + "/" + req.body.activityId + extension)
+    if (req.url == "/activities"){
+        var extension = originalname.substr(originalname.lastIndexOf("."))
+        console.log(req.url + "/" + req.body.activityId + extension)
+        cb(null, req.url + "/" + req.body.activityId + extension)
+    } else if (req.url == "/facilities") {
+        var extension = originalname.substr(originalname.lastIndexOf("."))
+        console.log(req.url + "/" + req.body.facilityId + extension)
+        cb(null, req.url + "/" + req.body.facilityId + extension)
+    }
   }
 })
 
@@ -402,7 +419,7 @@ var upload = multer({ storage: storage })
 app.post('/activities', upload.single('image'), (req, resp) => {   
     var activityId = req.body.activityId;
     var activityName = req.body.activityName;
-    var activityDescription = req.body.activityDescription;
+    var activityDescription = req.body.activityDescription.replace("\n", "<br />");
     var image = req.file;
     
     var sql = ""
@@ -436,32 +453,32 @@ app.post('/activities', upload.single('image'), (req, resp) => {
 app.post('/facilities', upload.single('image'), (req, resp) => {   
     var facilityId = req.body.facilityId;
     var facilityName = req.body.facilityName;
-    var facilityDescription = req.body.facilityDescription;
+    var facilityDescription = req.body.facilityDescription.replace("\n", "<br />");
     var image = req.file;
     var facilityType = req.body.facilityType;
     var facilityPrice = req.body.roomPrice;
+
     
     var sql = ""
     if (req.body.submit == "Submit"){
         //insert new activity if it does't already exist
         if (facilityId == 0 && image){
-            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '" +  image.filename + "', '" +  facilityType + "', '" +  facilityPrice + ")"
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '" +  image.filename + "', '" +  facilityType + "', '" +  facilityPrice + "')"
         } else if (facilityId == 0 && !image){
-            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '/facilities/default.jpg'', '" +  facilityType + "', '" +  facilityPrice + ")"
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '/facilities/default.jpg'', '" +  facilityType + "', '" +  facilityPrice + "')"
         } else if (facilityId != 0 && image){
             sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomImage = '" +  image.filename + "', roomType = '" +  facilityType + "', price = '" +  facilityPrice + "'   WHERE roomId = " + facilityId
         } else if (facilityId != 0 && !image){
             sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomType = '" +  facilityType + "', price = '" +  facilityPrice + "'   WHERE roomId = " + facilityId
         } 
     } else if (req.body.submit == "Delete") {
-        sql = "DELETE FROM rooms WHERE roomId = " + activityId
+        sql = "DELETE FROM rooms WHERE roomId = " + facilityId
     }
 
     
     con.query(sql, function (err, result, fields) {
       if (err) throw err;
         console.log(result)
-        console.log(sql)
         
         resp.redirect("/facilities.html")
         

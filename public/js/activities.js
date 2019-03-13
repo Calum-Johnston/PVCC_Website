@@ -58,7 +58,7 @@ function loadActivities(){
             if (imagePath == ""){
                 imagePath = "img/activities/room.jpg"
             } else {
-                imagePath = "img/" + imagePath
+                imagePath = "img" + imagePath
             }
             
             //convert room description into a preview of the description text of 120 characters to the nearest word.

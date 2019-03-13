@@ -39,8 +39,7 @@ $(function(){
                 var activityId = data[0].activityId
                 var imagePath = data[0].activityImage
                 var activityName = data[0].activityName
-                var activityDescription = data[0].activityDescription
-
+                var activityDescription = data[0].activityDescription.replace("<br />", "\n")
 
                 //alert(data)
                 $('#id').val(activityId)
@@ -106,7 +105,7 @@ $(function(){
                var roomId = data[0].roomId
                 var imagePath = data[0].roomImage
                 var roomName = data[0].roomName
-                var roomDescription = data[0].roomDescription
+                var roomDescription = data[0].roomDescription.replace("<br />", "\n")
                 var roomId = data[0].roomId
                 var roomPrice = data[0].price
                 var roomType = data[0].roomType
@@ -144,6 +143,7 @@ $(function(){
               document.cookie = "adminToken=" + data + ";" + expires + ";path=/admin";
                 console.log(document.cookie)
             });
+        window.location.replace("/admin");
         return false;
     });
     
