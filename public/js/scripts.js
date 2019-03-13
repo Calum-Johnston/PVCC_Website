@@ -93,6 +93,12 @@ $(document).ready(function(){
       });
     }
     $("#end-time").removeAttr("disabled");
+
+    $(this).on('input', function(){
+      // reset the price
+      $("#show-price").text("£");
+      $("#div-price").hide(500);
+    });
   });
 
 
