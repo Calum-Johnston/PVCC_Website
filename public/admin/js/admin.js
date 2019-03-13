@@ -1,13 +1,6 @@
 //load facilities
 $(function(){  
     
-    /*$(function(){
-        $("body").prepend("<div id='header'></div>");
-        $("body").append("<div id='footer'></div>");
-        $("#header").load("includes/header.html");
-        $("#footer").load("includes/footer.html");
-    });*/
-    
     
 
     //load drop down of options
@@ -142,6 +135,17 @@ $(function(){
     $('.form').on('submit', function(){
         return confirm("Are you sure you want to make this submission? The information you have entered will be displayed on the website.")
     })
+    
+    $('#adminLoginForm').on('submit', function(){        
+        $.post("/login", {password: $("#adminKey").val()}, function(data) {
+              var d = new Date();
+              d.setTime(d.getTime() + 30*60*1000);
+              var expires = "expires="+ d.toUTCString();
+              document.cookie = "adminToken=" + data + ";" + expires + ";path=/admin";
+                console.log(document.cookie)
+            });
+        return false;
+    });
     
     
     

@@ -15,6 +15,14 @@ const fs = require('fs');
 const express = require('express');
 const readline = require('readline');
 const bodyParser = require('body-parser');
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const jwt = require('jwt-simple');
+
+const ADMIN = 'admin';
+const ADMIN_PASSWORD = 'password';
+
 const app = express();
 
 // Packges(s) required to connect to google calendar
@@ -26,8 +34,6 @@ const inlineCss = require('inline-css');  // Writes CSS directly into HTML
 
 // Package(s) required for database connection
 const mysql = require("mysql");
-
-
 
 
 
@@ -168,39 +174,6 @@ global.con = con;
 
 
  /*#######################################
- ROUTING FOR SECURE SECTION OF ADMIN SITE
- #######################################*/
-//secure admin section
-function userIsAllowed(callback) {
-  // this function would contain your logic, presumably asynchronous,
-  // about whether or not the user is allowed to see files in the
-  // protected directory; here, we'll use a default value of "false"
-  callback(true);
-};
-
-// This function returns a middleware function
-var protectPath = function(regex) {
-  return function(req, res, next) {
-      //console.log(req.url)
-      //console.log(regex.test(req.url))
-    if (!regex.test(req.url)) { return next(); }
-
-    userIsAllowed(function(allowed) {
-      if (allowed) {
-        next(); // send the request to the next handler, which is express.static
-      } else {
-        res.end('You are not allowed!');
-      }
-    });
-  };
-};
-//end of secure
-
-app.use(protectPath(/^.*\/secure\/.*$/)); //secure directory
-
-
-
- /*#######################################
     EXPRESS FUNCTIONS, REQUEST HANDLING
  #######################################*/
 
@@ -212,6 +185,76 @@ app.use((req, res, next) => {
   res.setHeader('pragma', 'no-cache');
   next();
 });
+
+
+//secure admin secion
+
+const SECRET = "mysecret"
+
+app.post('/login',
+  function (req, resp) {
+    if (req.body.password === ADMIN_PASSWORD) {
+        resp.send(jwt.encode({ ADMIN }, SECRET))
+      }
+});
+
+//secure admin section
+function userIsAllowed(req, callback) {
+    try {
+        var decodedCookies = decodeURIComponent(req.headers.cookie).split(";");
+        for(var i = 0; i <decodedCookies.length; i++) {
+            var cookie = decodedCookies[i]
+            while (cookie.charAt(0) == ' '){
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf("adminToken=") == 0) {
+              var token = cookie.substring(11, cookie.length);
+                break;
+            }
+
+        }
+
+
+        const result = jwt.decode(token, SECRET)["ADMIN"];
+        if (result === ADMIN) {
+            callback(true)
+        } else {
+            callback(false);
+        }
+    } catch (err) {
+        callback(false);
+    }
+
+};
+
+// This function returns a middleware function
+var protectPath = function(regex) {
+  return function(req, res, next) {
+
+    if (!regex.test(req.url)) { return next(); }
+    userIsAllowed(req, function(allowed) {
+        console.log(allowed)
+      if (allowed) {
+        next(); // send the request to the next handler, which is express.static
+      } else {
+        res.redirect('/admin');
+        return;
+      }
+    });
+  };
+};
+//end of secure
+
+app.use(protectPath(/^.*\/secure\/.*$/)); //secure directory
+
+
+// end of secure admin section
+
+
+
+
+
+
 app.use(express.static('public'));
 
 // === CREATE EVENT ===
@@ -758,6 +801,7 @@ function getEmailData(){
     });
   });
 }
+
 
 
 
