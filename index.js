@@ -268,6 +268,12 @@ app.get('/delete-event/:id', function(req, resp){
   // Update website calendar to follow google calendar
 
 
+  for (var key in eventsDict){
+    //filters every array, removes event object if its ID = id of deleted google calendar event
+    eventsDict[key] = eventsDict[key].filter(function(value, index, arr){
+      return value["id"] != req.params.id;
+    });
+  };
   // Redirect user elsewhere
   return resp.redirect('/');
 });
@@ -464,9 +470,6 @@ app.get("/roomprices", function(req, resp){
 
 
 
-
-
-
 /*#########################
          FUNCTIONS
 #########################*/
@@ -519,6 +522,7 @@ function populateEvents(){
           title: event.summary,
           start: event.start.dateTime,
           end: event.end.dateTime,
+          id: event.id
         };
 
         //checks if the event is Private, sets title to private if it is
@@ -545,9 +549,11 @@ function populateEvents(){
           }
         }
 
+
       });
     }
   });
+
 }
 
 // Takes a JSON object with the event information and creates an event if the authentication is valid
@@ -585,8 +591,8 @@ function createEvent(eventInfo){
     return;
   }else{
 
-    console.log(event.data.id);
-    var id = event.data.id;
+
+    var eventId = event.data.id;
     //If successful, add to Tom's array here!
 
     var rooms = eventInfo.rooms.split(', ');
@@ -598,6 +604,7 @@ function createEvent(eventInfo){
       title: eventObj.summary,
       start: eventInfo.dateTimeStart,
       end: eventInfo.dateTimeEnd,
+      id: eventId
 
     };
 
@@ -652,13 +659,22 @@ function validateEvent(newEventInfo, resp){
       events.map((event, i) => {
         //get the list of rooms of current event being evaluated
         const rooms = event.location.split(', ');
-
+        rooms.pop();
+        
+        for (var i = 0; i < rooms.length; i++){
+          console.log(rooms[i]);
+        }
         //intersect the two room arrays to see if they are booking taken rooms
-        var matchingRooms = intersectArrays(requestedRooms, rooms);
+        console.log("Requested rooms: " + requestedRooms);
+        console.log("Events rooms: " + rooms);
+        //var matchingRooms = intersectArrays(requestedRooms, rooms);
+        const matched = requestedRooms.some(r=> rooms.includes(r));
+        console.log("Matched rooms:" + matched);
 
         //if there is more than 0 matching rooms then there is a clash
-        if (matchingRooms.length > 0){
+        if (matched == true){
           //if time and room clash is found
+
           console.log("Booking clash detected.");
           clashDiscovered = true;
           resp.send({"response": false});
@@ -788,13 +804,6 @@ function getEmailData(){
 
 // Function called to start the server after authorisation has occured **REQUIRED**
 function startServer(auth){
-
-  var testDict = {1:"yes"};
-  if (testDict[2] != undefined){
-    console.log("oh yes");
-  }else{
-    console.log("Yes");
-  }
 
   calendar = google.calendar({version: 'v3', auth});
   authObj = auth;
