@@ -340,36 +340,36 @@ $(document).ready(function(){
 ##Google Calendar API Stuff##
 ###########################*/
 
-  function postEvent(){
-    $.ajax({
-      type:"POST",
-      url: "http://127.0.0.1:1010/events",
-      data: JSON.stringify({
-        "name": $('#name').val(),
-        "email": $('#emailaddress').val(),
-        "telephone": $('#phone').val(),
-        "title": $('#title').val(),
-        "description": $("#description").val(),
-        "date": $('#date').val(),
-        "timeFrom": $('#start-time').val(),
-        "timeUntil": $('#end-time').val(),
-        "private": $("#private").prop("checked"), //returns if yes tickbox is ticked
-        "rooms": $('#room-selection').val(),
-        "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) //returns total price, formatted as a float
-      }),
-      contentType:"application/json; charset=utf-8",
-      dataType:"json",
-      success: function(data){
-        if(data.response === true){
-          alert("Booking created!");
-        }
-        else{
-          alert("Clash detected, booking not made.");
-        }
-      },
-      error: function(){
-        alert("Booking not made, ensure all data has been enterted correctly.");
+function postEvent(){
+  $.ajax({
+    type:"POST",
+    url: "http://127.0.0.1:1010/events",
+    data: JSON.stringify({
+      "name": $('#name').val(),
+      "email": $('#emailaddress').val(),
+      "telephone": $('#phone').val(),
+      "title": $('#title').val(),
+      "description": $("#description").val(),
+      "date": $('#date').val(),
+      "timeFrom": $('#start-time').val(),
+      "timeUntil": $('#end-time').val(),
+      "private": $("#private").prop("checked"), //returns if yes tickbox is ticked
+      "rooms": $('#room-selection').val(),
+      "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) //returns total price, formatted as a float
+    }),
+    contentType:"application/json; charset=utf-8",
+    dataType:"json",
+    success: function(data){
+      if(data.response === true){
+        alert("Booking created!");
       }
+      else{
+        alert("Clash detected, booking not made.");
+      }
+    },
+    error: function(){
+      alert("Booking not made, ensure all data has been enterted correctly.");
+    }
   });
   return false;
 }
@@ -401,4 +401,3 @@ paypal.Buttons({
     postEvent();
   }
 }).render('#paypal-button-container');
-});
