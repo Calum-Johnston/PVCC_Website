@@ -19,7 +19,7 @@
              
              <div class="row form-group">
                  <div class="dropdown show col-12">
-                  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-flip="false">
                     Activities
                   </a>
 
@@ -41,10 +41,11 @@
                     </div>
                   </div>
 
-                  <div class="row form-group" id="quillFormGroup">
+                  <div class="row form-group">
                     <label for="description" class="control-label col-12">Activity Description</label>
                     <div class="col-sm-12">
-                        <input id="description" type="text" name="activityDescription" class="form-control" required>
+                        <textarea id="description" type="text" name="activityDescription" class="form-control" required>
+                        </textarea>
                     </div>
                   </div>
 
@@ -73,6 +74,7 @@
         
 		<script src="../../js/scripts.js"></script>
         <script src="../js/admin.js"></script>
+        <script src="../js/adminSecure.js"></script>
         <!-- Include the Quill library -->
 
 	</body>

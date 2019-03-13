@@ -1,13 +1,6 @@
 //load facilities
 $(function(){  
     
-    /*$(function(){
-        $("body").prepend("<div id='header'></div>");
-        $("body").append("<div id='footer'></div>");
-        $("#header").load("includes/header.html");
-        $("#footer").load("includes/footer.html");
-    });*/
-    
     
 
     //load drop down of options
@@ -46,8 +39,7 @@ $(function(){
                 var activityId = data[0].activityId
                 var imagePath = data[0].activityImage
                 var activityName = data[0].activityName
-                var activityDescription = data[0].activityDescription
-
+                var activityDescription = data[0].activityDescription.replace("<br />", "\n")
 
                 //alert(data)
                 $('#id').val(activityId)
@@ -113,16 +105,22 @@ $(function(){
                var roomId = data[0].roomId
                 var imagePath = data[0].roomImage
                 var roomName = data[0].roomName
-                var roomDescription = data[0].roomDescription
+                var roomDescription = data[0].roomDescription.replace("<br />", "\n")
                 var roomId = data[0].roomId
+                var roomPrice = data[0].price
+                var roomType = data[0].roomType
 
-                console.log(roomName)
                 
                 //alert(data)
                 $('#id').val(roomId)
                 $('#name').val(roomName)
                 $('#description').val(roomDescription)
-
+                 $('#roomPrice').val(roomPrice)
+                 
+                 $('#roomType').children("option").each(function () {
+                    $(this).removeAttr("selected")
+                });
+                $('#roomType #'+roomType).attr("selected", "selected")
 
             })
         } else {
@@ -139,6 +137,17 @@ $(function(){
     $('.form').on('submit', function(){
         return confirm("Are you sure you want to make this submission? The information you have entered will be displayed on the website.")
     })
+    
+    $('#adminLoginForm').on('submit', function(){        
+        $.post("/login", {password: $("#adminKey").val()}, function(data) {
+              var d = new Date();
+              d.setTime(d.getTime() + 10*60*1000);
+              var expires = "expires="+ d.toUTCString();
+              document.cookie = "adminToken=" + data + ";" + expires + ";path=/admin";
+                window.location.href = "/admin";
+            });
+        return false;
+    });
     
     
     

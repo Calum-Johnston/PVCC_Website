@@ -15,6 +15,12 @@ const fs = require('fs');
 const express = require('express');
 const readline = require('readline');
 const bodyParser = require('body-parser');
+
+const jwt = require('jwt-simple');
+
+const ADMIN = 'admin';
+const ADMIN_PASSWORD = 'password';
+
 const app = express();
 
 // Packges(s) required to connect to google calendar
@@ -26,8 +32,6 @@ const inlineCss = require('inline-css');  // Writes CSS directly into HTML
 
 // Package(s) required for database connection
 const mysql = require("mysql");
-
-
 
 
 /*#########################
@@ -153,39 +157,6 @@ global.con = con;
 
 
  /*#######################################
- ROUTING FOR SECURE SECTION OF ADMIN SITE
- #######################################*/
-//secure admin section
-function userIsAllowed(callback) {
-  // this function would contain your logic, presumably asynchronous,
-  // about whether or not the user is allowed to see files in the
-  // protected directory; here, we'll use a default value of "false"
-  callback(true);
-};
-
-// This function returns a middleware function
-var protectPath = function(regex) {
-  return function(req, res, next) {
-      //console.log(req.url)
-      //console.log(regex.test(req.url))
-    if (!regex.test(req.url)) { return next(); }
-
-    userIsAllowed(function(allowed) {
-      if (allowed) {
-        next(); // send the request to the next handler, which is express.static
-      } else {
-        res.end('You are not allowed!');
-      }
-    });
-  };
-};
-//end of secure
-
-app.use(protectPath(/^.*\/secure\/.*$/)); //secure directory
-
-
-
- /*#######################################
     EXPRESS FUNCTIONS, REQUEST HANDLING
  #######################################*/
 
@@ -197,6 +168,87 @@ app.use((req, res, next) => {
   res.setHeader('pragma', 'no-cache');
   next();
 });
+
+
+//secure admin secion
+
+const SECRET = "mysecret"
+
+app.post('/login',
+  function (req, resp) {
+    if (req.body.password === ADMIN_PASSWORD) {
+        resp.send(jwt.encode({ ADMIN }, SECRET))
+      }
+});
+
+
+function userIsAllowed(req, callback) {
+    try {
+        var decodedCookies = decodeURIComponent(req.headers.cookie).split(";");
+        for(var i = 0; i <decodedCookies.length; i++) {
+            var cookie = decodedCookies[i]
+            while (cookie.charAt(0) == ' '){
+                cookie = cookie.substring(1);
+            }
+            if (cookie.indexOf("adminToken=") == 0) {
+              var token = cookie.substring(11, cookie.length);
+                break;
+            }
+
+        }
+
+
+        const result = jwt.decode(token, SECRET)["ADMIN"];
+        if (result === ADMIN) {
+            callback(true)
+        } else {
+            callback(false);
+        }
+    } catch (err) {
+        callback(false);
+    }
+
+};
+
+// This function returns a middleware function
+var protectPath = function(regex) {
+  return function(req, res, next) {
+
+    if (!regex.test(req.url)) { return next(); }
+    userIsAllowed(req, function(allowed) {
+      if (allowed) {
+        next(); // send the request to the next handler, which is express.static
+      } else {
+        res.redirect('/admin/login.html');
+        return;
+      }
+    });
+  };
+};
+//end of secure
+
+app.use(protectPath(/^.*\/secure\/.*$/)); //secure directory
+
+
+app.post("/testLogin", function(req,resp){
+    userIsAllowed(req, function(allowed) {
+        if (allowed) {
+            resp.send(true)
+        } else {
+            resp.send(false)
+            return;
+        }
+    });
+})
+
+
+// end of secure admin section
+
+
+
+
+
+
 app.use(express.static('public'));
 
 // === CREATE EVENT ===
@@ -346,9 +398,15 @@ var storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     var originalname = file.originalname
-    var extension = originalname.substr(originalname.lastIndexOf("."))
-    console.log(req.url + "/" + req.body.activityId + extension)
-    cb(null, req.url + "/" + req.body.activityId + extension)
+    if (req.url == "/activities"){
+        var extension = originalname.substr(originalname.lastIndexOf("."))
+        console.log(req.url + "/" + req.body.activityId + extension)
+        cb(null, req.url + "/" + req.body.activityId + extension)
+    } else if (req.url == "/facilities") {
+        var extension = originalname.substr(originalname.lastIndexOf("."))
+        console.log(req.url + "/" + req.body.facilityId + extension)
+        cb(null, req.url + "/" + req.body.facilityId + extension)
+    }
   }
 })
 
@@ -360,7 +418,7 @@ var upload = multer({ storage: storage })
 app.post('/activities', upload.single('image'), (req, resp) => {
     var activityId = req.body.activityId;
     var activityName = req.body.activityName;
-    var activityDescription = req.body.activityDescription;
+    var activityDescription = req.body.activityDescription.replace("\n", "<br />");
     var image = req.file;
 
     var sql = ""
@@ -377,6 +435,16 @@ app.post('/activities', upload.single('image'), (req, resp) => {
         }
     } else if (req.body.submit == "Delete") {
         sql = "DELETE FROM activities WHERE activityId = " + activityId
+        
+        //delete the image since it is no longer needed
+        fs.unlink('public/img/activities/'+activityId+'.jpg', function (err) {
+            if (err) {
+                console.log("image not deleted")
+            } else {
+                console.log('Image deleted!');
+            }
+        });  
+        
     }
 
     con.query(sql, function (err, result, fields) {
@@ -386,6 +454,7 @@ app.post('/activities', upload.single('image'), (req, resp) => {
 
     });
 
+
 });
 
 
@@ -394,31 +463,44 @@ app.post('/activities', upload.single('image'), (req, resp) => {
 app.post('/facilities', upload.single('image'), (req, resp) => {
     var facilityId = req.body.facilityId;
     var facilityName = req.body.facilityName;
-    var facilityDescription = req.body.facilityDescription;
+    var facilityDescription = req.body.facilityDescription.replace("\n", "<br />");
     var image = req.file;
-    var facilityType = req.body.facilityType;
-    var facilityPrice = req.body.facilityPrice;
 
+    var facilityType = req.body.roomType;
+    var facilityPrice = req.body.roomPrice;
+
+    
     var sql = ""
     if (req.body.submit == "Submit"){
         //insert new activity if it does't already exist
-        if (activityId == 0 && image){
-            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, roomPrice) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '" +  image.filename + "', '" +  facilityType + "', '" +  facilityPrice + ")"
-        } else if (activityId == 0 && !image){
-            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, roomPrice) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '/facilities/default.jpg'', '" +  facilityType + "', '" +  facilityPrice + ")"
-        } else if (activityId != 0 && image){
-            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomImage = '" +  image.filename + "', roomType = '" +  facilityType + "', roomPrice = '" +  roomPrice + "'   WHERE roomId = " + activityId
-        } else if (activityId != 0 && !image){
-            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomType = '" +  facilityType + "', roomPrice = '" +  roomPrice + "'   WHERE roomId = " + activityId
-        }
+        if (facilityId == 0 && image){
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '" +  image.filename + "', '" +  facilityType + "', '" +  facilityPrice + "')"
+        } else if (facilityId == 0 && !image){
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '/facilities/default.jpg', '" +  facilityType + "', '" +  facilityPrice + "')"
+        } else if (facilityId != 0 && image){
+            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomImage = '" +  image.filename + "', roomType = '" +  facilityType + "', price = '" +  facilityPrice + "'   WHERE roomId = " + facilityId
+        } else if (facilityId != 0 && !image){
+            sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomType = '" +  facilityType + "', price = '" +  facilityPrice + "'   WHERE roomId = " + facilityId
+        } 
+
     } else if (req.body.submit == "Delete") {
-        sql = "DELETE FROM rooms WHERE roomId = " + activityId
+        sql = "DELETE FROM rooms WHERE roomId = " + facilityId
+        
+        //delete the image since it is no longer needed
+        fs.unlink('public/img/facilities/'+facilityId+'.jpg', function (err) {
+            if (err) {
+                console.log("image not deleted")
+            } else {
+                console.log('Image deleted!');
+            }
+        }); 
+        
     }
 
+    console.log(sql)
     con.query(sql, function (err, result, fields) {
-      if (err) throw err;
-        console.log(result)
-        console.log(sql)
+
+      if (err) throw err;        
 
         resp.redirect("/facilities.html")
 
@@ -794,6 +876,7 @@ function getEmailData(){
     });
   });
 }
+
 
 
 

@@ -22,7 +22,7 @@ function loadFacility(facilityId){
         if (imagePath == ""){
             imagePath = "img/facilities/room.jpg"
         } else {
-            imagePath = "img/facilities/" + imagePath
+            imagePath = "img" + imagePath
         }
         
         $("#facilities .request-result").html(" ");
@@ -59,13 +59,13 @@ function loadFacilities(){
             if (imagePath == ""){
                 imagePath = "facilities/room.jpg"
             } else {
-                imagePath = "facilities/" + imagePath
+                imagePath = "img" + imagePath
             }
             
             //convert room description into a preview of the description text of 120 characters to the nearest word.
             roomDescription = roomDescription.substring(0,roomDescription.lastIndexOf(" ",120)) + "..."
             
-            $('<div class="col-12 col-md-6 col-lg-4 mb-4"><div class="card"><img class="card-img-top" src="img/'+imagePath+'" alt="Card image cap"><div class="card-body"><h5 class="card-title">'+roomName+'</h5><p class="card-text">'+roomDescription+'</p><a id="'+roomId+'" class="btn btn-primary facilityLink text-white">See Full Description</a></div></div></div>').hide().appendTo("#facilities .request-result").fadeIn()
+            $('<div class="col-12 col-md-6 col-lg-4 mb-4"><div class="card"><img class="card-img-top" src="'+imagePath+'" alt="Card image cap"><div class="card-body"><h5 class="card-title">'+roomName+'</h5><p class="card-text">'+roomDescription+'</p><a id="'+roomId+'" class="btn btn-primary facilityLink text-white">See Full Description</a></div></div></div>').hide().appendTo("#facilities .request-result").fadeIn()
         
         }
         
