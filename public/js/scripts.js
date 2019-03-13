@@ -62,7 +62,6 @@ $(document).ready(function(){
       $("#div-price").hide();
       $("#show-price").text("£");
 
-      $("#room-empty").hide(500);
       $("#submitButton").removeClass('disabled');
 
       // showing value of chosen event on dropdown button
@@ -152,6 +151,7 @@ $(document).ready(function(){
           $.each(value.rooms, function(key2, value2){
             $("<button type='button' class='btn btn-warning event-button' id='" + value2.roomId + "'>" + value2.roomName + "</button>").appendTo("#roomList");
           });
+          $("#room-empty").remove();
           return false;
         }
       });
@@ -162,6 +162,7 @@ $(document).ready(function(){
         // getting the price of the room
         let textData = $('#room-selection').val();
         const roomName = $(this).text();
+        $("#room-empty").hide(500);
 
         $.getJSON('/roomprices', function(data){
           $.each(data, function(key, value){
@@ -270,26 +271,32 @@ $(document).ready(function(){
     }
   });
 
-  $(".event-button").on('click', function(){
-    if ($("#room-selection").val() != ""){
-      $("#room-empty").hide(500);
-      $("#submitButton").removeClass('disabled');
-    }
+  $("#dropdownMenuButton").on('click', function(){
+    $("#room-empty").remove();
   });
 
   $("#bookingform").on('submit', function(e){
 
-    var bookingValid = true;
-    // show error if booking form rooms box is empty
-    if ($("#room-selection").val() == ""){
+    var bookingValid = false;
+    // show error if no rooms selected
+    $('.event-button').each(function(i, obj) {
+        if ($(this).hasClass('active')){
+          bookingValid = true;
+          return false;
+        }
+    });
+
+    if (!bookingValid){
+      console.log("invalid");
       e.preventDefault();
-      $("#room-empty").show(500);
-      $("#submitButton").addClass('disabled');
-      bookingValid = false;
-    }
-    else{
-      $("#room-empty").hide(500);
-      $("#submitButton").removeClass('disabled');
+      if ($("#room-empty").length){
+        $("#room-empty").show(500);
+      }
+      else{
+        $("<span class='error' id='room-empty'>A room must be selected</span>").appendTo("#roomList");
+        $("#room-empty").show(500);
+      }
+      return false;
     }
 
     // make sure booking is at least one hour long
@@ -298,21 +305,21 @@ $(document).ready(function(){
 
     let bookingLength = endTime - startTime;
     if (bookingLength < 1){
-      bookingValid = false;
       e.preventDefault();
       $("#time-error").show(500);
       $("#submitButton").addClass('disabled');
+    }
+    else{
+      bookingValid = true;
     }
 
     if (bookingValid){
       postEvent();
     }
-
     return false;
-
 });
 
-
+var price = parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length));
 
 /* ##########################
 ##Google Calendar API Stuff##
