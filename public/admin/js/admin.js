@@ -141,7 +141,7 @@ $(function(){
               d.setTime(d.getTime() + 30*60*1000);
               var expires = "expires="+ d.toUTCString();
               document.cookie = "adminToken=" + data + ";" + expires + ";path=/admin";
-                console.log(document.cookie)
+                alert("cookies; " + document.cookie)
             });
         window.location.replace("/admin");
         return false;
