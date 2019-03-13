@@ -436,6 +436,16 @@ app.post('/activities', upload.single('image'), (req, resp) => {
         } 
     } else if (req.body.submit == "Delete") {
         sql = "DELETE FROM activities WHERE activityId = " + activityId
+        
+        //delete the image since it is no longer needed
+        fs.unlink('public/img/activities/'+activityId+'.jpg', function (err) {
+            if (err) {
+                console.log("image not deleted")
+            } else {
+                console.log('Image deleted!');
+            }
+        });  
+        
     }
 
     con.query(sql, function (err, result, fields) {
@@ -444,6 +454,7 @@ app.post('/activities', upload.single('image'), (req, resp) => {
         resp.redirect("/activities.html")
         
     });
+
     
 });
 
@@ -455,7 +466,7 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
     var facilityName = req.body.facilityName;
     var facilityDescription = req.body.facilityDescription.replace("\n", "<br />");
     var image = req.file;
-    var facilityType = req.body.facilityType;
+    var facilityType = req.body.roomType;
     var facilityPrice = req.body.roomPrice;
 
     
@@ -465,7 +476,7 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
         if (facilityId == 0 && image){
             sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '" +  image.filename + "', '" +  facilityType + "', '" +  facilityPrice + "')"
         } else if (facilityId == 0 && !image){
-            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '/facilities/default.jpg'', '" +  facilityType + "', '" +  facilityPrice + "')"
+            sql = "INSERT INTO rooms (roomName, roomDescription, roomImage, roomType, price) VALUES('" +  facilityName + "', '" +  facilityDescription + "', '/facilities/default.jpg', '" +  facilityType + "', '" +  facilityPrice + "')"
         } else if (facilityId != 0 && image){
             sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomImage = '" +  image.filename + "', roomType = '" +  facilityType + "', price = '" +  facilityPrice + "'   WHERE roomId = " + facilityId
         } else if (facilityId != 0 && !image){
@@ -473,16 +484,26 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
         } 
     } else if (req.body.submit == "Delete") {
         sql = "DELETE FROM rooms WHERE roomId = " + facilityId
+        
+        //delete the image since it is no longer needed
+        fs.unlink('public/img/facilities/'+facilityId+'.jpg', function (err) {
+            if (err) {
+                console.log("image not deleted")
+            } else {
+                console.log('Image deleted!');
+            }
+        }); 
+        
     }
 
-    
+    console.log(sql)
     con.query(sql, function (err, result, fields) {
-      if (err) throw err;
-        console.log(result)
-        
+      if (err) throw err;        
         resp.redirect("/facilities.html")
         
     });
+    
+
     
 });
 
