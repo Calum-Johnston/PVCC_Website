@@ -385,6 +385,5 @@ paypal.Buttons({
   },
   onError: function(error){
     console.log('Invalid Payment' + error);
-    postEvent();
   }
 }).render('#paypal-button-container');
