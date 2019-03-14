@@ -332,6 +332,8 @@ $(document).ready(function(){
 
     if (bookingValid){
       $('#submitButton').hide();
+      $(".input-type").prop("disabled", true);
+      $(".event-button").prop("disabled", true);
       $('#paypal-button-container').show();
     }
     return false;
