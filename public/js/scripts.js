@@ -7,6 +7,9 @@
 /* jshint devel: true */
 //sam stuff
 
+// Variable stores price
+var totalCost = 0;
+
 //from sitepoint || src: https://www.sitepoint.com/url-parameters-jquery/
 $.urlParam = function(name){
     var results = new RegExp('[\?&]' + name + '=([^[?|?]*]*)').exec(window.location.href);
@@ -18,8 +21,6 @@ $.urlParam = function(name){
     }
 };
 //end
-
-//carousel controls
 
 //load header and footer
 $(function(){
@@ -47,6 +48,8 @@ $(document).ready(function(){
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
   $("#div-price").hide();
+  $('#paypal-button-container').hide();
+
 
   // loading the event types into dropdown box and dynamically selecting rooms when an event is selected
   $.getJSON('/eventrooms', function(data){
@@ -56,13 +59,16 @@ $(document).ready(function(){
     });
 
     $(".event").on('click', function(e){
+
+      // Resets price
+      totalCost = 0;
+
       e.preventDefault();
 
       // hide and reset price when selecting new event
       $("#div-price").hide();
-      $("#show-price").text("£");
+      $("#show-price").text("");
 
-      $("#room-empty").hide(500);
       $("#submitButton").removeClass('disabled');
 
       // showing value of chosen event on dropdown button
@@ -94,12 +100,34 @@ $(document).ready(function(){
       });
     }
     $("#end-time").removeAttr("disabled");
+
+    $(this).on('input', function(){
+      // reset the price
+      $("#show-price").text("");
+      $("#div-price").hide(500);
+
+      $('.event-button').each(function(i, obj) {
+        $(this).removeClass('active');
+        totalCost = 0;
+      });
+    });
   });
 
 
   $("#end-time").on('click', function(){
     $("#time-error").hide(500);
     $("#submitButton").removeClass('disabled');
+
+    $(this).on('input', function(){
+      // reset the price
+      $("#show-price").text("");
+      $("#div-price").hide(500);
+
+      $('.event-button').each(function(i, obj) {
+        $(this).removeClass('active');
+        totalCost = 0;
+      });
+    });
     });
   });
 
@@ -152,6 +180,7 @@ $(document).ready(function(){
           $.each(value.rooms, function(key2, value2){
             $("<button type='button' class='btn btn-warning event-button' id='" + value2.roomId + "'>" + value2.roomName + "</button>").appendTo("#roomList");
           });
+          $("#room-empty").remove();
           return false;
         }
       });
@@ -162,21 +191,12 @@ $(document).ready(function(){
         // getting the price of the room
         let textData = $('#room-selection').val();
         const roomName = $(this).text();
+        $("#room-empty").hide(500);
 
         $.getJSON('/roomprices', function(data){
           $.each(data, function(key, value){
             if (roomName == key){
-              let price = value.price;
-              let originalPrice = $("#show-price").text(); // price before newly clicked room added
-
-              if (originalPrice == "£"){
-                originalPrice = 0;
-              }
-              else {
-                // remove pound sign and convert to int
-                originalPrice = originalPrice.substring(1, originalPrice.length);
-                originalPrice = parseFloat(originalPrice);
-              }
+              var price = value.price;
 
               // if clicked, make active and vice versa; add rooms to selection box
               if ($("#" + id).hasClass('active')){
@@ -185,21 +205,18 @@ $(document).ready(function(){
                 $('#room-selection').val(textData.replace(($("#" + id).text() + ","), ""));
 
                 // now subtract current from original
-                price = originalPrice - price;
-                if (price < 1){
+                totalCost -= price;
+                if (totalCost < 1){
                   $("#div-price").hide(500);
-                  price = 0;
-                  originalPrice = 0;
-                  $("#show-price").text("£");
                 }
                 else {
                   if (price.toString().length > 2){
-                    price = Math.round(price) - 0.01;
+                    totalCost = Math.round(totalCost) - 0.01;
                   }
                   else {
-                    price = price - 0.01;
+                    totalCost = totalCost - 0.01;
                   }
-                  $("#show-price").text("£" + price);
+                  $("#show-price").text("£" + totalCost);
                 }
               }
               else {
@@ -208,15 +225,16 @@ $(document).ready(function(){
 
                 const time = getEndTime() - getStartTime();
 
+                price = price * time;
+                totalCost += price;
+
                 // add price to original price
-                if (originalPrice < 1){
-                  $("#show-price").append(Math.round(price * time) - 0.01);
+                if (totalCost < 1){
+                  $("#show-price").append(Math.round(totalCost * time) - 0.01);
                 }
                 else {
-                  price = price * time;
-                  price = originalPrice + price;
-                  price = Math.round(price) - 0.01;
-                  $("#show-price").text("£" + price);
+                  totalCost = Math.round(totalCost) - 0.01;
+                  $("#show-price").text("£" + totalCost);
                 }
                 $("#div-price").show(500);
 
@@ -270,26 +288,32 @@ $(document).ready(function(){
     }
   });
 
-  $(".event-button").on('click', function(){
-    if ($("#room-selection").val() != ""){
-      $("#room-empty").hide(500);
-      $("#submitButton").removeClass('disabled');
-    }
+  $("#dropdownMenuButton").on('click', function(){
+    $("#room-empty").remove();
   });
 
   $("#bookingform").on('submit', function(e){
 
-    var bookingValid = true;
-    // show error if booking form rooms box is empty
-    if ($("#room-selection").val() == ""){
+    var bookingValid = false;
+    // show error if no rooms selected
+    $('.event-button').each(function(i, obj) {
+        if ($(this).hasClass('active')){
+          bookingValid = true;
+          return false;
+        }
+    });
+
+    if (!bookingValid){
+      console.log("invalid");
       e.preventDefault();
-      $("#room-empty").show(500);
-      $("#submitButton").addClass('disabled');
-      bookingValid = false;
-    }
-    else{
-      $("#room-empty").hide(500);
-      $("#submitButton").removeClass('disabled');
+      if ($("#room-empty").length){
+        $("#room-empty").show(500);
+      }
+      else{
+        $("<span class='error' id='room-empty'>A room must be selected</span>").appendTo("#roomList");
+        $("#room-empty").show(500);
+      }
+      return false;
     }
 
     // make sure booking is at least one hour long
@@ -298,21 +322,20 @@ $(document).ready(function(){
 
     let bookingLength = endTime - startTime;
     if (bookingLength < 1){
-      bookingValid = false;
       e.preventDefault();
       $("#time-error").show(500);
       $("#submitButton").addClass('disabled');
     }
-
-    if (bookingValid){
-      postEvent();
+    else{
+      bookingValid = true;
     }
 
+    if (bookingValid){
+      $('#submitButton').hide();
+      $('#paypal-button-container').show();
+    }
     return false;
-
 });
-
-
 
 /* ##########################
 ##Google Calendar API Stuff##
@@ -351,3 +374,31 @@ function postEvent(){
   });
   return false;
 }
+
+/* ##########################
+##PAYMENT STUFF##
+###########################*/
+
+paypal.Buttons({
+  createOrder: function(data, actions){
+    // Set up the transaction
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          value: totalCost
+        }
+      }]
+    });
+  },
+  onApprove: function(data, actions){
+    // Capture the funds from the transaction
+    return actions.order.capture().then(function(details){
+      alert('Transaction completed by ' + details.payer.name.given_name);
+      postEvent();
+    });
+  },
+  onError: function(error){
+    console.log('Invalid Payment' + error);
+    postEvent();
+  }
+}).render('#paypal-button-container');
