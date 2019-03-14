@@ -19,6 +19,7 @@ $(document).ready(function(){
   $("#end-time").attr("disabled", 'disabled');
   $(".error").hide();
   $("#div-price").hide();
+  $("#paypal-label").hide();
   $('#paypal-button-container').hide();
   $("#edit-details").hide();
   $("#room-label").hide();
@@ -270,6 +271,7 @@ $(document).ready(function(){
     $(".input-type").prop("disabled", false);
     $(".event-button").prop("disabled", false);
     $("#edit-details").hide(500);
+    $("#paypal-label").hide(500);
     $("#paypal-button-container").hide(500);
     $('#submitButton').show(500);
   });
@@ -318,6 +320,7 @@ $(document).ready(function(){
       $(".event-button").prop("disabled", true);
       $("#div-captcha").remove();
       $("#edit-details").show(500);
+      $("#paypal-label").show(500);
       $("#paypal-button-container").show(500);
     }
     return false;
