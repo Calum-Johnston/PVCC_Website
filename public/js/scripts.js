@@ -375,7 +375,7 @@ function postEvent(){
     dataType:"json",
     success: function(data){
       if(data.response === true){
-        alert("Booking created!");
+        window.location.replace("/bookingConfirmation.html");
       }
       else{
         alert("Clash detected, booking not made.");
