@@ -144,7 +144,9 @@ $(function(){
               d.setTime(d.getTime() + 10*60*1000);
               var expires = "expires="+ d.toUTCString();
               document.cookie = "adminToken=" + data + ";" + expires + ";path=/admin";
-                window.location.href = "/admin";
+              
+              $("#adminLoginForm").addClass("d-none")
+              $("#adminLoginWelcome").removeClass("d-none")
             });
         return false;
     });
