@@ -399,46 +399,13 @@ var storage = multer.diskStorage({
   filename: function (req, file, cb) {
     var originalname = file.originalname
     if (req.url == "/activities"){
-        var activityId = req.body.activityId
         var extension = originalname.substr(originalname.lastIndexOf("."))
-        if (activityId == 0){
-            con.query("SELECT MAX(activityId) FROM activities", function (err, result, fields) {
-              if (err) throw err;
-                
-              //console.log("max " + JSON.stringify(result[0]["MAX(activityId)"]))
-              activityId = result[0]["MAX(activityId)"] + 1
-              //console.log("the final activity ID " + activityId)
-              
-              var filename = req.url + "/" + activityId + extension
-              //console.log("New event photo " + filename)
-              cb(null, filename)
-            });
-    
-        } else {
-            console.log("New event photo " + req.url + "/" + activityId + extension)
-            cb(null, req.url + "/" + activityId + extension)
-        }
-        
+        console.log(req.url + "/" + req.body.activityId + extension)
+        cb(null, req.url + "/" + req.body.activityId + extension)
     } else if (req.url == "/facilities") {
-        var facilityId = req.body.facilityId
         var extension = originalname.substr(originalname.lastIndexOf("."))
-        if (facilityId == 0){
-            con.query("SELECT MAX(roomId) FROM rooms", function (err, result, fields) {
-              if (err) throw err;
-                
-              //console.log("max " + JSON.stringify(result[0]["MAX(roomId)"]))
-              facilityId = result[0]["MAX(roomId)"] + 1
-              //console.log("the final room ID " + facilityId)
-              
-              var filename = req.url + "/" + facilityId + extension
-              //console.log("New event photo " + filename)
-              cb(null, filename)
-            });
-    
-        } else {
-            console.log("New event photo " + req.url + "/" + facilityId + extension)
-            cb(null, req.url + "/" + facilityId + extension)
-        }
+        console.log(req.url + "/" + req.body.facilityId + extension)
+        cb(null, req.url + "/" + req.body.facilityId + extension)
     }
   }
 })
@@ -458,8 +425,7 @@ app.post('/activities', upload.single('image'), (req, resp) => {
     if (req.body.submit == "Submit"){
         //insert new activity if it does't already exist
         if (activityId == 0 && image){
-            sql = "INSERT INTO activities (activityName, activityDescription, activityImage) VALUES('" +  activityName + "', '" +  activityDescription + "', '" +  image.filename + "')"
-            
+            sql = "INSERT INTO activities (activityName, activityDescription, activityImage) VALUES('" +  activityName + "', '" +  activityDescription + "', '" +  image.filename
         } else if (activityId == 0 && !image){
             sql = "INSERT INTO activities (activityName, activityDescription, activityImage) VALUES('" +  activityName + "', '" +  activityDescription +"', '/activities/default.jpg')"
         } else if (activityId != 0 && image){
@@ -481,7 +447,6 @@ app.post('/activities', upload.single('image'), (req, resp) => {
 
     }
 
-    //console.log(sql)
     con.query(sql, function (err, result, fields) {
       if (err) throw err;
 
