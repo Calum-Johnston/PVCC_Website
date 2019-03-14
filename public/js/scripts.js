@@ -26,22 +26,16 @@ $(function(){
     $("body").append("<div id='footer'></div>");
     $("#header").load("includes/header.html", function(){
         $("#footer").load("includes/footer.html", function(){
-            var currentHeight = $("html").height()
-            var windowHeight = $(window).height()
-            console.log(currentHeight)
-            console.log(windowHeight)
-            var difference = windowHeight-currentHeight
-            console.log(difference)
+            var currentHeight = $("html").height();
+            var windowHeight = $(window).height();
+            var difference = windowHeight - currentHeight;
             if (difference > 0){
-                $('#filler').css("min-height", difference)
-                //console.log("<div style='min-height:" + difference + "'></div>")
-                //$('#footer').insertBefore("<div style='min-height:" + difference + "px'></div>");
-
+                $('#filler').css("min-height", difference);
             }
         });
     });
 
-    
+
 });
 
 //carousel controls

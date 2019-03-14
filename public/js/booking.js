@@ -2,6 +2,14 @@
 ######Booking form stuff#########
 ###############################*/
 
+"use strict";
+/* jshint -W097 */
+/* jshint esversion: 6 */
+/* jshint node: true */
+/* jshint browser: true */
+/* jshint jquery: true */
+/* jshint devel: true */
+
 // Variable stores price
 var totalCost = 0;
 
@@ -13,6 +21,7 @@ $(document).ready(function(){
   $("#div-price").hide();
   $('#paypal-button-container').hide();
   $("#edit-details").hide();
+  $("#room-label").hide();
 
   // loading the event types into dropdown box and dynamically selecting rooms when an event is selected
   $.getJSON('/eventrooms', function(data){
@@ -40,6 +49,7 @@ $(document).ready(function(){
       // Matching events to rooms
       const value = $(this).text();
       outputRooms(value);
+      $("#room-label").show();
     });
   });
 
