@@ -650,7 +650,7 @@ function createEvent(eventInfo){
   var eventObj = {
     'summary': eventInfo.title,
     'location': eventInfo.rooms,
-    'description': eventInfo.description,
+    'description': eventInfo.description + "\n" + "Email: " + eventInfo.email + "\n" + "Telephone: " + eventInfo.telephone,
     'start': {
       'dateTime': eventInfo.dateTimeStart,
       'timeZone': 'Europe/London',
