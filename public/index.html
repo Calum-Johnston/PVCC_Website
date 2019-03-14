@@ -17,7 +17,7 @@
           js.src = 'https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v3.2';
           fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));</script>
-        
+
         <!--Image slider-->
 		<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
 			<div class="carousel-item active">
@@ -64,7 +64,7 @@
 		<span class="carousel-control-next-icon" aria-hidden="true"></span>
 		<span class="sr-only">Next</span>
 		</a>
-        
+
 		<!-- this shows our facilities which will dynamically laoded from the database we ahve stored (a few example cards are shown) -->
 		<div id="facilities" class="container my-5">
             <div class="row">
@@ -72,8 +72,8 @@
 				<div class="col-12 mb-4">All of our facilities are available for hire. We have facilities to suit all activities, events or occasions raging from sports opportunities to meetings and parties. Hiring agreements can range from one off facility hire to fully catered with licensed bar events. Please make an enquiry should you wish to discuss booking options further.
 				</div>
             </div>
-            
-			<div class="row request-result">                
+
+			<div class="row request-result">
 				<div class="col-12 col-md-6 col-lg-4 mb-4">
 					<div class="card">
 						<img class="card-img-top" src="img/facilities/astroturf.jpg" alt="Card image cap">
@@ -115,66 +115,23 @@
 					</div>
 				</div>
             </div>
-            
+
             <div class="row">
                 <div class="col-12">
                     <h5>4D Virtual Theatre Tour</h3>
                     <p>You can now view our theatre tour online! Take a look and see for yourself.</p>
-                
+
                 </div>
                 <div class="col-12">
                     <iframe style="width:100%" height="350px" style="border-radius:10px" src="https://www.4dtours.co.uk/4d/the-pictures/fullscreen/">
                       <p>Your browser does not support iframes.</p>
                     </iframe>
-                
+
                 </div>
             </div>
 		</div>
-        
 
-        
-        <!-- embed of social media -->
-        <div class="social-media bg-yellow py-5">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 col-md-6 text-md-left text-center">
-                        <h2 class="header-4">Social Media</h2>
-                        <p class="lead">Help us build our community by reaching out to us on social media. We'd love to hear from you just as much as we'd love you to hear from us!</p>
-                        
-                        <div class="btn-group socialToggle mb-4 d-none d-sm-block" role="group" aria-label="Basic example">
-                          <button type="button" id="btn-facebook" class="btn btn-light">Facebook</button>
-                          <button type="button" id="btn-twitter" class="btn btn-light">Twitter</button>
-                        </div>
-                        
-                        <div class="socialButtons d-block d-sm-none">
-                            <a href="https://twitter.com/ParkViewCA?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-size="large" data-show-count="false">Follow @ParkViewCA</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                        </div>
-                        <div class="socialButtons d-block d-sm-none">
-                            <div class="fb-like" data-href="https://www.facebook.com/parkviewcommunitycentre/" data-layout="button" data-action="like" data-size="large" data-show-faces="true" data-share="false"></div>
-                        </div>
-                        
-                        
-                    </div>
-                    <div class="socialFeeds col-12 col-md-6 text-center d-none d-sm-block">
-                        <div id="fb-page" class="fb-page" data-href="https://www.facebook.com/parkviewcommunitycentre/" data-tabs="timeline" data-height="300" data-width="350" data-small-header="true" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="true"><blockquote cite="https://www.facebook.com/parkviewcommunitycentre/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/parkviewcommunitycentre/">Park View Community Centre</a></blockquote></div>
 
-                        <div id="twitter-page" class="twitter-page">
-                            <a class="twitter-timeline" data-width="350" data-height="300" href="https://twitter.com/ParkViewCA?ref_src=twsrc%5Etfw">Tweets by ParkViewCA</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
-                        </div>
-                    </div>
-                    
-                    <!--
-                    <div class="socialButtons d-inline d-sm-none">
-                        <a href="https://twitter.com/ParkViewCA?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-size="large" data-show-count="false">Follow @ParkViewCA</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                        
-                        <div class="fb-like" data-href="https://www.facebook.com/parkviewcommunitycentre/" data-layout="button" data-action="like" data-size="large" data-show-faces="true" data-share="false"></div>
-                    </div>
-                    -->
-                </div>
-            </div>
-        </div>
-        
-        
         <!--activities previews from database -->
 		<div id="activities" class="container my-5">
 			<div class="row">
@@ -215,9 +172,41 @@
 				</div>
 			</div>
 		</div>
-        
 
-		<script src="js/scripts.js"></script>  
+		<!-- embed of social media -->
+		<div class="social-media bg-yellow py-5">
+				<div class="container">
+						<div class="row">
+								<div class="col-12 col-md-6 text-md-left text-center">
+										<h2 class="header-4">Social Media</h2>
+										<p class="lead">Help us build our community by reaching out to us on social media. We'd love to hear from you just as much as we'd love you to hear from us!</p>
+
+										<div class="btn-group socialToggle mb-4 d-none d-sm-block" role="group" aria-label="Basic example">
+											<button type="button" id="btn-facebook" class="btn btn-light">Facebook</button>
+											<button type="button" id="btn-twitter" class="btn btn-light">Twitter</button>
+										</div>
+
+										<div class="socialButtons d-block d-sm-none">
+												<a href="https://twitter.com/ParkViewCA?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-size="large" data-show-count="false">Follow @ParkViewCA</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+										</div>
+										<div class="socialButtons d-block d-sm-none">
+												<div class="fb-like" data-href="https://www.facebook.com/parkviewcommunitycentre/" data-layout="button" data-action="like" data-size="large" data-show-faces="true" data-share="false"></div>
+										</div>
+
+
+								</div>
+								<div class="socialFeeds col-12 col-md-6 text-center d-none d-sm-block">
+										<div id="fb-page" class="fb-page" data-href="https://www.facebook.com/parkviewcommunitycentre/" data-tabs="timeline" data-height="300" data-width="350" data-small-header="true" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="true"><blockquote cite="https://www.facebook.com/parkviewcommunitycentre/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/parkviewcommunitycentre/">Park View Community Centre</a></blockquote></div>
+
+										<div id="twitter-page" class="twitter-page">
+												<a class="twitter-timeline" data-width="350" data-height="300" href="https://twitter.com/ParkViewCA?ref_src=twsrc%5Etfw">Tweets by ParkViewCA</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+										</div>
+								</div>
+						</div>
+				</div>
+		</div>
+
+		<script src="js/scripts.js"></script>
         <script src="js/homepage.js"></script>
 	</body>
 </html>

@@ -9,9 +9,10 @@
 		<link rel="stylesheet" type="text/css" href="css/booking.css" />
     <title>PVCC</title>
 
+
     <!-- Paypal Related Stuff--> 
     <script src="https://www.paypal.com/sdk/js?client-id=AeoJExeFyni8Z0-xlMza7J1Kn4O5v6pNdDLD9XoDV6E5csr6UdG1A0LmceAqjbXnW_M5xVuRp5GjHZgn&currency=GBP"></script>
-  
+ 
   </head>
 	<body>
 		<div id="activities" class="container my-5">
@@ -26,7 +27,7 @@
               <div class="row form-group">
                 <label for="name" class="control-label col-sm-2">Full Name:</label>
                 <div class="col-sm-6">
-                  <input id="name" type="text" name="name" class="form-control" required>
+                  <input id="name" type="text" name="name" class="form-control input-type" required>
                   <span class="error" id="name-error">Name cannot contain special characters</span>
                   <span class="error" id="name-empty">Name is required</span>
                 </div>
@@ -35,14 +36,14 @@
               <div class="row form-group">
                 <label for="email" class="control-label col-sm-2">Email Address:</label>
                 <div class="col-sm-6">
-                  <input id="emailaddress" type="email" name="emailaddress" class="form-control" required>
+                  <input id="emailaddress" type="email" name="emailaddress" class="form-control input-type" required>
                 </div>
               </div>
 
               <div class="row form-group">
                 <label for="phone" class="control-label col-sm-2">Phone (optional):</label>
                 <div class="col-sm-6">
-                  <input id="phone" type="phone" name="full-name" class="form-control">
+                  <input id="phone" type="phone" name="full-name" class="form-control input-type">
                   <span class="error" id="phone-error">Phone no. must be valid</span>
                 </div>
               </div>
@@ -50,7 +51,7 @@
 							<div class="row form-group">
 								<label for="event-title" class="control-label col-sm-2">Event title:</label>
 								<div class="col-sm-6">
-									<input id="title" type="text" name="name" class="form-control" required>
+									<input id="title" type="text" name="name" class="form-control input-type" required>
 									<span class="error" id="title-error">Event title cannot contain special characters</span>
 									<span class="error" id="title-empty">Event title is required</span>
 								</div>
@@ -59,7 +60,7 @@
 							<div class="row form-group">
 								<label for="description" class="control-label col-sm-2">Event description (optional):</label>
 								<div class="col-sm-6">
-									<textarea id="description" class="form-control" rows="5" cols="50"></textarea><br>
+									<textarea id="description" class="form-control input-type" rows="5" cols="50"></textarea><br>
 								</div>
 							</div>
 
@@ -67,11 +68,11 @@
 								<label for="public/private" class="control-label col-sm-2">Private event?</label>
 								<div class="col-sm-4">
 									<div class="form-check form-check-inline">
-									  <input id="private" class="form-check-input" type="checkbox">
+									  <input id="private" class="form-check-input input-type" type="checkbox">
 									  <label class="form-check-label" for="private"><b>Yes</b></label>
 									</div>
 									<div class="form-check form-check-inline">
-									  <input id="public" class="form-check-input" type="checkbox">
+									  <input id="public" class="form-check-input input-type" type="checkbox">
 									  <label class="form-check-label" for="public"><b>No</b></label>
 									</div>
 								</div>
@@ -81,7 +82,7 @@
                 <label for="date" class="control-label col-sm-2">Date:</label>
                 <div class="col-sm-5">
                   <input id="date" type="date" name="date" min="2019-01-31"
-                  max="2019-12-31" value="2019-03-14" class="form-control" required>
+                  max="2019-12-31" value="2019-03-14" class="form-control input-type" required>
                 </div>
               </div>
 
@@ -89,12 +90,12 @@
                 <label for="time" class="control-label col-sm-2">Start/End Time:</label>
                 <div class="col-sm-4">
                   <input id="start-time" type="time" name="time" max="20:00"
-                   value="16:00" class="form-control" step="900" required>
+                   value="16:00" class="form-control input-type" step="900" required>
                 </div>
 
                 <div class="col-sm-4">
                   <input id="end-time" type="time" name="time" max="21:00"
-                   value="17:00" class="form-control" step="900" required>
+                   value="17:00" class="form-control input-type" step="900" required>
                 </div>
                 <span class="error" id="time-error">Booking must be for at least one hour</span>
               </div>
@@ -102,7 +103,7 @@
               <div class="row form-group">
                 <label for="event" class="control-label col-sm-2">Event type:</label>
                 <div class="dropdown col-sm-10">
-                  <button class="btn btn-warning dropdown-toggle" id="dropdownMenuButton"
+                  <button class="btn btn-warning dropdown-toggle input-type" id="dropdownMenuButton"
                    type="button" data-toggle="dropdown">Select Event &nbsp;
                    <span class="caret"></span></button>
                   <ul class="dropdown-menu" id="dropdownList">
@@ -132,14 +133,20 @@
 								</div>
 							</div>
 
-	      			<div class="row form-group">
+	      			<div class="row form-group" id="div-captcha">
 								<label for="captcha" class="control-label col-sm-2"></label>
 								<div class="col-sm-10">
 								  <div class="g-recaptcha" data-sitekey="6LeakZMUAAAAADZt2rcNRhv0UpSC9ntVT43-CPao"></div>
 								</div>
               </div>
-              
-              <div class="row form-group" id="paypal-button-container"></div>
+
+
+              <div class="row form-group">
+								<label for="paypal" class="control-label col-sm-2"></label>
+								<div class="col-sm-4" id="paypal-button-container">
+
+								</div>
+							</div>
 
               <div class="row form-group">
                 <label for="submit" class="control-label col-sm-2"></label>
@@ -147,6 +154,13 @@
                   <input type="submit" value="Check for Availability" class="btn btn-success" id="submitButton">
                 </div>
               </div>
+
+							<div class="row form-group" id="edit-details">
+								<label for="cancel" class="control-label col-sm-2"></label>
+								<div class="col-sm-4">
+									<button type='button' class='btn btn-warning'>Edit Details</button>
+								</div>
+							</div>
 
             </form>
 

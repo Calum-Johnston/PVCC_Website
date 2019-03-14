@@ -49,7 +49,7 @@ $(document).ready(function(){
   $(".error").hide();
   $("#div-price").hide();
   $('#paypal-button-container').hide();
-
+  $("#edit-details").hide();
 
   // loading the event types into dropdown box and dynamically selecting rooms when an event is selected
   $.getJSON('/eventrooms', function(data){
@@ -292,6 +292,15 @@ $(document).ready(function(){
     $("#room-empty").remove();
   });
 
+  $("#edit-details").on('click', function(){
+    // enable all input fields again, remove paypal buttons and show check for avaliability button
+    $(".input-type").prop("disabled", false);
+    $(".event-button").prop("disabled", false);
+    $("#edit-details").hide(500);
+    $("#paypal-button-container").hide(500);
+    $('#submitButton').show(500);
+  });
+
   $("#bookingform").on('submit', function(e){
 
     var bookingValid = false;
@@ -332,7 +341,11 @@ $(document).ready(function(){
 
     if (bookingValid){
       $('#submitButton').hide();
-      $('#paypal-button-container').show();
+      $(".input-type").prop("disabled", true);
+      $(".event-button").prop("disabled", true);
+      $("#div-captcha").remove();
+      $("#edit-details").show(500);
+      $("#paypal-button-container").show(500);
     }
     return false;
 });
