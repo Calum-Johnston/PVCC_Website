@@ -106,8 +106,12 @@ footer {
   margin:0%;
 }
 
-error{
- background-color:rgb(33, 32, 21, 50%);			display: none;
-	    opacity:1;	103		margin-left: 10px;
-	    -webkit-transition: opacity 0.4s;	104	  color: red;
-	    transition: opacity 0.4s;	105	}
+.error{
+  background-color:rgb(33, 32, 21, 50%);			
+  display: none;
+  opacity:1;	
+  margin-left: 10px;
+  -webkit-transition: opacity 0.4s;	
+  color: red;
+  transition: opacity 0.4s;		
+}
