@@ -327,7 +327,7 @@ app.get('/delete-event/:id', function(req, resp){
     });
   };
   // Redirect user elsewhere
-  return resp.redirect('/');
+  return resp.redirect('/cancellationConfirmation');
 });
 
 
