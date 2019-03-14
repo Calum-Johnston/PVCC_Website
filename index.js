@@ -375,7 +375,7 @@ app.get("/activities", function(req, resp){
         resp.send(result);
       });
 });
-
+ 
 
 // === INDIVIDUAL ACTIVITIES ===
 // Returns information about a given activity by ID
@@ -729,7 +729,7 @@ function validateEvent(newEventInfo, resp){
 
   }, (err, res) => {
 
-    if (err) return console.log('The API returned an error: ' + err);
+    if (err) return console.trace()//console.log('The API returned an error: ' + err);
     //events object
     var clashDiscovered = false;
     const events = res.data.items;
