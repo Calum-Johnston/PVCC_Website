@@ -417,8 +417,8 @@ var upload = multer({ storage: storage })
 //insert an activity
 app.post('/activities', upload.single('image'), (req, resp) => {
     var activityId = req.body.activityId;
-    var activityName = req.body.activityName;
-    var activityDescription = req.body.activityDescription.replace("\n", "<br />");
+    var activityName = req.body.activityName.replace("'", "&#39;");
+    var activityDescription = req.body.activityDescription.replace("\n", "<br />").replace("'", "&#39;");
     var image = req.file;
 
     var sql = ""
@@ -462,12 +462,13 @@ app.post('/activities', upload.single('image'), (req, resp) => {
 //insert a facilitiy
 app.post('/facilities', upload.single('image'), (req, resp) => {
     var facilityId = req.body.facilityId;
-    var facilityName = req.body.facilityName;
-    var facilityDescription = req.body.facilityDescription.replace("\n", "<br />");
+    var facilityName = req.body.facilityName.replace("'", "&#39;");
+    var facilityDescription = req.body.facilityDescription.replace("\n", "<br />").replace("'", "&#39;");
     var image = req.file;
 
     var facilityType = req.body.roomType;
     var facilityPrice = req.body.roomPrice;
+    
 
 
     var sql = ""
