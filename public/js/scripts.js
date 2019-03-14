@@ -22,9 +22,26 @@ $.urlParam = function(name){
 //load header and footer
 $(function(){
     $("body").prepend("<div id='header'></div>");
+    $("body").append("<div id='filler'></div>");
     $("body").append("<div id='footer'></div>");
-    $("#header").load("includes/header.html");
-    $("#footer").load("includes/footer.html");
+    $("#header").load("includes/header.html", function(){
+        $("#footer").load("includes/footer.html", function(){
+            var currentHeight = $("html").height()
+            var windowHeight = $(window).height()
+            console.log(currentHeight)
+            console.log(windowHeight)
+            var difference = windowHeight-currentHeight
+            console.log(difference)
+            if (difference > 0){
+                $('#filler').css("min-height", difference)
+                //console.log("<div style='min-height:" + difference + "'></div>")
+                //$('#footer').insertBefore("<div style='min-height:" + difference + "px'></div>");
+
+            }
+        });
+    });
+
+    
 });
 
 //carousel controls
