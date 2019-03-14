@@ -375,7 +375,7 @@ app.get("/activities", function(req, resp){
         resp.send(result);
       });
 });
- 
+
 
 // === INDIVIDUAL ACTIVITIES ===
 // Returns information about a given activity by ID
@@ -435,7 +435,7 @@ app.post('/activities', upload.single('image'), (req, resp) => {
         }
     } else if (req.body.submit == "Delete") {
         sql = "DELETE FROM activities WHERE activityId = " + activityId
-        
+
         //delete the image since it is no longer needed
         fs.unlink('public/img/activities/'+activityId+'.jpg', function (err) {
             if (err) {
@@ -443,8 +443,8 @@ app.post('/activities', upload.single('image'), (req, resp) => {
             } else {
                 console.log('Image deleted!');
             }
-        });  
-        
+        });
+
     }
 
     con.query(sql, function (err, result, fields) {
@@ -469,7 +469,7 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
     var facilityType = req.body.roomType;
     var facilityPrice = req.body.roomPrice;
 
-    
+
     var sql = ""
     if (req.body.submit == "Submit"){
         //insert new activity if it does't already exist
@@ -481,11 +481,11 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
             sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomImage = '" +  image.filename + "', roomType = '" +  facilityType + "', price = '" +  facilityPrice + "'   WHERE roomId = " + facilityId
         } else if (facilityId != 0 && !image){
             sql = "UPDATE rooms SET roomName = '" +  facilityName + "', roomDescription = '" +  facilityDescription + "', roomType = '" +  facilityType + "', price = '" +  facilityPrice + "'   WHERE roomId = " + facilityId
-        } 
+        }
 
     } else if (req.body.submit == "Delete") {
         sql = "DELETE FROM rooms WHERE roomId = " + facilityId
-        
+
         //delete the image since it is no longer needed
         fs.unlink('public/img/facilities/'+facilityId+'.jpg', function (err) {
             if (err) {
@@ -493,14 +493,14 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
             } else {
                 console.log('Image deleted!');
             }
-        }); 
-        
+        });
+
     }
 
     console.log(sql)
     con.query(sql, function (err, result, fields) {
 
-      if (err) throw err;        
+      if (err) throw err;
 
         resp.redirect("/facilities.html")
 
@@ -592,44 +592,49 @@ function populateEvents(){
       // Loop through all events
       events.map((event, i) => {
 
-        // Gets a list of rooms from the event
-        var rooms = event.location.split(', ');
-        // Remove any none room types, not sure this is needed anymore
-        //  rooms.pop();
+        if (event.location.length != null){
+          // Gets a list of rooms from the event
+          var rooms = event.location.split(', ');
+          // Remove any none room types, not sure this is needed anymore
+          //  rooms.pop();
 
-        var j;
+          var j;
 
-        // Creates an object to be pushed onto correct room arrays
-        var eventCalendarObj = {
-          title: event.summary,
-          start: event.start.dateTime,
-          end: event.end.dateTime,
-          id: event.id
-        };
+          // Creates an object to be pushed onto correct room arrays
+          var eventCalendarObj = {
+            title: event.summary,
+            start: event.start.dateTime,
+            end: event.end.dateTime,
+            id: event.id
+          };
 
-        //checks if the event is Private, sets title to private if it is
-        if (event.private == true){
-          eventCalendarObj["title"] = "Private Event";
-        }
-
-        // Push event onto arrays corresponding to rooms booked
-        for(j = 0; j < rooms.length - 1; j++){
-          //set to lower case and remove whitespace
-          var room = rooms[j];
-          room = room.toLowerCase();
-          room = room.replace(/\s/g, '');
-
-          //check for empty string (end of array of google calendar)
-          if (room != null){
-
-            if (eventsDict[room] == undefined){
-              //set up dictionary entry
-              eventsDict[room] = [];
-            }
-            eventsDict[room].push(eventCalendarObj);
-
+          //checks if the event is Private, sets title to private if it is
+          if (event.private == true){
+            eventCalendarObj["title"] = "Private Event";
           }
+
+          // Push event onto arrays corresponding to rooms booked
+          for(j = 0; j < rooms.length - 1; j++){
+            //set to lower case and remove whitespace
+            var room = rooms[j];
+            room = room.toLowerCase();
+            room = room.replace(/\s/g, '');
+
+            //check for empty string (end of array of google calendar)
+            if (room != null){
+
+              if (eventsDict[room] == undefined){
+                //set up dictionary entry
+                eventsDict[room] = [];
+              }
+              eventsDict[room].push(eventCalendarObj);
+
+            }
+          }
+        }else{
+          console.log("Invalid event read from calendar, no location provided.");
         }
+
 
 
       });
@@ -742,7 +747,7 @@ function validateEvent(newEventInfo, resp){
         //get the list of rooms of current event being evaluated
         const rooms = event.location.split(', ');
         rooms.pop();
-        
+
         for (var i = 0; i < rooms.length; i++){
           console.log(rooms[i]);
         }
