@@ -327,7 +327,7 @@ app.get('/delete-event/:id', function(req, resp){
     });
   };
   // Redirect user elsewhere
-  return resp.redirect('/cancellationConfirmation');
+  return resp.redirect('/cancellationConfirmation.html');
 });
 
 
@@ -468,7 +468,7 @@ app.post('/facilities', upload.single('image'), (req, resp) => {
 
     var facilityType = req.body.roomType;
     var facilityPrice = req.body.roomPrice;
-    
+
 
 
     var sql = ""
