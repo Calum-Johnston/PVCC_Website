@@ -334,6 +334,7 @@ $(document).ready(function(){
       $('#submitButton').hide();
       $(".input-type").prop("disabled", true);
       $(".event-button").prop("disabled", true);
+      $("#div-captcha").remove();
       $('#paypal-button-container').show();
     }
     return false;
