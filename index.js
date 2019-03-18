@@ -597,7 +597,7 @@ function populateEvents(){
           //  rooms.pop();
 
           var j;
-          console.log("Adding " + event.summary + " to server calendar, in rooms" + rooms);
+          //console.log("Adding " + event.summary + " to server calendar, in rooms " + rooms);
           // Creates an object to be pushed onto correct room arrays
           var eventCalendarObj = {
             title: event.summary,

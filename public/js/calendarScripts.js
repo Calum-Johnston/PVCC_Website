@@ -69,7 +69,7 @@ $( document ).ready(function() {
                     dow: [ 0, 1, 2, 3, 4, 5, 6]
             },
         events: {
-            url: "http://127.0.0.1:1010/events/astroturf(mugga)",
+            url: "/events/astroturf(mugga)",
         },
         eventBackgroundColor: "rgb(255, 201, 45)",
         eventTextColor: "black",
@@ -88,8 +88,8 @@ function changeRooms(room) {
     prevRoom = prevRoom.replace(/\s/g, '');
     room = room.toLowerCase();
     room = room.replace(/\s/g, '');
-    var removeSource = 'http://127.0.0.1:1010/events/' + prevRoom;
-    var newSource = 'http://127.0.0.1:1010/events/' + room;
+    var removeSource = '/events/' + prevRoom;
+    var newSource = '/events/' + room;
     $('#calendar').fullCalendar( 'removeEventSource', removeSource )
     $("#calendar").fullCalendar('addEventSource', newSource);
     $('#calendar').fullCalendar( 'refetchEvents' );

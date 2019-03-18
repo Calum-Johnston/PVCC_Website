@@ -341,7 +341,7 @@ function validateEvent(){
   };
   $.ajax({
     type:"POST",
-    url: "http://127.0.0.1:1010/checkEvents",
+    url: "/checkEvents",
     data: JSON.stringify(eventToPost),
     contentType:"application/json; charset=utf-8",
     dataType:"json",
@@ -369,7 +369,7 @@ function validateEvent(){
 function createEvent(){
   $.ajax({
     type:"POST",
-    url: "http://127.0.0.1:1010/createEvent",
+    url: "/createEvent",
     data: JSON.stringify(eventToPost),
     contentType:"application/json; charset=utf-8",
     dataType:"json",
