@@ -12,6 +12,7 @@
 
 // Variable stores price
 var totalCost = 0;
+var eventToPost;
 
 $(document).ready(function(){
 
@@ -325,22 +326,23 @@ $(document).ready(function(){
 ###########################*/
 
 function validateEvent(){
+  eventToPost = {
+    "name": $('#name').val(),
+    "email": $('#emailaddress').val(),
+    "telephone": $('#phone').val(),
+    "title": $('#title').val(),
+    "description": $("#description").val(),
+    "date": $('#date').val(),
+    "timeFrom": $('#start-time').val(),
+    "timeUntil": $('#end-time').val(),
+    "private": $("#private").prop("checked"), //returns if yes tickbox is ticked
+    "rooms": $('#room-selection').val(),
+    "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) //returns total price, formatted as a float
+  };
   $.ajax({
     type:"POST",
     url: "http://127.0.0.1:1010/checkEvents",
-    data: JSON.stringify({
-      "name": $('#name').val(),
-      "email": $('#emailaddress').val(),
-      "telephone": $('#phone').val(),
-      "title": $('#title').val(),
-      "description": $("#description").val(),
-      "date": $('#date').val(),
-      "timeFrom": $('#start-time').val(),
-      "timeUntil": $('#end-time').val(),
-      "private": $("#private").prop("checked"), //returns if yes tickbox is ticked
-      "rooms": $('#room-selection').val(),
-      "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) //returns total price, formatted as a float
-    }),
+    data: JSON.stringify(eventToPost),
     contentType:"application/json; charset=utf-8",
     dataType:"json",
     success: function(data){
@@ -368,23 +370,16 @@ function createEvent(){
   $.ajax({
     type:"POST",
     url: "http://127.0.0.1:1010/createEvent",
-    data: JSON.stringify({
-      "name": $('#name').val(),
-      "email": $('#emailaddress').val(),
-      "telephone": $('#phone').val(),
-      "title": $('#title').val(),
-      "description": $("#description").val(),
-      "date": $('#date').val(),
-      "timeFrom": $('#start-time').val(),
-      "timeUntil": $('#end-time').val(),
-      "private": $("#private").prop("checked"), //returns if yes tickbox is ticked
-      "rooms": $('#room-selection').val(),
-      "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) //returns total price, formatted as a float
-    }),
+    data: JSON.stringify(eventToPost),
     contentType:"application/json; charset=utf-8",
     dataType:"json",
-    success: function(){
-        window.location.replace("/bookingConfirmation.html");
+    success: function(data){
+      if (data.response == true){
+          window.location.replace("/bookingConfirmation.html");
+      }else{
+          alert("Unfortunately no booking was made, something may be wrong with our servers, please try again later.");
+      };
+
     },
     error: function(){
       alert("Booking failed, something went wrong with our servers. Please try again later.");

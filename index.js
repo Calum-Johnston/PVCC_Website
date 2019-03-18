@@ -597,7 +597,7 @@ function populateEvents(){
           //  rooms.pop();
 
           var j;
-
+          console.log("Adding " + event.summary + " to server calendar, in rooms" + rooms);
           // Creates an object to be pushed onto correct room arrays
           var eventCalendarObj = {
             title: event.summary,
@@ -642,7 +642,7 @@ function populateEvents(){
 }
 
 // Takes a JSON object with the event information and creates an event if the authentication is valid
-function createEvent(eventInfo){
+function createEvent(eventInfo, resp){
 
   // Creates the event object
   var eventObj = {
@@ -673,6 +673,7 @@ function createEvent(eventInfo){
 
   if (err) {
     console.log('There was an error contacting the Calendar service: ' + err);
+    resp.send({"response":false});
     return;
   }else{
 
@@ -710,6 +711,7 @@ function createEvent(eventInfo){
 
   }
   console.log('Event created!');
+  resp.send({"response":true});
   sendConfirmation(eventInfo, event.data.id);
   });
 }
