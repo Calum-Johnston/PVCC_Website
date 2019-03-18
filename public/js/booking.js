@@ -12,6 +12,7 @@
 
 // Variable stores price
 var totalCost = 0;
+var eventToPost;
 
 $(document).ready(function(){
 
@@ -315,13 +316,7 @@ $(document).ready(function(){
     }
 
     if (bookingValid){
-      $('#submitButton').hide();
-      $(".input-type").prop("disabled", true);
-      $(".event-button").prop("disabled", true);
-      $("#div-captcha").remove();
-      $("#edit-details").show(500);
-      $("#paypal-label").show(500);
-      $("#paypal-button-container").show(500);
+      validateEvent();
     }
     return false;
 });
@@ -330,35 +325,64 @@ $(document).ready(function(){
 ##Google Calendar API Stuff##
 ###########################*/
 
-function postEvent(){
+function validateEvent(){
+  eventToPost = {
+    "name": $('#name').val(),
+    "email": $('#emailaddress').val(),
+    "telephone": $('#phone').val(),
+    "title": $('#title').val(),
+    "description": $("#description").val(),
+    "date": $('#date').val(),
+    "timeFrom": $('#start-time').val(),
+    "timeUntil": $('#end-time').val(),
+    "private": $("#private").prop("checked"), //returns if yes tickbox is ticked
+    "rooms": $('#room-selection').val(),
+    "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) //returns total price, formatted as a float
+  };
   $.ajax({
     type:"POST",
-    url: "http://127.0.0.1:1010/events",
-    data: JSON.stringify({
-      "name": $('#name').val(),
-      "email": $('#emailaddress').val(),
-      "telephone": $('#phone').val(),
-      "title": $('#title').val(),
-      "description": $("#description").val(),
-      "date": $('#date').val(),
-      "timeFrom": $('#start-time').val(),
-      "timeUntil": $('#end-time').val(),
-      "private": $("#private").prop("checked"), //returns if yes tickbox is ticked
-      "rooms": $('#room-selection').val(),
-      "price": parseFloat(($("#show-price").text()).substring(1, ($("#show-price").text()).length)) //returns total price, formatted as a float
-    }),
+    url: "http://127.0.0.1:1010/checkEvents",
+    data: JSON.stringify(eventToPost),
     contentType:"application/json; charset=utf-8",
     dataType:"json",
     success: function(data){
       if(data.response === true){
-        window.location.replace("/bookingConfirmation.html");
+        $('#submitButton').hide();
+        $(".input-type").prop("disabled", true);
+        $(".event-button").prop("disabled", true);
+        $("#div-captcha").remove();
+        $("#edit-details").show(500);
+        $("#paypal-label").show(500);
+        $("#paypal-button-container").show(500);
       }
       else{
-        alert("Clash detected, booking not made.");
+        alert("Room clash detected, please check What's On calendar for room avaliability!");
       }
     },
     error: function(){
       alert("Booking not made, ensure all data has been enterted correctly.");
+    }
+  });
+  return false;
+}
+
+function createEvent(){
+  $.ajax({
+    type:"POST",
+    url: "http://127.0.0.1:1010/createEvent",
+    data: JSON.stringify(eventToPost),
+    contentType:"application/json; charset=utf-8",
+    dataType:"json",
+    success: function(data){
+      if (data.response == true){
+          window.location.replace("/bookingConfirmation.html");
+      }else{
+          alert("Unfortunately no booking was made, something may be wrong with our servers, please try again later.");
+      };
+
+    },
+    error: function(){
+      alert("Booking failed, something went wrong with our servers. Please try again later.");
     }
   });
   return false;
@@ -382,8 +406,8 @@ paypal.Buttons({
   onApprove: function(data, actions){
     // Capture the funds from the transaction
     return actions.order.capture().then(function(details){
-      alert('Transaction completed by ' + details.payer.name.given_name);
-      postEvent();
+      //alert('Transaction completed by ' + details.payer.name.given_name);
+      createEvent();
     });
   },
   onError: function(error){

@@ -253,7 +253,7 @@ app.use(express.static('public'));
 
 // === CREATE EVENT ===
 // Handles the post request for creating events
-app.post('/events', function(req, resp){
+app.post('/checkEvents', function(req, resp){
 
   // Creates an event object which stores all data sent in request
   var eventInfo = {
@@ -269,32 +269,29 @@ app.post('/events', function(req, resp){
     "price": req.body.price
   };
 
-  // Validates the captcha (** NOT WORKING **)
-  /*
-  if(req.body['g-recaptcha-response'] === undefined || req.body['g-recaptcha-response'] === '' || req.body['g-recaptcha-response'] === null) {
-    return resp.json({"responseCode" : 1,"responseDesc" : "Please select captcha"});
-  }
-
-  // Put your secret key here.
-  var secretKey = "6LeakZMUAAAAAJ3ppyXG4OjcAACeLdMv4yd9NcRI";
-  // req.connection.remoteAddress will provide IP address of connected user.
-  var verificationUrl = "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
-  // Hitting GET request to the URL, Google will respond with success or error scenario.
-  req(verificationUrl ,function(error, response, body) {
-    body = JSON.parse(body);
-    // Success will be true or false depending upon captcha validation.
-    if(body.success !== undefined && !body.success) {
-      return resp.json({"responseCode" : 1,"responseDesc" : "Failed captcha verification"});
-    }
-    resp.json({"responseCode" : 0,"responseDesc" : "Sucess"});
-  });
-  */
-  //call function to check if the event is valid, i.e. not overlapping other events
-  //send resp to validateEvent due to calendar API taking too long to respond, resp
-  //ends up getting processed first otherwise.
-
   // Validates the event
   validateEvent(eventInfo, resp);
+
+});
+
+app.post('/createEvent', function(req, resp){
+
+  // Creates an event object which stores all data sent in request
+  var eventInfo = {
+    "name": req.body.name,
+    "email": req.body.email,
+    "telephone": req.body.telephone,
+    "title": req.body.title,
+    "description": req.body.description,
+    "dateTimeStart": (new Date(req.body.date + " " + req.body.timeFrom)).toISOString(),
+    "dateTimeEnd": (new Date(req.body.date + " " + req.body.timeUntil)).toISOString(),
+    "private": req.body.private,
+    "rooms": req.body.rooms,
+    "price": req.body.price
+  };
+
+  // Validates the event
+  createEvent(eventInfo, resp);
 
 });
 
@@ -600,7 +597,7 @@ function populateEvents(){
           //  rooms.pop();
 
           var j;
-
+          console.log("Adding " + event.summary + " to server calendar, in rooms" + rooms);
           // Creates an object to be pushed onto correct room arrays
           var eventCalendarObj = {
             title: event.summary,
@@ -645,7 +642,7 @@ function populateEvents(){
 }
 
 // Takes a JSON object with the event information and creates an event if the authentication is valid
-function createEvent(eventInfo){
+function createEvent(eventInfo, resp){
 
   // Creates the event object
   var eventObj = {
@@ -676,6 +673,7 @@ function createEvent(eventInfo){
 
   if (err) {
     console.log('There was an error contacting the Calendar service: ' + err);
+    resp.send({"response":false});
     return;
   }else{
 
@@ -713,6 +711,7 @@ function createEvent(eventInfo){
 
   }
   console.log('Event created!');
+  resp.send({"response":true});
   sendConfirmation(eventInfo, event.data.id);
   });
 }
@@ -771,22 +770,16 @@ function validateEvent(newEventInfo, resp){
 
       if (!clashDiscovered){
         //if time clash but no room clash
-        console.log("No room clashes, creating event...");
-        // Passes createEvent() as a callback for sendConfirmation()
-        createEvent(newEventInfo);
-
-        // Sends teh response to the website
+        console.log("No room clashes, returning true.");
+        // Sends the response to the website
         resp.send({"response": true});
       }
 
     } else {
       //if there no time clashes
-      console.log("No events in that time range, no possibility for clashing booking, creating event...");
+      console.log("No events in that time range, no possibility for clashing booking, returning true.");
 
-      // Passes createEvent() as a callback for sendConfirmation()
-      createEvent(newEventInfo);
-
-      // Sends the response to the website
+        // Sends the response to the website
       resp.send({"response": true});
     }
 
